@@ -16,7 +16,7 @@ const laligaData = require('./match-data/es1.json');
 const ligue1Data = require('./match-data/fr1.json');
 const bundesligaData = require('./match-data/de1.json');
 const serieaData = require('./match-data/it1.json');
-import { findDates } from './leagueFunctions.js';
+import { findDates, findMatches } from './leagueFunctions.js';
 
 const leagueIDs = {
     'epl' : 'Premier League',
@@ -71,7 +71,20 @@ app.get('/football/:league/fixtures', (req, res) => {
 
 app.get('/football/:league/fixtures/:date', (req, res) => {
     const { league, date } = req.params;
-    res.send(`Displaying fixtures for the ${league} league for ${date}`);
+    let matches; 
+    if(league === 'epl'){
+        matches = findMatches(eplData, date);
+    } else if (league === 'ligue1'){
+        matches = findMatches(ligue1Data, date);
+    }else if (league === 'laliga'){
+        matches = findMatches(laligaData, date);
+    } else if (league === 'bundesliga'){
+        matches= findMatches(bundesligaData, date);
+    } else if (league === 'seriea'){
+        matches = findMatches(serieaData, date);
+    }
+    // res.send(`Displaying fixtures for the ${league} league for ${date}`);
+    res.render('football/matches', {matches, date});
 })
 
 app.listen(3000, () => {
