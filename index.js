@@ -18,6 +18,14 @@ const bundesligaData = require('./match-data/de1.json');
 const serieaData = require('./match-data/it1.json');
 import { findDates } from './leagueFunctions.js';
 
+const leagueIDs = {
+    'epl' : 'Premier League',
+    'seriea' : 'Seria A',
+    'ligue1' : 'Ligue 1',
+    'bundesliga' : 'Bundesliga',
+    'laliga' : 'La Liga'
+}
+
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
@@ -36,31 +44,34 @@ app.get('/football', (req, res) => {
 })
 
 // Displays table of team standings in the specified league
-app.get('/football/:country/:league', (req, res) => {
-    const { country, league } = req.params;
-    res.send(`Client wants to see the table for ${country}'s ${league}`);
+app.get('/football/:league', (req, res) => {
+    const { league } = req.params;
+    res.render('football/leauge', { leagueInfo: {
+        leagueName : leagueIDs[league]}
+     });
+    // res.send(`League: ${league}`);
 })
 
 // Displays upcoming league matches until the end of the season
-app.get('/football/:country/:league/fixtures', (req, res) => {
-    const { country, league } = req.params;
-    let matchDates; 
-    if(country === 'england' && league === 'epl'){
+app.get('/football/:league/fixtures', (req, res) => {
+    const { league } = req.params;
+    let matchDates;
+    if(league === 'epl'){
         matchDates = findDates(eplData);
-    } else if (country === 'france' && league === 'ligue1'){
+    } else if (league === 'ligue1'){
         matchDates = findDates(ligue1Data);
-    }else if (country === 'spain' && league === 'laliga'){
+    }else if (league === 'laliga'){
         matchDates = findDates(laligaData);
-    } else if (country === 'germany' && league === 'bundesliga'){
+    } else if (league === 'bundesliga'){
         matchDates = findDates(bundesligaData);
-    } else if (country === 'italy' && league === 'seriea'){
+    } else if (league === 'seriea'){
         matchDates = findDates(serieaData);
     }
     res.send(`Displaying fixtures for the ${league} league`);
 })
 
-app.get('/football/:country/:league/fixtures/:date', (req, res) => {
-    const { country, league, date } = req.params;
+app.get('/football/:league/fixtures/:date', (req, res) => {
+    const { league, date } = req.params;
     res.send(`Displaying fixtures for the ${league} league for ${date}`);
 })
 
