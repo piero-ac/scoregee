@@ -46,9 +46,7 @@ app.get('/football', (req, res) => {
 // Displays table of team standings in the specified league
 app.get('/football/:league', (req, res) => {
     const { league } = req.params;
-    res.render('football/leauge', { leagueInfo: {
-        leagueName : leagueIDs[league]}
-     });
+    res.render('football/league', { leagueName : leagueIDs[league], league });
     // res.send(`League: ${league}`);
 })
 
@@ -67,7 +65,8 @@ app.get('/football/:league/fixtures', (req, res) => {
     } else if (league === 'seriea'){
         matchDates = findDates(serieaData);
     }
-    res.send(`Displaying fixtures for the ${league} league`);
+    // res.send(`Displaying fixtures for the ${league} league`);
+    res.render('football/fixtures', { leagueName : leagueIDs[league], matchDates, league })
 })
 
 app.get('/football/:league/fixtures/:date', (req, res) => {
