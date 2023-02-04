@@ -2,7 +2,8 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const axios = require("axios");
 
-const options = {
+
+const optionsFixtures = {
   method: 'GET',
   url: 'https://football98.p.rapidapi.com/premierleague/fixtures',
   headers: {
