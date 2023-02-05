@@ -2,6 +2,7 @@
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const axios = require("axios");
+import { config } from "./config.js";
 
 
 const eplOptions = {
@@ -10,7 +11,7 @@ const eplOptions = {
     params: {league: '39', season: '2022'},
     headers: {
       'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
-      'x-rapidapi-key': '9c4deaf318msh0c5222871352babp16fb89jsnfe2c2ef108cc'
+      'x-rapidapi-key': config.RAPID_API_KEY
     }
 };
 

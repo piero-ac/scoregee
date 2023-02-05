@@ -2,13 +2,14 @@
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const axios = require("axios");
+import { config } from "./config.js";
 
 const englandLeagues = {
     method: 'GET',
     url: 'https://api-football-v1.p.rapidapi.com/v3/leagues',
     params: {country: 'England'},
     headers: {
-        'X-RapidAPI-Key': '9c4deaf318msh0c5222871352babp16fb89jsnfe2c2ef108cc',
+        'X-RapidAPI-Key': config.RAPID_API_KEY,
         'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
     }
 }
@@ -18,7 +19,7 @@ const italyLeagues = {
     url: 'https://api-football-v1.p.rapidapi.com/v3/leagues',
     params: {country: 'Italy'},
     headers: {
-        'X-RapidAPI-Key': '9c4deaf318msh0c5222871352babp16fb89jsnfe2c2ef108cc',
+        'X-RapidAPI-Key': config.RAPID_API_KEY,
         'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
     }
 }
@@ -28,7 +29,7 @@ const germanyLeagues = {
     url: 'https://api-football-v1.p.rapidapi.com/v3/leagues',
     params: {country: 'Germany'},
     headers: {
-        'X-RapidAPI-Key': '9c4deaf318msh0c5222871352babp16fb89jsnfe2c2ef108cc',
+        'X-RapidAPI-Key': config.RAPID_API_KEY,
         'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
     }
 }
@@ -38,7 +39,7 @@ const spainLeagues = {
     url: 'https://api-football-v1.p.rapidapi.com/v3/leagues',
     params: {country: 'Spain'},
     headers: {
-        'X-RapidAPI-Key': '9c4deaf318msh0c5222871352babp16fb89jsnfe2c2ef108cc',
+        'X-RapidAPI-Key': config.RAPID_API_KEY,
         'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
     }
 }
@@ -48,7 +49,7 @@ const franceLeagues = {
     url: 'https://api-football-v1.p.rapidapi.com/v3/leagues',
     params: {country: 'France'},
     headers: {
-        'X-RapidAPI-Key': '9c4deaf318msh0c5222871352babp16fb89jsnfe2c2ef108cc',
+        'X-RapidAPI-Key': config.RAPID_API_KEY,
         'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
     }
 }

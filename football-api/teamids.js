@@ -1,13 +1,14 @@
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const axios = require("axios");
+import { config } from "./config.js";
 
 const options = {
     method: 'GET',
     url: 'https://api-football-v1.p.rapidapi.com/v3/teams',
     params: {season: '2022', league: '39'},
     headers: {
-      'X-RapidAPI-Key': '9c4deaf318msh0c5222871352babp16fb89jsnfe2c2ef108cc',
+      'X-RapidAPI-Key': config.RAPID_API_KEY,
       'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
     }
   };
