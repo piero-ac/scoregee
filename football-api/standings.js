@@ -42,8 +42,51 @@ function displayLeagueStandings(data){
         console.log(`Games Played: ${played} - W/D/L: ${win}/${draw}/${lose}`);
         console.log(`Goals - For: ${forGoals}, Against: ${againstGoals}`);
         console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++');
-
     }
+
+
+}
+
+
+
+export function getLeagueStandings(leagueName){
+    const options = {
+        method: 'GET',
+        url: 'https://api-football-v1.p.rapidapi.com/v3/standings',
+        params: {league: '', season: '2022'},
+        headers: {
+            'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
+            'x-rapidapi-key': config.RAPID_API_KEY
+        }   
+    }
+    if(leagueName === 'epl'){
+        options.params.league = '39';
+    } else if (leagueName === 'ligue1'){
+        options.params.league = '61';
+    }else if (leagueName === 'laliga'){
+        options.params.league = '140';
+    } else if (leagueName === 'bundesliga'){
+        options.params.league = '78';
+    } else if (leagueName === 'seriea'){
+        options.params.league = '135';
+    }
+
+    axios.request(options)
+    .then((response) => {
+        // console.log(response.data);
+        const league = response.data.response[0].league;
+        const { id: leagueID, name: leagueName, country : leagueCountry, standings} = league;
+        console.log(`League ID: ${leagueID} - Name: ${leagueName} - Country: ${leagueCountry}`);
+        console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        
+        const leagueStandings = standings[0];
+        return leagueStandings;
+    })
+    .catch((e) => {
+        console.error(e);
+    })
+
+
 }
 
 /**
