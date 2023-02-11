@@ -18,6 +18,10 @@ const bundesligaData = require('./match-data/de1.json');
 const serieaData = require('./match-data/it1.json');
 import { findDates, findMatches } from './leagueFunctions.js';
 
+//function imports
+import { config } from './football-api/config.js';
+const axios = require("axios");
+
 const leagueIDs = {
     'epl' : 'Premier League',
     'seriea' : 'Seria A',
@@ -46,8 +50,39 @@ app.get('/football', (req, res) => {
 // Displays table of team standings in the specified league
 app.get('/football/:league', (req, res) => {
     const { league } = req.params;
-    res.render('football/league', { leagueName : leagueIDs[league], league });
-    // res.send(`League: ${league}`);
+    const options = {
+        method: 'GET',
+        url: 'https://api-football-v1.p.rapidapi.com/v3/standings',
+        params: {league: '', season: '2022'},
+        headers: {
+            'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
+            'x-rapidapi-key': config.RAPID_API_KEY
+        }   
+    }
+    if(league === 'epl'){
+        options.params.league = '39';
+    } else if (league === 'ligue1'){
+        options.params.league = '61';
+    }else if (league === 'laliga'){
+        options.params.league = '140';
+    } else if (league === 'bundesliga'){
+        options.params.league = '78';
+    } else if (league === 'seriea'){
+        options.params.league = '135';
+    }
+
+    axios.request(options)
+    .then((res) => {
+        const league = res.data.response[0].league;
+        const { id: leagueID, name: leagueName, country : leagueCountry, standings} = league;
+        return standings[0];
+    })
+    .then((leagueStandings) => {
+        res.render('football/league', { leagueName : leagueIDs[league], leagueStandings, league })
+    })
+    .catch((e) => {
+        console.error(e);
+    })
 })
 
 // Displays upcoming league matches until the end of the season
