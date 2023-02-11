@@ -9,23 +9,8 @@
 <body>
     <h1>Fixture Dates</h1>
     <ul>
-    <% for(let i = 0; i < leagueFixtures.length; i++) { %>
-        <% const { fixture, league, teams, goals, score } = leagueFixtures[i]; %>
-        <% const { id: fixtureID, referee, timezone, date, timestamp,
-                periods: { first: firstPeriod, second: secondPeriod }, 
-                venue : { id: venueID, name: venueName, city: venueCity}, 
-                status: { long: statusLong, short: statusShort, elapsed}} = fixture; %>
-        <% const { id: leagueID, name: leagueName, country, logo, flag, season, round } = league; %>
-        <% const { home : { id: homeID, name: homeName, logo: homeLogo, winner: homeIsWinner}, 
-                away: { id: awayID, name: awayName, logo: awayLogo, winner: awayIsWinner} } = teams; %>
-        <% const { home: homeGoals, away: awayGoals} = goals; %>
-        <% const { halftime: { home: homeGoalsHT, away: awayGoalsHT },
-                fulltime: { home: homeGoalsFT, away: awayGoalsFT },
-                extratime: { home: homeGoalsET, away: awayGoalsET },
-                penalty: { home: homeGoalsPT, away: awayGoalsPT } } = score; %>
-
-        <li><a href="/football/<%= league %>/fixtures/<%= date.substring(0, date.indexOf('T')) %>"> <%= date.substring(0, date.indexOf('T')) %></a></li>
-
+    <% for(let date of dates) { %>
+        <li><a href="/football/<%= league %>/fixtures/<%= date %>"> <%= date %></a></li>
     <% } %>
     </ul>
 </body>
