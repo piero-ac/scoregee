@@ -33,6 +33,9 @@
                 <p>Match Status: To Be Played</p>
             <% } else if (statusLong === "Match Postponed") { %>
                 <p>Match Status: Postponed</p>
+            <% } else if (statusLong === "First Half" || statusLong === "Second Half" || statusLong === "Halftime") { %>
+                <p>Match Status: <%= statusLong %></p>
+                <p>Score: <%= homeGoalsHT %> vs <%= awayGoalsHT %></p>
             <% } else { %>
                 <p> Match Status: Completed</p>
                 <p>Score: <%= homeGoalsFT %> vs <%= awayGoalsFT %></p>
