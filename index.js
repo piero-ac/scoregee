@@ -11,11 +11,11 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const eplData = require('./match-data/en1.json');
-const laligaData = require('./match-data/es1.json');
-const ligue1Data = require('./match-data/fr1.json');
-const bundesligaData = require('./match-data/de1.json');
-const serieaData = require('./match-data/it1.json');
+// const eplData = require('./match-data/en1.json');
+// const laligaData = require('./match-data/es1.json');
+// const ligue1Data = require('./match-data/fr1.json');
+// const bundesligaData = require('./match-data/de1.json');
+// const serieaData = require('./match-data/it1.json');
 import { findDates, findMatches } from './leagueFunctions.js';
 
 //function imports
@@ -88,20 +88,38 @@ app.get('/football/:league', (req, res) => {
 // Displays upcoming league matches until the end of the season
 app.get('/football/:league/fixtures', (req, res) => {
     const { league } = req.params;
-    let matchDates;
-    if(league === 'epl'){
-        matchDates = findDates(eplData);
-    } else if (league === 'ligue1'){
-        matchDates = findDates(ligue1Data);
-    }else if (league === 'laliga'){
-        matchDates = findDates(laligaData);
-    } else if (league === 'bundesliga'){
-        matchDates = findDates(bundesligaData);
-    } else if (league === 'seriea'){
-        matchDates = findDates(serieaData);
+    const options = {
+        method: 'GET',
+        url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures',
+        params: {league: '', season: '2022'},
+        headers: {
+            'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
+            'x-rapidapi-key': config.RAPID_API_KEY
+        }   
     }
-    // res.send(`Displaying fixtures for the ${league} league`);
-    res.render('football/fixtures', { leagueName : leagueIDs[league], matchDates, league })
+    if(league === 'epl'){
+        options.params.league = '39';
+    } else if (league === 'ligue1'){
+        options.params.league = '61';
+    }else if (league === 'laliga'){
+        options.params.league = '140';
+    } else if (league === 'bundesliga'){
+        options.params.league = '78';
+    } else if (league === 'seriea'){
+        options.params.league = '135';
+    }
+
+    axios.request(options)
+    .then((res) => {
+        const leagueFixtures = res.data.response;
+        return leagueFixtures;
+    })
+    .then((leagueFixtures) => {
+        res.render('football/fixtures', { leagueName : leagueIDs[league], leagueFixtures, league })
+    })
+    .catch((e) => {
+        console.error(e);
+    })
 })
 
 app.get('/football/:league/fixtures/:date', (req, res) => {
