@@ -39,7 +39,6 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.get('/', (req, res) => {
     res.send("Hello World");
-    console.log(eplData.rounds[0].matches[0]);
 })
 
 // Football Homepage
