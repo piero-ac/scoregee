@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 const standingSchema = new mongoose.Schema({
     leagueName: {
@@ -9,26 +9,31 @@ const standingSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    leagueStandings: {
-        type: [String],
-        teamID: {
-            type: String,
-            required: true
-        },
-        teamName: {
-            type: String,
-            required: true
-        },
-        teamPoints: {
-            type: Number,
-            required: true
-        },
-        teamRanking: {
-            type: Number,
-            required: true
+    leagueSeason: {
+        type: String,
+        required: true
+    },
+    leagueStandings: [
+        {
+            teamID: {
+                type: String,
+                required: true
+            },
+            teamName: {
+                type: String,
+                required: true
+            },
+            teamPoints: {
+                type: Number,
+                required: true
+            },
+            teamRanking: {
+                type: Number,
+                required: true
+            }
         }
-    }
+    ]
 })
 
-const Standing = mongoose.Model('Standing', standingSchema);
-module.exports = Standing;
+export const Standing = mongoose.model('Standing', standingSchema);
+// module.exports = Standing;
