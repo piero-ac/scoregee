@@ -7,11 +7,8 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
 const app = express();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-import { findDates, findMatches } from './leagueFunctions.js';
 
 //function imports
 import { config } from './football-api/config.js';
