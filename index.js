@@ -23,6 +23,17 @@ const leagueIDs = {
     'laliga' : 'La Liga'
 }
 
+main()
+.then(() => {
+    console.log("MONGO CONNECTION OPENED");
+})
+.catch(err => console.log(err));
+
+async function main() {
+  await mongoose.connect('mongodb://127.0.0.1:27017/scoregee');
+  
+  // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
+}
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
