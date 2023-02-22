@@ -3,8 +3,12 @@ const mongoose = require("mongoose");
 const standingSchema = new mongoose.Schema({
     leagueName: {
         type: String,
-        required: true
+        required: true,
     }, 
+    leagueID: {
+        type: String,
+        required: true
+    },
     leagueStandings: {
         type: [String],
         teamID: {
@@ -27,4 +31,4 @@ const standingSchema = new mongoose.Schema({
 })
 
 const Standing = mongoose.Model('Standing', standingSchema);
-modules.export = Standing;
+module.exports = Standing;
