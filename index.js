@@ -11,11 +11,6 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// const eplData = require('./match-data/en1.json');
-// const laligaData = require('./match-data/es1.json');
-// const ligue1Data = require('./match-data/fr1.json');
-// const bundesligaData = require('./match-data/de1.json');
-// const serieaData = require('./match-data/it1.json');
 import { findDates, findMatches } from './leagueFunctions.js';
 
 //function imports
