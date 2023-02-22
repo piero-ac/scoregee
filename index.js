@@ -13,6 +13,7 @@ const mongoose = require('mongoose');
 
 //function imports
 import { config } from './football-api/config.js';
+import { Standing } from './models/standing.js';
 const axios = require("axios");
 
 const leagueIDs = {
@@ -21,6 +22,15 @@ const leagueIDs = {
     'ligue1' : 'Ligue 1',
     'bundesliga' : 'Bundesliga',
     'laliga' : 'La Liga'
+}
+
+const ids = {
+    'epl' : '39',
+    'seriea' : '135',
+    'ligue1' : '61',
+    'bundesliga' : '78',
+    'laliga' : '140'
+
 }
 
 main()
@@ -51,41 +61,11 @@ app.get('/football', (req, res) => {
 })
 
 // Displays table of team standings in the specified league
-app.get('/football/:league', (req, res) => {
+app.get('/football/:league', async (req, res) => {
     const { league } = req.params;
-    const options = {
-        method: 'GET',
-        url: 'https://api-football-v1.p.rapidapi.com/v3/standings',
-        params: {league: '', season: '2022'},
-        headers: {
-            'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
-            'x-rapidapi-key': config.RAPID_API_KEY
-        }   
-    }
-    if(league === 'epl'){
-        options.params.league = '39';
-    } else if (league === 'ligue1'){
-        options.params.league = '61';
-    }else if (league === 'laliga'){
-        options.params.league = '140';
-    } else if (league === 'bundesliga'){
-        options.params.league = '78';
-    } else if (league === 'seriea'){
-        options.params.league = '135';
-    }
-
-    axios.request(options)
-    .then((res) => {
-        const league = res.data.response[0].league;
-        const { id: leagueID, name: leagueName, country : leagueCountry, standings} = league;
-        return standings[0];
-    })
-    .then((leagueStandings) => {
-        res.render('football/league', { leagueName : leagueIDs[league], leagueStandings, league })
-    })
-    .catch((e) => {
-        console.error(e);
-    })
+    const id = ids[league];
+    const standings = await Standing.findOne({leagueID: `${id}`});
+    res.render('football/league', { standings, league });
 })
 
 // Displays upcoming league matches until the end of the season
