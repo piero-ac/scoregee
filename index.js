@@ -76,7 +76,6 @@ app.get('/football/:league/fixtures', async (req, res) => {
     
     // Query fixture information for specified league and season (to be implemented)
     const fixtures = await Fixture.find({'league.id' : id, 'league.season' : 2022});
-    // console.log(fixtures[1].fixture.date);
 
     // Get dates from fixtures
     let fixtureDates = new Set();
@@ -94,40 +93,27 @@ app.get('/football/:league/fixtures', async (req, res) => {
     res.render('football/fixtures', { leagueName : leagueIDs[league], fixtureDates, league })
 })
 
-app.get('/football/:league/fixtures/:date', (req, res) => {
+app.get('/football/:league/fixtures/:date', async (req, res) => {
     const { league, date } = req.params;
-    const options = {
-        method: 'GET',
-        url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures',
-        params: {league: '', season: '2022', from: date, to: date},
-        headers: {
-            'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
-            'x-rapidapi-key': config.RAPID_API_KEY
-        }   
-    }
-    if(league === 'epl'){
-        options.params.league = '39';
-    } else if (league === 'ligue1'){
-        options.params.league = '61';
-    }else if (league === 'laliga'){
-        options.params.league = '140';
-    } else if (league === 'bundesliga'){
-        options.params.league = '78';
-    } else if (league === 'seriea'){
-        options.params.league = '135';
-    }
+    const id = ids[league];
 
-    axios.request(options)
-    .then((res) => {
-        const leagueFixturesByDate = res.data.response;
-        return leagueFixturesByDate;
-    })
-    .then((leagueFixturesByDate) => {
-        res.render('football/matches', { leagueName : leagueIDs[league], leagueFixturesByDate, league, date })
-    })
-    .catch((e) => {
-        console.error(e);
-    })
+    // Query fixture information based on leauge, season (to be added), and date
+    const fixtures = await Fixture.find({'league.id' : id, 'league.season' : 2022, 'fixture.date': { '$regex': `.*${date}.*`}});
+
+    // Send fixtures to football/matches
+    res.render('football/matches', { fixtures, league, date })
+
+    // axios.request(options)
+    // .then((res) => {
+    //     const leagueFixturesByDate = res.data.response;
+    //     return leagueFixturesByDate;
+    // })
+    // .then((leagueFixturesByDate) => {
+    //     res.render('football/matches', { leagueName : leagueIDs[league], leagueFixturesByDate, league, date })
+    // })
+    // .catch((e) => {
+    //     console.error(e);
+    // })
 })
 
 app.listen(3000, () => {
