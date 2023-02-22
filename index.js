@@ -9,6 +9,7 @@ const require = createRequire(import.meta.url);
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const mongoose = require('mongoose');
 
 //function imports
 import { config } from './football-api/config.js';
