@@ -16,7 +16,14 @@ const __dirname = path.dirname(__filename);
 // const ligue1Data = require('./match-data/fr1.json');
 // const bundesligaData = require('./match-data/de1.json');
 // const serieaData = require('./match-data/it1.json');
+<<<<<<< mybranch2
+
+//function imports
+import { config } from './football-api/config.js';
+const axios = require("axios");
+=======
 import { findDates, findMatches } from './leagueFunctions.js';
+>>>>>>> mybranch
 
 //function imports
 import { config } from './football-api/config.js';
