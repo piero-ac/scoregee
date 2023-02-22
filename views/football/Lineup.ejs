@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+ <html>
+ <head></head>
+ <body>
+ <%for (let team of fixturelineup){%>
+    <%   const { startXI } = team;%>  
+       
+    <%for (let player of startXI) {%>
+        <%const name = player.player.name;%>
+        <%const number = player.player.number;%>
+        <%const pos = player.player.pos;%>
+        <%const grid = player.player.grid;%>
+        <%const Team = player.player.Team;%>
+        <li> <%=name%> <%=number%> <%=pos%> <%=grid%> <%=Team%></li>
+    <%}%>
+
+<%}%>
+</body>
+</html>
