@@ -14,6 +14,10 @@ const __dirname = path.dirname(__filename);
 import { config } from './football-api/config.js';
 const axios = require("axios");
 
+//function imports
+import { config } from './football-api/config.js';
+const axios = require("axios");
+
 const leagueIDs = {
     'epl' : 'Premier League',
     'seriea' : 'Seria A',
@@ -161,6 +165,32 @@ app.get('/football/:league/fixtures/:date', (req, res) => {
     })
 })
 
+app.get('/football/:league/fixture-linenup/:fixtureid', (req, res) => {
+    const { league, fixtureid } = req.params;
+    const options = {
+        method: 'GET',
+        url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures/lineups',
+        params: {fixture: fixtureid},
+  headers: {
+    'X-RapidAPI-Key': config.RAPID_API_KEY',
+    'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
+  }
+};
+axios.request(options)
+.then(function (response) {
+    //console.log(response.data.response);
+    const fixturelineup=response.data.response;
+    res.render('football/Lineup', {
+      fixturelineup
+    })
+
+}).catch(function (error) {
+    console.error(error);
+});
+
+})
+
 app.listen(3000, () => {
     console.log("LISTENING ON PORT 3000");
 })
+

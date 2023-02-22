@@ -10,12 +10,15 @@
     <h1>Matches For <%= date %></h1>
     <ul>
         <% for(let i = 0; i < leagueFixturesByDate.length; i++) { %>
-            <% const { fixture, league, teams, goals, score } = leagueFixturesByDate[i]; %>
+            <% const { fixture, league: leaguein, teams, goals, score } = leagueFixturesByDate[i]; %>
+
             <% const { id: fixtureID, referee, timezone, date, timestamp,
                     periods: { first: firstPeriod, second: secondPeriod }, 
                     venue : { id: venueID, name: venueName, city: venueCity}, 
                     status: { long: statusLong, short: statusShort, elapsed}} = fixture; %>
-            <% const { id: leagueID, name: leagueName, country, logo, flag, season, round } = league; %>
+
+            <% const { id: leagueID, name: leagueName, country, logo, flag, season, round } = leaguein; %>
+
             <% const { home : { id: homeID, name: homeName, logo: homeLogo, winner: homeIsWinner}, 
                     away: { id: awayID, name: awayName, logo: awayLogo, winner: awayIsWinner} } = teams; %>
             <% const { home: homeGoals, away: awayGoals} = goals; %>
@@ -25,7 +28,9 @@
                     penalty: { home: homeGoalsPT, away: awayGoalsPT } } = score; %>
     
         <div>
-            <h2>Home: <%= homeName %> vs Away: <%= awayName %></h2>
+
+            <h2>Home: <%= homeName %> vs Away: <%= awayName %> fixtureid: <%= fixtureID %></h2>
+
             <img src="<%= homeLogo %>" alt="<%= homeName %> Logo">
             <img src="<%= awayLogo %>" alt="<%= awayName %> Logo">
             <h3>Stadium:<%= venueName %> City: <%= venueCity %></h3>
@@ -40,6 +45,12 @@
                 <p> Match Status: Completed</p>
                 <p>Score: <%= homeGoalsFT %> vs <%= awayGoalsFT %></p>
             <% } %>
+
+            <br>
+            <a href="/football/<%= league %>/fixture-linenup/<%= fixtureID %>">fixtureid: <%= fixtureID %></a>
+            
+         <!-- <button>View Lineups</button> -->
+
         </div>
     
         <% } %>
