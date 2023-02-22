@@ -8,8 +8,10 @@
 </head>
 <body>
     <h1>Fixture Dates</h1>
-    <% for(let date of matchDates.values()){ %>
-        <li><a href="/football/<%= league %>/fixtures/<%= date %>"><%= date %></a></li>
+    <ul>
+    <% for(let date of dates) { %>
+        <li><a href="/football/<%= league %>/fixtures/<%= date %>"> <%= date %></a></li>
     <% } %>
+    </ul>
 </body>
 </html>
