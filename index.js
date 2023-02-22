@@ -172,7 +172,7 @@ app.get('/football/:league/fixture-linenup/:fixtureid', (req, res) => {
         url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures/lineups',
         params: {fixture: fixtureid},
   headers: {
-    'X-RapidAPI-Key': config.RAPID_API_KEY',
+    'X-RapidAPI-Key': config.RAPID_API_KEY,
     'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
   }
 };
