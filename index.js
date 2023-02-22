@@ -102,18 +102,6 @@ app.get('/football/:league/fixtures/:date', async (req, res) => {
 
     // Send fixtures to football/matches
     res.render('football/matches', { fixtures, league, date })
-
-    // axios.request(options)
-    // .then((res) => {
-    //     const leagueFixturesByDate = res.data.response;
-    //     return leagueFixturesByDate;
-    // })
-    // .then((leagueFixturesByDate) => {
-    //     res.render('football/matches', { leagueName : leagueIDs[league], leagueFixturesByDate, league, date })
-    // })
-    // .catch((e) => {
-    //     console.error(e);
-    // })
 })
 
 app.listen(3000, () => {
