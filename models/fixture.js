@@ -4,11 +4,12 @@ const fixtureSchema = new mongoose.Schema({
     id: { type: Number, required: true },
     referee: { type: String, required: true },
     timezone: { type: String, required: true },
-    date: { type: Date, required: true },
+    date: { type: String, required: true },
+    time: { type: String, required: true},
     timestamp: { type: Number, required: true },
     periods: {
-        first: { type: Number, required: true },
-        second: { type: Number, required: true }
+        first: { type: String, required: true },
+        second: { type: String, required: true }
     },
     venue: {
         id: { type: Number, required: true },
@@ -18,7 +19,7 @@ const fixtureSchema = new mongoose.Schema({
     status: {
         long: { type: String, required: true },
         short: { type: String, required: true },
-        elapsed: { type: Number, required: true }
+        elapsed: { type: String, required: true }
     }
 });
 
@@ -36,17 +37,17 @@ const teamSchema = new mongoose.Schema({
     id: { type: Number, required: true },
     name: { type: String, required: true },
     logo: { type: String, required: true },
-    winner: { type: Boolean, required: true }
+    winner: { type: String, required: true }
 });
 
 const scoreSchema = new mongoose.Schema({
-    home: { type: Number, required: true },
-    away: { type: Number, required: true }
+    home: { type: String, required: true },
+    away: { type: String, required: true }
 });
 
 const goalSchema = new mongoose.Schema({
-    home: { type: Number, required: true },
-    away: { type: Number, required: true }
+    home: { type: String, required: true },
+    away: { type: String, required: true }
 });
 
 const fixtureModelSchema = new mongoose.Schema({
