@@ -7,23 +7,12 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
 const app = express();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// const eplData = require('./match-data/en1.json');
-// const laligaData = require('./match-data/es1.json');
-// const ligue1Data = require('./match-data/fr1.json');
-// const bundesligaData = require('./match-data/de1.json');
-// const serieaData = require('./match-data/it1.json');
-<<<<<<< mybranch2
 
 //function imports
 import { config } from './football-api/config.js';
 const axios = require("axios");
-=======
-import { findDates, findMatches } from './leagueFunctions.js';
->>>>>>> mybranch
 
 //function imports
 import { config } from './football-api/config.js';
@@ -62,7 +51,7 @@ app.get('/football/:league', (req, res) => {
         params: {league: '', season: '2022'},
         headers: {
             'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
-            'x-rapidapi-key': "3929d7ffd1mshebbaec9f369e0efp1f8b5bjsn5b5ffa6ed367"
+            'x-rapidapi-key': config.RAPID_API_KEY
         }   
     }
     if(league === 'epl'){
@@ -100,7 +89,7 @@ app.get('/football/:league/fixtures', (req, res) => {
         params: {league: '', season: '2022'},
         headers: {
             'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
-            'x-rapidapi-key': "3929d7ffd1mshebbaec9f369e0efp1f8b5bjsn5b5ffa6ed367"
+            'x-rapidapi-key': config.RAPID_API_KEY
         }   
     }
     if(league === 'epl'){
@@ -148,7 +137,7 @@ app.get('/football/:league/fixtures/:date', (req, res) => {
         params: {league: '', season: '2022', from: date, to: date},
         headers: {
             'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
-            'x-rapidapi-key': "3929d7ffd1mshebbaec9f369e0efp1f8b5bjsn5b5ffa6ed367"
+            'x-rapidapi-key': config.RAPID_API_KEY
         }   
     }
     if(league === 'epl'){
@@ -183,7 +172,7 @@ app.get('/football/:league/fixture-linenup/:fixtureid', (req, res) => {
         url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures/lineups',
         params: {fixture: fixtureid},
   headers: {
-    'X-RapidAPI-Key': '3929d7ffd1mshebbaec9f369e0efp1f8b5bjsn5b5ffa6ed367',
+    'X-RapidAPI-Key': config.RAPID_API_KEY',
     'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
   }
 };
@@ -192,23 +181,13 @@ axios.request(options)
     //console.log(response.data.response);
     const fixturelineup=response.data.response;
     res.render('football/Lineup', {
-fixturelineup
+      fixturelineup
     })
-//     for (let team of response.data.response)
-//     {
-//         const { startXI } = team;  
-//       //  console.log(startXI);
-//     for (let player of startXI) {
-//         const name = player.player.name;
-//         const number = player.player.number;
-// console.log(name, number);
-//     }
-
-//     }
 
 }).catch(function (error) {
     console.error(error);
 });
+
 })
 
 app.listen(3000, () => {
