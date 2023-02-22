@@ -14,6 +14,7 @@ const mongoose = require('mongoose');
 //function imports
 import { config } from './football-api/config.js';
 import { Standing } from './models/standing.js';
+import { Fixture } from './models/fixture.js';
 const axios = require("axios");
 
 const leagueIDs = {
@@ -69,52 +70,28 @@ app.get('/football/:league', async (req, res) => {
 })
 
 // Displays upcoming league matches until the end of the season
-app.get('/football/:league/fixtures', (req, res) => {
+app.get('/football/:league/fixtures', async (req, res) => {
     const { league } = req.params;
-    const options = {
-        method: 'GET',
-        url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures',
-        params: {league: '', season: '2022'},
-        headers: {
-            'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
-            'x-rapidapi-key': config.RAPID_API_KEY
-        }   
-    }
-    if(league === 'epl'){
-        options.params.league = '39';
-    } else if (league === 'ligue1'){
-        options.params.league = '61';
-    }else if (league === 'laliga'){
-        options.params.league = '140';
-    } else if (league === 'bundesliga'){
-        options.params.league = '78';
-    } else if (league === 'seriea'){
-        options.params.league = '135';
+    const id = ids[league];
+    
+    // Query fixture information for specified league and season (to be implemented)
+    const fixtures = await Fixture.find({'league.id' : id, 'league.season' : 2022});
+    // console.log(fixtures[1].fixture.date);
+
+    // Get dates from fixtures
+    let fixtureDates = new Set();
+    for(let i = 0; i < fixtures.length; i++){
+        let { fixture: { date } } = fixtures[i];
+        date = date.substring(0, date.indexOf('T'));
+        fixtureDates.add(date);
     }
 
-    axios.request(options)
-    .then((res) => {
-        const leagueFixtures = res.data.response;
-        return leagueFixtures;
-    })
-    .then((leagueFixtures) => {
-        const dates = [];
-        for(let i = 0; i < leagueFixtures.length; i++) { 
-            const { fixture } = leagueFixtures[i]; 
-            const { date } = fixture;
-            
-            const dateShortened = date.substring(0, date.indexOf('T'));
-            if(!dates.includes(dateShortened)){
-                dates.push(dateShortened);
-            }
-        }
-        return dates;
-    }).then((dates) => {
-        res.render('football/fixtures', { leagueName : leagueIDs[league], dates, league })
-    })
-    .catch((e) => {
-        console.error(e);
-    })
+    // Sort the dates
+    fixtureDates = Array.from(fixtureDates);
+    fixtureDates.sort((a, b) => a.localeCompare(b));
+
+    // Send dates to football/fixtures
+    res.render('football/fixtures', { leagueName : leagueIDs[league], fixtureDates, league })
 })
 
 app.get('/football/:league/fixtures/:date', (req, res) => {
