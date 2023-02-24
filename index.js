@@ -14,6 +14,10 @@ const __dirname = path.dirname(__filename);
 import { config } from './football-api/config.js';
 const axios = require("axios");
 
+//function imports
+import { config } from './football-api/config.js';
+const axios = require("axios");
+
 const leagueIDs = {
     'epl' : 'Premier League',
     'seriea' : 'Seria A',
@@ -182,6 +186,7 @@ app.get('/football/:league/fixture-linenup/:fixtureid', (req, res) => {
     .catch(function (error) {
         console.error(error);
     });
+
 
 })
 
