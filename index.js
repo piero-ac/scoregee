@@ -186,8 +186,6 @@ app.get('/football/:league/fixture-linenup/:fixtureid', (req, res) => {
     .catch(function (error) {
         console.error(error);
     });
-
-
 })
 
 app.listen(3000, () => {
