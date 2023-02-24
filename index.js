@@ -1,21 +1,18 @@
 import express from 'express';
+const app = express();
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 // These lines make "require" available
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-
-const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const mongoose = require('mongoose');
 
-//function imports
-import { config } from './football-api/config.js';
 import { Standing } from './models/standing.js';
 import { Fixture } from './models/fixture.js';
-const axios = require("axios");
+const cors = require('cors');
 
 const leagueIDs = {
     'epl' : 'Premier League',
@@ -31,7 +28,6 @@ const ids = {
     'ligue1' : '61',
     'bundesliga' : '78',
     'laliga' : '140'
-
 }
 
 main()
@@ -46,62 +42,54 @@ async function main() {
   // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 }
 
-app.use(express.urlencoded({extended: true}));
-app.use(express.json());
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.use(express.static('public'));
+app.use(cors());
 
-
-app.get('/', (req, res) => {
-    res.send("Hello World");
-})
-
-// Football Homepage
+// Sends the ScoreGee - Football Homepage
 app.get('/football', (req, res) => {
-    res.render('football/index');
+    res.sendFile(__dirname + "/public/soccer.html");
 })
 
-// Displays table of team standings in the specified league
-app.get('/football/:league', async (req, res) => {
+// Sends the html file for displaying league rankings
+app.get('/football/:league', (req, res) => {
+    res.sendFile(__dirname + "/public/league.html")
+})
+
+// Sends the json object with the rankings after league.html loads
+app.get('/football/:league/standings', async (req, res) => {
     const { league } = req.params;
     const id = ids[league];
     const standings = await Standing.findOne({leagueID: `${id}`});
-    res.render('football/league', { standings, league });
+    res.json(standings);
 })
 
-// Displays upcoming league matches until the end of the season
+// Sends the html file for displaying the dates for fixtures
 app.get('/football/:league/fixtures', async (req, res) => {
+    res.sendFile(__dirname + "/public/fixtures.html")
+})
+
+// Sends the json object with the fixtures after league.html loads
+app.get('/football/:league/fixtures-data', async (req, res) => {
     const { league } = req.params;
     const id = ids[league];
-    
     // Query fixture information for specified league and season (to be implemented)
     const fixtures = await Fixture.find({'league.id' : id, 'league.season' : 2022});
-
-    // Get dates from fixtures
-    let fixtureDates = new Set();
-    for(let i = 0; i < fixtures.length; i++){
-        let { fixture: { date } } = fixtures[i];
-        date = date.substring(0, date.indexOf('T'));
-        fixtureDates.add(date);
-    }
-
-    // Sort the dates
-    fixtureDates = Array.from(fixtureDates);
-    fixtureDates.sort((a, b) => a.localeCompare(b));
-
-    // Send dates to football/fixtures
-    res.render('football/fixtures', { leagueName : leagueIDs[league], fixtureDates, league })
+    res.json({ league, leagueName : leagueIDs[league], fixtures});
 })
 
+// Sends the html file for displaying the matches for the specified date
 app.get('/football/:league/fixtures/:date', async (req, res) => {
+    res.sendFile(__dirname + "/public/matches.html");
+})
+
+// Sends the json object with the matches for the specified date after league.html loads
+app.get('/football/:league/fixtures/:date/data', async (req, res) => {
     const { league, date } = req.params;
     const id = ids[league];
 
     // Query fixture information based on leauge, season (to be added), and date
     const fixtures = await Fixture.find({'league.id' : id, 'league.season' : 2022, 'fixture.date': { '$regex': `.*${date}.*`}});
-
-    // Send fixtures to football/matches
-    res.render('football/matches', { fixtures, league, date })
+    res.json({ fixtures, league, date });
 })
 
 app.listen(3000, () => {
