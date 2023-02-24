@@ -6,7 +6,6 @@
     <%   const { startXI, team: TeamName } = team;%>  
     <%   const { name: Tname }= TeamName;%>
     <%= Tname %>
-    <%   const { startXI } = team;%>  
     <%for (let player of startXI) {%>
         <%const name = player.player.name;%>
         <%const number = player.player.number;%>
@@ -14,8 +13,6 @@
         <%const grid = player.player.grid;%>
         <%const team = player.player.team;%>
         <li> <%=name%> <%=number%> <%=pos%> <%=grid%> <%=team%></li>
-        <%const Team = player.player.Team;%>
-        <li> <%=name%> <%=number%> <%=pos%> <%=grid%> <%=Team%></li>
     <%}%>
 
 <%}%>
