@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import { Team } from "../models/team.js";
 import axios from "axios";
 import { config } from "../football-api/config.js";
-import { parse } from "dotenv";
 
 // DB Connection
 main()
