@@ -1,3 +1,3 @@
-# This Branch is the version of ScoreGee that uses a MongoDB database.
+# This branch contains the version of ScoreGee that still makes an API request to API-Football.
 
-# This Branch does not include the Lineup.ejs file that Dan G. creates for displaying a fixture's lineup
+# This branch includes the Lineup.ejs file that Dan G. created.
