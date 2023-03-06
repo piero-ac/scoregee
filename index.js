@@ -14,6 +14,7 @@ import { Standing } from "./models/standing.js";
 import { Fixture } from "./models/fixture.js";
 import { Team } from "./models/team.js";
 import { League } from "./models/league.js";
+import { config } from "./football-api/config.js";
 
 const cors = require("cors");
 
@@ -115,6 +116,27 @@ app.get("/football/:league/fixtures/:date/data", async (req, res) => {
 		"fixture.date": { $regex: `.*${date}.*` },
 	});
 	res.json({ fixtures, league, date });
+});
+
+// Send the html file for displaying the lineup
+app.get("/football/fixture-lineup", (req, res) => {
+	res.sendFile(__dirname + "/public/lineup.html");
+});
+
+// Send the JSON object containing the lineup information
+app.get("/football/fixture-lineup/data", async (req, res) => {
+	const options = {
+		method: "GET",
+		url: "https://api-football-v1.p.rapidapi.com/v3/fixtures/lineups",
+		params: { fixture: "867946" },
+		headers: {
+			"X-RapidAPI-Key": config.RAPID_API_KEY,
+			"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com",
+		},
+	};
+
+	const response = await axios.request(options);
+	res.json(response.response);
 });
 
 app.listen(3000, () => {
