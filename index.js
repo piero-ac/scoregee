@@ -13,6 +13,7 @@ const mongoose = require("mongoose");
 import { Standing } from "./models/standing.js";
 import { Fixture } from "./models/fixture.js";
 import { Team } from "./models/team.js";
+import { League } from "./models/league.js";
 
 const cors = require("cors");
 
@@ -62,6 +63,9 @@ app.get("/football/:league/standings/:season", async (req, res) => {
 	const { league, season } = req.params;
 	const id = ids[league];
 
+	// Get the league information for the specified league
+	const leagueInfo = await League.findOne({ leagueID: `${id}` });
+
 	// Get the standings for the specified league and season
 	const standings = await Standing.findOne({
 		leagueID: `${id}`,
@@ -74,7 +78,7 @@ app.get("/football/:league/standings/:season", async (req, res) => {
 	const teamsInfo = await Team.find({ teamID: { $in: teamIDs } });
 
 	// Send an object containing the league standings and their corresponding teams
-	res.json({ standings, teamsInfo });
+	res.json({ leagueInfo, standings, teamsInfo });
 });
 
 // Sends the html file for displaying the dates for fixtures
