@@ -9,9 +9,9 @@
 <body>
     <h1>Matches For <%= date %></h1>
     <ul>
-        <% for(let i = 0; i < leagueFixturesByDate.length; i++) { %>
-            <% const { fixture, league: leaguein, teams, goals, score } = leagueFixturesByDate[i]; %>
 
+        <% for(let i = 0; i < fixtures.length; i++) { %>
+            <% const { fixture, league, teams, goals, score } = fixtures[i]; %>
             <% const { id: fixtureID, referee, timezone, date, timestamp,
                     periods: { first: firstPeriod, second: secondPeriod }, 
                     venue : { id: venueID, name: venueName, city: venueCity}, 
@@ -33,7 +33,8 @@
 
             <img src="<%= homeLogo %>" alt="<%= homeName %> Logo">
             <img src="<%= awayLogo %>" alt="<%= awayName %> Logo">
-            <h3>Stadium:<%= venueName %> City: <%= venueCity %></h3>
+            <h3>Stadium: <%= venueName %></h3>
+            <h3>City: <%= venueCity %></h3>
             <% if(statusLong === "Not Started"){ %>
                 <p>Match Status: To Be Played</p>
             <% } else if (statusLong === "Match Postponed") { %>
