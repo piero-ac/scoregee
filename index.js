@@ -54,7 +54,7 @@ app.get("/football", (req, res) => {
 });
 
 // Sends the html file for displaying league rankings
-app.get("/football/:league", (req, res) => {
+app.get("/football/:league/:season", (req, res) => {
 	res.sendFile(__dirname + "/public/league.html");
 });
 
