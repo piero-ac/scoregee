@@ -10,20 +10,9 @@ const awayTeamStarters = document.querySelector("#awayTeam-starters");
 const awayTeamSubstitutes = document.querySelector("#awayTeam-substitutes");
 const awayTeamCoach = document.querySelector("#awayTeam-coach");
 
-const options = {
-	method: "GET",
-	headers: {
-		"X-RapidAPI-Key": "9c4deaf318msh0c5222871352babp16fb89jsnfe2c2ef108cc",
-		"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com",
-	},
-};
-
-fetch(
-	"https://api-football-v1.p.rapidapi.com/v3/fixtures/lineups?fixture=867946",
-	options
-)
+fetch("http://localhost:3000/football/fixture-lineup/data")
 	.then((response) => response.json())
-	.then((response) => displayLineupData(response.data.response))
+	.then((response) => displayLineupData(response))
 	.catch((err) => console.error(err));
 
 function displayLineupData(data) {
