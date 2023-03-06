@@ -3,18 +3,37 @@
  <head></head>
  <body>
  <%for (let team of fixturelineup){%>
-    <%   const { startXI, team: TeamName } = team;%>  
+    <%   const { startXI, team: TeamName, substitutes, coach: CoachName, formation: ForName } = team;%>  
     <%   const { name: Tname }= TeamName;%>
     <%= Tname %>
-    <%for (let player of startXI) {%>
+
+    <%   const { coach: Cname }= CoachName;%>
+    <%= Cname %>
+
+    <%   const { formation: Fname }= ForName;%>
+    <%= Fname %>
+    
+    <%for (let player of startXI) {%> 
         <%const name = player.player.name;%>
         <%const number = player.player.number;%>
         <%const pos = player.player.pos;%>
         <%const grid = player.player.grid;%>
         <%const team = player.player.team;%>
-        <li> <%=name%> <%=number%> <%=pos%> <%=grid%> <%=team%></li>
-    <%}%>
+        <%const coach = player.player.coach;%>
+        <%const formation = player.player.formation;%>
 
-<%}%>
+        <li> <%=name%> <%=number%> <%=pos%> <%=grid%> <%=team%> <%=coach%> <%=formation%></li>
+        <%}%>
+    <%for (let player of substitutes) {%>
+        <%const name = player.player.name;%>
+        <%const number = player.player.number;%>
+        <%const pos = player.player.pos;%>
+        <%const grid = player.player.grid;%>
+        <%const team = player.player.team;%>
+        <%const coach = player.player.coach;%>
+        <%const formation = player.player.formation;%>
+        <li> <%=name%> <%=number%> <%=pos%> <%=grid%> <%=team%> <%=coach%> <%=formation%></li>
+      <%}%>
+      <%}%>
 </body>
 </html>
