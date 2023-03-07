@@ -30,7 +30,7 @@ function displayRankings(data) {
 	rankingsHeading.innerText = `${leagueName} Rankings ${leagueSeason} Season`;
 	viewFixturesLink.setAttribute(
 		"href",
-		`/football/${leagueNameShort}/fixtures`
+		`/football/${leagueNameShort}/fixtures/${leagueSeason}`
 	);
 
 	// Parse through the leagueStandings obj
