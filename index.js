@@ -55,27 +55,6 @@ app.get("/football", (req, res) => {
 	res.sendFile(__dirname + "/public/soccer.html");
 });
 
-// Send the html file for displaying the lineup
-app.get("/football/fixture-lineup", (req, res) => {
-	res.sendFile(__dirname + "/public/lineup.html");
-});
-
-// Send the JSON object containing the lineup information
-app.get("/football/fixture-lineup/data", async (req, res) => {
-	const options = {
-		method: "GET",
-		url: "https://api-football-v1.p.rapidapi.com/v3/fixtures/lineups",
-		params: { fixture: "867946" },
-		headers: {
-			"X-RapidAPI-Key": config.RAPID_API_KEY,
-			"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com",
-		},
-	};
-
-	const response = await axios.request(options);
-	res.json(response.data.response);
-});
-
 // Sends the html file for displaying league rankings
 app.get("/football/:league/:season", (req, res) => {
 	res.sendFile(__dirname + "/public/league.html");
@@ -105,13 +84,13 @@ app.get("/football/:league/standings/:season", async (req, res) => {
 });
 
 // Sends the html file for displaying the dates for fixtures
-app.get("/football/:league/fixtures", async (req, res) => {
+app.get("/football/:league/fixtures/:season", async (req, res) => {
 	res.sendFile(__dirname + "/public/fixtures.html");
 });
 
 // Sends the json object with the fixtures after league.html loads
-app.get("/football/:league/fixtures-data", async (req, res) => {
-	const { league } = req.params;
+app.get("/football/:league/fixtures-data/:season", async (req, res) => {
+	const { league, season } = req.params;
 	const id = ids[league];
 	// Query fixture information for specified league and season (to be implemented)
 	const fixtures = await Fixture.find({
@@ -138,6 +117,27 @@ app.get("/football/:league/fixtures/:date/data", async (req, res) => {
 		"fixture.date": { $regex: `.*${date}.*` },
 	});
 	res.json({ fixtures, league, date });
+});
+
+// Send the html file for displaying the lineup
+app.get("/football/fixture-lineup", (req, res) => {
+	res.sendFile(__dirname + "/public/lineup.html");
+});
+
+// Send the JSON object containing the lineup information
+app.get("/football/fixture-lineup/data", async (req, res) => {
+	const options = {
+		method: "GET",
+		url: "https://api-football-v1.p.rapidapi.com/v3/fixtures/lineups",
+		params: { fixture: "867946" },
+		headers: {
+			"X-RapidAPI-Key": config.RAPID_API_KEY,
+			"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com",
+		},
+	};
+
+	const response = await axios.request(options);
+	res.json(response.data.response);
 });
 
 app.listen(3000, () => {
