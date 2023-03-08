@@ -3,6 +3,10 @@ const leagueSeasonHeading = document.querySelector("#leagueSeason-hd");
 const rankingsHeading = document.querySelector("#rankings-hd");
 const rankingsContainer = document.querySelector("#rankings-ctn");
 const viewFixturesLink = document.querySelector("#viewfixtures");
+const fixtureDatesDiv = document.querySelector("#fixture-dates-div");
+const fixtureDisplayDateHeading = document.querySelector(
+	"#fixture-display-date-hd"
+);
 const url = window.location.href;
 const urlParts = url.split("/");
 const leagueNameShort = urlParts[urlParts.length - 2];
@@ -23,13 +27,14 @@ responsePromise
 		}
 		return response.json();
 	})
-	.then((data) => displayRankings(data))
+	.then((data) => parseData(data))
+	.then(() => displayFixtureDates(fixturesObj))
 	.catch((error) => {
 		console.error(`Could not get league information: ${error}`);
 	});
 
-function displayRankings(data) {
-	const { leagueInfo, standings, teamsInfo } = data;
+function parseData(data) {
+	const { leagueInfo, standings, teamsInfo, fixtures } = data;
 	const { leagueID, leagueName, leagueCountry, leagueLogo } = leagueInfo;
 	const { leagueSeason, leagueStandings } = standings;
 
@@ -53,5 +58,30 @@ function displayRankings(data) {
 		const p = document.createElement("p");
 		p.innerText = `${teamRanking}. ${teamName} (${teamCode}) - ${teamPoints}`;
 		rankingsContainer.appendChild(p);
+	}
+
+	teamInfoObj = teamsInfo;
+	fixturesObj = fixtures;
+}
+
+function displayFixtureDates(fixtures) {
+	const matchdates = new Set();
+	for (let f of fixtures) {
+		matchdates.add(f.league.leagueRound);
+	}
+
+	for (let md of matchdates) {
+		const mdURL = md.split(" ").join("");
+		const button = document.createElement("button");
+		button.classList.add("mdButton");
+		button.innerText = md;
+		button.value = `${leagueNameShort}/${leagueSeason}/${mdURL}`;
+
+		// add event listener to display button value
+		button.addEventListener("click", function () {
+			console.log(this.value);
+			fixtureDisplayDateHeading.innerText = button.innerText;
+		});
+		fixtureDatesDiv.append(button);
 	}
 }
