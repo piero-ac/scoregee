@@ -7,6 +7,8 @@ const fixtureDatesDiv = document.querySelector("#fixture-dates-div");
 const fixtureDisplayDateHeading = document.querySelector(
 	"#fixture-display-date-hd"
 );
+const fixturesForDate = document.querySelector("#fixtures-for-date");
+
 const url = window.location.href;
 const urlParts = url.split("/");
 const leagueNameShort = urlParts[urlParts.length - 2];
@@ -79,9 +81,109 @@ function displayFixtureDates(fixtures) {
 
 		// add event listener to display button value
 		button.addEventListener("click", function () {
-			console.log(this.value);
-			fixtureDisplayDateHeading.innerText = button.innerText;
+			displayFixturesForDate(this.value, this.innerText);
 		});
 		fixtureDatesDiv.append(button);
 	}
+}
+
+function displayFixturesForDate(buttonValue, buttonText) {
+	// Set the heading for the fixture date
+	fixtureDisplayDateHeading.innerText = buttonText;
+
+	// Find the matches for the specified date
+	const date = `Regular Season - ${buttonValue.substring(
+		buttonValue.indexOf("-") + 1
+	)}`;
+
+	const fixtures = fixturesObj.filter((obj) => obj.league.leagueRound === date);
+	console.log(fixtures);
+
+	if (fixtures.length !== 0) {
+		for (let f of fixtures) {
+			const fixtureMatchInfoDiv = createFixtureContainer(f);
+			fixtureDatesDiv.appendChild(fixtureMatchInfoDiv);
+		}
+	}
+}
+
+function createFixtureContainer(f) {
+	const { fixture, teams, goals, score } = f;
+	console.log(teams);
+	const { home, away } = teams;
+
+	// create fixture match info div
+	const fixtureMatchInfoDiv = document.createElement("div");
+	fixtureMatchInfoDiv.classList.add("fixture-match-info-div");
+
+	// create divs for home team and away team
+	const homeTeamInfoDiv = createTeamInfoDiv(home, "home");
+	const awayTeamInfoDiv = createTeamInfoDiv(away, "away");
+
+	// create div for match info
+	const matchInfoDiv = createMatchInfoDiv(fixture, goals, score);
+
+	fixtureMatchInfoDiv.appendChild(
+		homeTeamInfoDiv,
+		matchInfoDiv,
+		awayTeamInfoDiv
+	);
+
+	return fixtureMatchInfoDiv;
+}
+
+function createTeamInfoDiv(team, type) {
+	const teamInfo = teamInfoObj.find((obj) => obj.teamID === team.teamID);
+	const teamInfoDiv = document.createElement("div");
+	if (type === "home") {
+		teamInfoDiv.classList.add("homeTeam", "team");
+	} else {
+		teamInfoDiv.classList.add("awayTeam", "team");
+	}
+
+	const teamLogoImg = document.createElement("img");
+	teamLogoImg.setAttribute("src", teamInfo.teamLogo);
+	teamLogoImg.setAttribute("alt", `Logo for ${teamInfo.teamName}`);
+
+	const teamNamePara = document.createElement("p");
+	teamNamePara.innerText = teamInfo.teamName;
+
+	teamInfoDiv.append(teamLogoImg, teamNamePara);
+	return teamInfoDiv;
+}
+
+function createMatchInfoDiv(fixture, goals, score) {
+	const matchStatusLong = fixture.status.long;
+	const matchStatusShort = fixture.status.short;
+	const dateLong = fixture.date;
+
+	const matchInfoDiv = document.createElement("div");
+	matchInfoDiv.classList.add("match-info");
+
+	const datePara = document.createElement("p");
+	const dateShort = dateLong.substring(0, dateLong.indexOf("T"));
+	datePara.innerText = dateShort;
+
+	const timePara = document.createElement("p");
+	const time = dateLong.substring(
+		dateLong.indexOf("T") + 1,
+		dateLong.indexOf("T") + 5
+	);
+	timePara.innerText = time;
+
+	matchInfoDiv.append(datePara, timePara);
+
+	const statusPara = document.createElement("p");
+	if (matchStatusShort === "FT") {
+		statusPara.innerText = `FT - ${score.fullftime.home} : ${score.fulltime.away}`;
+	} else if (matchStatusShort === "HT") {
+		statusPara.innerText = `HT - ${score.halftime.home} : ${score.halftime.away}`;
+	} else if (matchStatusShort === "CANC") {
+		statusPara.innerText = `Canceled`;
+	} else if (matchStatusShort === "PST") {
+		statusPara.innerText = `Postponed`;
+	}
+
+	matchInfoDiv.append(statusPara);
+	return matchInfoDiv;
 }
