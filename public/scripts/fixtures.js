@@ -12,9 +12,15 @@ fetch(
 	.then((response) => {
 		return response.json();
 	})
-	.then((data) => {
-		displayFixturesDates(data);
+	.then((response) => {
+		console.log(response.fixtures[0].fixture);
+		console.log(response.fixtures[0].league);
+		displayMatchdates(response);
+		return response;
 	})
+	// .then((data) => {
+	// 	displayFixturesDates(data);
+	// })
 	.catch((error) => {
 		console.log(error);
 	});
@@ -47,4 +53,52 @@ function displayFixturesDates(data) {
 
 		fixtureDatesList.appendChild(li);
 	}
+}
+
+// Will parse fixtures object to display matchdates
+// in the following format
+// Regular Season X - (from to to)
+function displayMatchdates(data) {
+	let currentMatchdate = "";
+	let firstDate = "";
+	let lastDate = "";
+
+	const { fixtures } = data;
+	// console.log(fixtures);
+
+	// Get the matchdates for the season
+	const matchdates = new Set();
+	for (let f of fixtures) {
+		matchdates.add(f.league.leagueRound);
+	}
+
+	// Get the dates that encompass a matchdate
+	let dates = [];
+	for (let md of matchdates) {
+		const datesForMD = fixtures.filter((obj) => {
+			if (obj.league.leagueRound === md) {
+				return obj.fixture.date;
+			}
+		});
+		datesForMD.unshift(md);
+		dates.push(datesForMD);
+	}
+	console.log(dates);
+
+	// for (let d of dates) {
+	// 	const matchdate = d[0]; // Regular Season X
+	// 	const firstDate = parseDate(d[1].fixture.date); // First date of Regular Season X
+	// 	const secondDate = parseDate(d[d.length - 1].fixture.date); // Second date of Regular Season X
+	// 	console.log(`${matchdate} - (${firstDate} - ${secondDate})`);
+	// }
+	for (let f of fixtures) {
+		// 1. check if currentMatchdate is not the same as current fixture's matchdate
+		// 2. If it is not the same, then save the date and currentMatchdate
+		// if it is and firstDate has already been set, then continue
+		// if it is and firstDate is not already set
+	}
+}
+
+function parseDate(date) {
+	return date.substring(0, date.indexOf("T"));
 }
