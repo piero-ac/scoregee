@@ -1,4 +1,5 @@
 const leagueNameHeading = document.querySelector("#leagueName-hd");
+const leagueSeasonHeading = document.querySelector("#leagueSeason-hd");
 const rankingsHeading = document.querySelector("#rankings-hd");
 const rankingsContainer = document.querySelector("#rankings-ctn");
 const viewFixturesLink = document.querySelector("#viewfixtures");
@@ -7,18 +8,24 @@ const urlParts = url.split("/");
 const leagueNameShort = urlParts[urlParts.length - 2];
 const leagueSeason = urlParts[urlParts.length - 1];
 
-// Fetch the rankings for the specified league
-fetch(
+let teamInfoObj;
+let fixturesObj;
+
+// make request for data to backend
+const responsePromise = fetch(
 	`http://localhost:3000/football/${leagueNameShort}/standings/${leagueSeason}`
-)
+);
+
+responsePromise
 	.then((response) => {
+		if (!response.ok) {
+			throw new Error(`HTTP error: ${response.status}`);
+		}
 		return response.json();
 	})
-	.then((data) => {
-		displayRankings(data);
-	})
+	.then((data) => displayRankings(data))
 	.catch((error) => {
-		console.log(error);
+		console.error(`Could not get league information: ${error}`);
 	});
 
 function displayRankings(data) {
@@ -27,7 +34,10 @@ function displayRankings(data) {
 	const { leagueSeason, leagueStandings } = standings;
 
 	leagueNameHeading.innerText = leagueName;
-	rankingsHeading.innerText = `${leagueName} Rankings ${leagueSeason} Season`;
+
+	const season = `${leagueSeason}-${parseInt(leagueSeason) + 1} Season`;
+	leagueSeasonHeading.innerText = season;
+	// rankingsHeading.innerText = `${leagueName} Rankings ${leagueSeason} Season`;
 	viewFixturesLink.setAttribute(
 		"href",
 		`/football/${leagueNameShort}/fixtures/${leagueSeason}`
