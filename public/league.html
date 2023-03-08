@@ -5,13 +5,60 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>League Rankings</title>
+		<style>
+			main {
+				display: flex;
+				flex-direction: row;
+				column-gap: 50px;
+			}
+
+			#leagueName-hd {
+				text-align: center;
+			}
+
+			#leagueSeason-hd {
+				text-align: center;
+			}
+
+			#fixtures-info-div {
+				display: flex;
+				flex-direction: row;
+				column-gap: 20px;
+			}
+		</style>
 	</head>
 	<body>
-		<h1 id="leagueName-hd">Loading...</h1>
-		<div>
-			<h2 id="rankings-hd">Loading...</h2>
-			<div id="rankings-ctn"></div>
-		</div>
+		<header>
+			<h1 id="leagueName-hd">Loading...</h1>
+			<h2 id="leagueSeason-hd">Loading...</h2>
+		</header>
+		<main>
+			<section id="rankings-sct">
+				<h3 id="rankings-hd">League Table</h3>
+				<div id="rankings-ctn"></div>
+			</section>
+			<section id="fixtures-sct">
+				<h3 id="fixtures-hd">Fixtures</h3>
+				<div id="fixtures-info-div">
+					<div id="fixture-dates-div">
+						<h4>Fixture Dates</h4>
+						<p><a href="">Regular Season 1</a></p>
+						<p><a href="">Regular Season 1</a></p>
+						<p><a href="">Regular Season 1</a></p>
+						<p><a href="">Regular Season 1</a></p>
+						<p><a href="">Regular Season 1</a></p>
+					</div>
+					<div id="fixture-display-div">
+						<h4>Regular Season 1 Matches</h4>
+						<div>
+							<p>Arsenal vs Crystal Palace</p>
+							<p>11 March 08:30 UTC</p>
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+		<button id="displayFixtureDates">display dates</button>
 		<a id="viewfixtures" href="">View Fixtures</a>
 		<script type="application/javascript" src="/scripts/rankings.js"></script>
 	</body>
