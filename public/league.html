@@ -9,7 +9,17 @@
 			main {
 				display: flex;
 				flex-direction: row;
+				justify-content: center;
+				align-items: flex-start;
 				column-gap: 50px;
+			}
+
+			#rankings-sct {
+				width: 300px;
+			}
+
+			#fixtures-sct {
+				width: 600px;
 			}
 
 			#leagueName-hd {
@@ -82,35 +92,11 @@
 					</div>
 					<div id="fixture-display-div">
 						<h4 id="fixture-display-date-hd">Choose a Fixture Date</h4>
-						<div id="fixtures-for-date">
-							<div class="fixture-match-info-div">
-								<div class="homeTeam team">
-									<img
-										src="https://media.api-sports.io/football/teams/65.png"
-										alt=""
-									/>
-									<p>Nottingham Forest</p>
-								</div>
-								<div class="match-info">
-									<p>11 MARCH</p>
-									<p>07:30 UTC</p>
-									<p>Status: To Be played</p>
-								</div>
-								<div class="awayTeam team">
-									<img
-										src="https://media.api-sports.io/football/teams/66.png"
-										alt=""
-									/>
-									<p>Aston Villa</p>
-								</div>
-							</div>
-						</div>
+						<div id="fixtures-for-date"></div>
 					</div>
 				</div>
 			</section>
 		</main>
-		<button id="displayFixtureDates">display dates</button>
-		<a id="viewfixtures" href="">View Fixtures</a>
 		<script type="application/javascript" src="/scripts/rankings.js"></script>
 	</body>
 </html>
