@@ -35,6 +35,33 @@
 				text-align: left;
 				font-size: 14px;
 			}
+
+			.fixture-match-info-div {
+				border: 1px solid black;
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				align-items: center;
+				height: 200px;
+				width: 500px;
+				column-gap: 30px;
+			}
+
+			.fixture-match-info-div img {
+				width: 70px;
+				height: auto;
+			}
+
+			.team {
+				border: 2px solid red;
+				text-align: center;
+				width: 100px;
+				height: 140px;
+			}
+
+			.match-info {
+				text-align: center;
+			}
 		</style>
 	</head>
 	<body>
@@ -55,6 +82,29 @@
 					</div>
 					<div id="fixture-display-div">
 						<h4 id="fixture-display-date-hd">Choose a Fixture Date</h4>
+						<div id="fixtures-for-date">
+							<div class="fixture-match-info-div">
+								<div class="homeTeam team">
+									<img
+										src="https://media.api-sports.io/football/teams/65.png"
+										alt=""
+									/>
+									<p>Nottingham Forest</p>
+								</div>
+								<div class="match-info">
+									<p>11 MARCH</p>
+									<p>07:30 UTC</p>
+									<p>Status: To Be played</p>
+								</div>
+								<div class="awayTeam team">
+									<img
+										src="https://media.api-sports.io/football/teams/66.png"
+										alt=""
+									/>
+									<p>Aston Villa</p>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</section>
