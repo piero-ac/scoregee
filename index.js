@@ -79,8 +79,14 @@ app.get("/football/:league/standings/:season", async (req, res) => {
 	const teamIDs = leagueStandings.map((obj) => obj.teamID);
 	const teamsInfo = await Team.find({ teamID: { $in: teamIDs } });
 
+	// Get the fixture information for the league and season
+	const fixtures = await Fixture.find({
+		"league.leagueID": id,
+		"league.leagueSeason": season,
+	});
+
 	// Send an object containing the league standings and their corresponding teams
-	res.json({ leagueInfo, standings, teamsInfo });
+	res.json({ leagueInfo, standings, teamsInfo, fixtures });
 });
 
 // Sends the html file for displaying the dates for fixtures
