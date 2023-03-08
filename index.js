@@ -94,8 +94,8 @@ app.get("/football/:league/fixtures-data/:season", async (req, res) => {
 	const id = ids[league];
 	// Query fixture information for specified league and season (to be implemented)
 	const fixtures = await Fixture.find({
-		"league.id": id,
-		"league.season": 2022,
+		"league.leagueID": id,
+		"league.leagueSeason": season,
 	});
 	res.json({ league, leagueName: leagueIDs[league], fixtures });
 });
