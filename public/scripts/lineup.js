@@ -12,7 +12,9 @@ const awayTeamCoach = document.querySelector("#awayTeam-coach");
 
 fetch("http://localhost:3000/football/fixture-lineup/data")
 	.then((response) => response.json())
-	.then((response) => displayLineupData(response))
+	.then((response) => {
+		displayLineupData(response);
+	})
 	.catch((err) => console.error(err));
 
 function displayLineupData(data) {
