@@ -20,7 +20,7 @@ let fixturesObj;
 
 // make request for data to backend
 const responsePromise = fetch(
-	`http://localhost:3000/football/${leagueNameShort}/standings/${leagueSeason}`
+	`/football/${leagueNameShort}/${leagueSeason}/overview`
 );
 
 responsePromise
