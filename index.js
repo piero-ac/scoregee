@@ -81,8 +81,8 @@ app.get("/football/:league/:season", (req, res) => {
 	res.sendFile(__dirname + "/public/league.html");
 });
 
-// Sends the json object with the rankings after league.html loads
-app.get("/football/:league/standings/:season", async (req, res) => {
+// Sends the data containing league information for the season
+app.get("/football/:league/:season/overview", async (req, res) => {
 	const { league, season } = req.params;
 	const id = ids[league];
 
