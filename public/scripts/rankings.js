@@ -111,6 +111,7 @@ function displayFixturesForDate(buttonValue, buttonText) {
 	console.log("Ending displayFixturesForDate");
 }
 
+// Creates the containers that will go inside a fixture container
 function createFixtureContainer(f) {
 	console.log("Starting createFixtureContainer");
 	const { fixture, teams, goals, score } = f;
@@ -133,6 +134,7 @@ function createFixtureContainer(f) {
 	return fixtureMatchInfoDiv;
 }
 
+// Creates the container for the team information such as logo and name
 function createTeamInfoDiv(team, type) {
 	console.log("Starting createTeamInfoDiv");
 
@@ -158,10 +160,12 @@ function createTeamInfoDiv(team, type) {
 	return teamInfoDiv;
 }
 
+// Creates the container for the score, time, and match status
 function createMatchInfoDiv(fixture, goals, score) {
 	console.log("Starting createMatchInfoDiv");
 	const matchStatusLong = fixture.status.long;
 	const matchStatusShort = fixture.status.short;
+	const fixtureid = fixture.id;
 	const dateLong = fixture.date;
 
 	const matchInfoDiv = document.createElement("div");
@@ -178,8 +182,6 @@ function createMatchInfoDiv(fixture, goals, score) {
 	);
 	timePara.innerText = `${time} UTC`;
 
-	matchInfoDiv.append(datePara, timePara);
-
 	const statusPara = document.createElement("p");
 	if (matchStatusShort === "FT") {
 		statusPara.innerText = `FT - ${score.fulltime.home} : ${score.fulltime.away}`;
@@ -193,7 +195,18 @@ function createMatchInfoDiv(fixture, goals, score) {
 		statusPara.innerText = "Not Started";
 	}
 
-	matchInfoDiv.append(statusPara);
+	const fixtureLink = document.createElement("a");
+	fixtureLink.setAttribute(
+		"href",
+		`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureid}`
+	);
+	fixtureLink.innerText = "More Info";
+
+	const fixturePara = document.createElement("p");
+	fixturePara.append(fixtureLink);
+
+	matchInfoDiv.append(datePara, timePara, statusPara, fixtureLink);
+
 	console.log("Ending createMatchInfoDiv");
 	return matchInfoDiv;
 }
