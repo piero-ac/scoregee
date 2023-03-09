@@ -115,6 +115,9 @@ app.get("/football/:league/:season/fixture/:fixtureid", async (req, res) => {
 	const { league, season, fixtureid } = req.params;
 	const id = ids[league];
 
+	// Get the league information for the specified league
+	const leagueInfo = await League.findOne({ leagueID: `${id}` });
+
 	// Get the fixture information for the league and season
 	const fixture = await Fixture.findOne({
 		"league.leagueID": id,
@@ -126,7 +129,7 @@ app.get("/football/:league/:season/fixture/:fixtureid", async (req, res) => {
 	const teamIDs = teams.map((obj) => obj.teamID);
 	const teamsInfo = await Team.find({ teamID: { $in: teamIDs } });
 
-	res.json({ teamsInfo, fixture });
+	res.json({ leagueInfo, teamsInfo, fixture });
 });
 
 // Sends the html file for displaying the dates for fixtures
