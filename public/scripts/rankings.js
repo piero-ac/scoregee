@@ -38,6 +38,7 @@ responsePromise
 
 function parseData(data) {
 	const { leagueInfo, standings, teamsInfo, fixtures } = data;
+
 	const { leagueID, leagueName, leagueCountry, leagueLogo } = leagueInfo;
 	const { leagueSeason, leagueStandings } = standings;
 
