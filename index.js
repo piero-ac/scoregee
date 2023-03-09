@@ -114,6 +114,19 @@ app.get("/football/:league/:season/overview", async (req, res) => {
 app.get("/football/:league/:season/fixture/:fixtureid", async (req, res) => {
 	const { league, season, fixtureid } = req.params;
 	const id = ids[league];
+
+	// Get the fixture information for the league and season
+	const fixture = await Fixture.findOne({
+		"league.leagueID": id,
+		"league.leagueSeason": season,
+		"fixture.id": fixtureid,
+	});
+
+	const { teams } = fixture;
+	const teamIDs = teams.map((obj) => obj.teamID);
+	const teamsInfo = await Team.find({ teamID: { $in: teamIDs } });
+
+	res.json({ teamsInfo, fixture });
 });
 
 // Sends the html file for displaying the dates for fixtures
