@@ -3,6 +3,7 @@ const fixtureMatchInfoDiv = document.querySelector("#fixture-match-info-div");
 const matchInfoSection = document.querySelector("#match-info-sct");
 const quickInfoDiv = document.querySelector("#quick-info");
 const quickInfoData = document.querySelector("#quick-info-data");
+const leagueHomepageLink = document.querySelector("#league-hp-link");
 
 const url = window.location.href;
 const urlParts = url.split("/");
@@ -28,6 +29,11 @@ function parseData(data) {
 	const { leagueInfo, teamsInfo, fixture, lineup } = data;
 	const { leagueName, leagueCountry } = leagueInfo;
 	fixtureLeague.innerText = `${leagueName} - ${leagueCountry}`;
+
+	leagueHomepageLink.setAttribute(
+		"href",
+		`/football/${leagueNameShort}/${leagueSeason}`
+	);
 
 	return { teamsInfo, fixture, lineup };
 }
