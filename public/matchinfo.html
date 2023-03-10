@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Loading...</title>
+		<style>
+			.team {
+				border: 2px solid red;
+				text-align: center;
+				width: 100px;
+				height: 140px;
+			}
+
+			.match-info {
+				text-align: center;
+			}
+
+			.fixture-match-info-div {
+				border: 1px solid black;
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				align-items: center;
+				height: 200px;
+				width: 500px;
+				column-gap: 30px;
+			}
+
+			.fixture-match-info-div img {
+				width: 70px;
+				height: auto;
+			}
+
+			#match-info-sct {
+				display: flex;
+				flex-direction: column;
+			}
+			#quick-info div {
+				display: flex;
+				flex-direction: row;
+				column-gap: 15px;
+			}
+
+			#match-lineup {
+				display: flex;
+				flex-direction: row;
+				column-gap: 30px;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1 id="fixture-league">League Name - League Country</h1>
+			<div class="fixture-match-info-div">
+				<div class="homeTeam team">
+					<img
+						src="https://media.api-sports.io/football/teams/66.png"
+						alt="Logo for Aston Villa"
+					/>
+					<p>Aston Villa</p>
+				</div>
+				<div class="match-info">
+					<p>2022-09-16</p>
+					<p>19:00 UTC</p>
+				</div>
+				<div class="awayTeam team">
+					<img
+						src="https://media.api-sports.io/football/teams/41.png"
+						alt="Logo for Southampton"
+					/>
+					<p>Southampton</p>
+				</div>
+			</div>
+		</header>
+		<section id="match-info-sct">
+			<div id="quick-info">
+				<h3>Info</h3>
+				<div id="quick-info-data"></div>
+			</div>
+			<h3>Lineups</h3>
+			<div id="match-lineup">
+				<div id="homeTeam-lineup">
+					<p>Aston Villa Coach: John Doe Formation: 4-3-3</p>
+					<div id="homeTeam-starters">
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+					</div>
+					<div id="homeTeam-subs">
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+					</div>
+				</div>
+				<div id="awayTeam-lineup">
+					<p>Southampton Coach: John Doe Formation: 4-3-3</p>
+					<div id="awayTeam-starters">
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+					</div>
+					<div id="awayTeam-subs">
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+						<p>John Doe 1</p>
+					</div>
+				</div>
+			</div>
+		</section>
+		<script src="/scripts/fixture-info.js"></script>
+	</body>
+</html>
