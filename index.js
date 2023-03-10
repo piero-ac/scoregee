@@ -110,27 +110,48 @@ app.get("/football/:league/:season/overview", async (req, res) => {
 	res.json({ leagueInfo, standings, teamsInfo, fixtures });
 });
 
-// Send data containing fixture information for the specified fixture
-app.get("/football/:league/:season/fixture/:fixtureid", async (req, res) => {
-	const { league, season, fixtureid } = req.params;
-	const id = ids[league];
-
-	// Get the league information for the specified league
-	const leagueInfo = await League.findOne({ leagueID: `${id}` });
-
-	// Get the fixture information for the league and season
-	const fixture = await Fixture.findOne({
-		"league.leagueID": id,
-		"league.leagueSeason": season,
-		"fixture.id": fixtureid,
-	});
-
-	const { teams } = fixture;
-	const teamIDs = teams.map((obj) => obj.teamID);
-	const teamsInfo = await Team.find({ teamID: { $in: teamIDs } });
-
-	res.json({ leagueInfo, teamsInfo, fixture });
+// Sends the html file for displaying the fixture information
+app.get("/football/:league/:season/fixture/:fixtureid", (req, res) => {
+	res.sendFile(__dirname + "/public/matchinfo.html");
 });
+
+// Send data containing fixture information for the specified fixture
+app.get(
+	"/football/:league/:season/fixture/:fixtureid/info",
+	async (req, res) => {
+		const { league, season, fixtureid } = req.params;
+		const id = ids[league];
+
+		// Get the league information for the specified league
+		const leagueInfo = await League.findOne({ leagueID: `${id}` });
+
+		// Get the fixture information for the league and season
+		const fixture = await Fixture.findOne({
+			"league.leagueID": id,
+			"league.leagueSeason": season,
+			"fixture.id": fixtureid,
+		});
+
+		const { teams } = fixture;
+		const teamIDs = teams.map((obj) => obj.teamID);
+		const teamsInfo = await Team.find({ teamID: { $in: teamIDs } });
+
+		// Make axios request for lineup
+		const options = {
+			method: "GET",
+			url: "https://api-football-v1.p.rapidapi.com/v3/fixtures/lineups",
+			params: { fixture: fixtureid },
+			headers: {
+				"X-RapidAPI-Key": config.RAPID_API_KEY,
+				"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com",
+			},
+		};
+
+		const lineup = await axios.request(options);
+
+		res.json({ leagueInfo, teamsInfo, fixture, lineup });
+	}
+);
 
 // Sends the html file for displaying the dates for fixtures
 // app.get("/football/:league/fixtures/:season", async (req, res) => {
