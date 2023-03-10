@@ -131,10 +131,12 @@ app.get(
 			"league.leagueSeason": season,
 			"fixture.id": fixtureid,
 		});
-
+		// console.log(fixture);
 		const { teams } = fixture;
-		const teamIDs = teams.map((obj) => obj.teamID);
-		const teamsInfo = await Team.find({ teamID: { $in: teamIDs } });
+		const homeTeamInfo = await Team.find({ teamID: teams.home.teamID });
+		const awayTeamInfo = await Team.find({ teamID: teams.away.teamID });
+
+		const teamsInfo = [homeTeamInfo, awayTeamInfo];
 
 		// Make axios request for lineup
 		const options = {
@@ -147,7 +149,8 @@ app.get(
 			},
 		};
 
-		const lineup = await axios.request(options);
+		const lineupResponse = await axios.request(options);
+		const { response: lineup } = lineupResponse;
 
 		res.json({ leagueInfo, teamsInfo, fixture, lineup });
 	}
