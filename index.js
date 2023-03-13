@@ -155,42 +155,6 @@ app.get(
 	}
 );
 
-// Sends the html file for displaying the dates for fixtures
-// app.get("/football/:league/fixtures/:season", async (req, res) => {
-// 	res.sendFile(__dirname + "/public/fixtures.html");
-// });
-
-// Sends the json object with the fixtures after league.html loads
-// app.get("/football/:league/fixtures-data/:season", async (req, res) => {
-// 	const { league, season } = req.params;
-// 	const id = ids[league];
-// 	// Query fixture information for specified league and season (to be implemented)
-// 	const fixtures = await Fixture.find({
-// 		"league.leagueID": id,
-// 		"league.leagueSeason": season,
-// 	});
-// 	res.json({ league, leagueName: leagueIDs[league], fixtures });
-// });
-
-// Sends the html file for displaying the matches for the specified date
-// app.get("/football/:league/fixtures/:date", async (req, res) => {
-// 	res.sendFile(__dirname + "/public/matches.html");
-// });
-
-// Sends the json object with the matches for the specified date after league.html loads
-// app.get("/football/:league/fixtures/:date/data", async (req, res) => {
-// 	const { league, date } = req.params;
-// 	const id = ids[league];
-
-// 	// Query fixture information based on leauge, season (to be added), and date
-// 	const fixtures = await Fixture.find({
-// 		"league.id": id,
-// 		"league.season": 2022,
-// 		"fixture.date": { $regex: `.*${date}.*` },
-// 	});
-// 	res.json({ fixtures, league, date });
-// });
-
 app.listen(3000, () => {
 	console.log("LISTENING ON PORT 3000");
 });
