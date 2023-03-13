@@ -28,10 +28,12 @@ This project draws inspiration from LiveScore.com. We wanted to create our versi
 
 ### Technologies
 
-Frontend: HTML, CSS, JS
-Backend: NodeJS, Express, Axios
-Database: MongoDB, Mongoose
-API: API-Football https://www.api-football.com/documentation-v3
+<ul>
+<li>Frontend: HTML, CSS, JS</li>
+<li>Backend: NodeJS, Express, Axios</li>
+<li>Database: MongoDB, Mongoose</li>
+<li>API: API-Football https://www.api-football.com/documentation-v3</li>
+</ul>
 
 ### Current Version Specific Information
 
