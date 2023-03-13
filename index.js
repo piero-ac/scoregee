@@ -136,7 +136,7 @@ app.get(
 		const homeTeamInfo = await Team.find({ teamID: teams.home.teamID });
 		const awayTeamInfo = await Team.find({ teamID: teams.away.teamID });
 
-		const teamsInfo = [homeTeamInfo, awayTeamInfo];
+		const teamsInfo = [homeTeamInfo[0], awayTeamInfo[0]];
 
 		// Make axios request for lineup
 		const options = {
@@ -150,8 +150,7 @@ app.get(
 		};
 
 		const lineupResponse = await axios.request(options);
-		const { response: lineup } = lineupResponse;
-
+		const { response: lineup } = lineupResponse.data;
 		res.json({ leagueInfo, teamsInfo, fixture, lineup });
 	}
 );
