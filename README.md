@@ -1,7 +1,3 @@
-## This version of ScoreGee uses a mongodb database to query information and
-
-## Also contains a folder with text files of fixture ids for the 2022 season for the top 5 leagues
-
 # ScoreGee
 
 ScoreGee is an web application that shows information on matches for the Top 5 European leagues.
