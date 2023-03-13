@@ -176,11 +176,8 @@ function createMatchInfoDiv(fixture, goals, score) {
 	datePara.innerText = dateShort;
 
 	const timePara = document.createElement("p");
-	const time = dateLong.substring(
-		dateLong.indexOf("T") + 1,
-		dateLong.indexOf("T") + 6
-	);
-	timePara.innerText = `${time} UTC`;
+	const time = getLocalTime(dateLong);
+	timePara.innerText = time;
 
 	const statusPara = document.createElement("p");
 	if (matchStatusShort === "FT") {
@@ -209,4 +206,12 @@ function createMatchInfoDiv(fixture, goals, score) {
 
 	console.log("Ending createMatchInfoDiv");
 	return matchInfoDiv;
+}
+
+function getLocalTime(dateString) {
+	const date = new Date(dateString);
+	return date.toLocaleTimeString("en-US", {
+		hour: "2-digit",
+		minute: "2-digit",
+	});
 }
