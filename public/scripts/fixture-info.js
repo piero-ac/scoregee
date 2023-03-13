@@ -1,3 +1,4 @@
+const matchInfoTitle = document.querySelector("#match-info-title");
 const fixtureLeague = document.querySelector("#fixture-league");
 const fixtureMatchInfoDiv = document.querySelector("#fixture-match-info-div");
 const matchInfoSection = document.querySelector("#match-info-sct");
@@ -54,6 +55,7 @@ function displayFixtureInfo(data) {
 	const homeTeam = teamsInfo[0];
 	const awayTeam = teamsInfo[1];
 
+	matchInfoTitle.innerText = `${homeTeam.teamName} vs ${awayTeam.teamName} Match Info`;
 	createFixtureContainer(homeTeam, awayTeam, fixture);
 
 	// DISPLAY REFEREE, TIME, AND STADIUM
@@ -63,10 +65,7 @@ function displayFixtureInfo(data) {
 		venue: { name: stadiumName },
 	} = fixture.fixture;
 
-	const time = dateLong.substring(
-		dateLong.indexOf("T") + 1,
-		dateLong.indexOf("T") + 6
-	);
+	const time = getLocalTime(dateLong);
 
 	const refereePara = document.createElement("p");
 	refereePara.innerText = referee;
@@ -79,11 +78,11 @@ function displayFixtureInfo(data) {
 
 	quickInfoData.append(timePara, refereePara, stadiumPara);
 
-	return { teamsInfo, lineup };
+	return { lineup };
 }
 
 function displayTeamLineups(data) {
-	const { teamsInfo, lineup } = data;
+	const { lineup } = data;
 	const {
 		coach: hCoach,
 		formation: hFormation,
@@ -198,11 +197,8 @@ function createMatchInfoDiv(fixture, goals, score) {
 	datePara.innerText = dateShort;
 
 	const timePara = document.createElement("p");
-	const time = dateLong.substring(
-		dateLong.indexOf("T") + 1,
-		dateLong.indexOf("T") + 6
-	);
-	timePara.innerText = `${time} UTC`;
+	const time = getLocalTime(dateLong);
+	timePara.innerText = time;
 
 	const statusPara = document.createElement("p");
 	if (matchStatusShort === "FT") {
@@ -221,4 +217,12 @@ function createMatchInfoDiv(fixture, goals, score) {
 
 	console.log("Ending createMatchInfoDiv");
 	return matchInfoDiv;
+}
+
+function getLocalTime(dateString) {
+	const date = new Date(dateString);
+	return date.toLocaleTimeString("en-US", {
+		hour: "2-digit",
+		minute: "2-digit",
+	});
 }
