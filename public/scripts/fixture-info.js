@@ -49,7 +49,14 @@ function parseData(data) {
 // Displays the time, referee, and stadium of the fixture
 function displayFixtureInfo(data) {
 	const { teamsInfo, fixture, lineup } = data;
-	// console.log(fixture);
+
+	// DISPLAY MATCH INFO UP TOP
+	const homeTeam = teamsInfo[0];
+	const awayTeam = teamsInfo[1];
+
+	createFixtureContainer(homeTeam, awayTeam, fixture);
+
+	// DISPLAY REFEREE, TIME, AND STADIUM
 	const {
 		referee,
 		date: dateLong,
@@ -130,4 +137,88 @@ function displayPlayers(team, type, players) {
 			awayTeamSubs.append(playerP);
 		}
 	}
+}
+
+function createFixtureContainer(homeTeam, awayTeam, fixture) {
+	console.log("Starting createFixtureContainer");
+
+	// create divs for home team and away team
+	const homeTeamInfoDiv = createTeamInfoDiv(homeTeam, "home");
+	const awayTeamInfoDiv = createTeamInfoDiv(awayTeam, "away");
+
+	// create div for match info
+	const matchInfoDiv = createMatchInfoDiv(
+		fixture.fixture,
+		fixture.goals,
+		fixture.score
+	);
+
+	fixtureMatchInfoDiv.append(homeTeamInfoDiv, matchInfoDiv, awayTeamInfoDiv);
+
+	console.log("Ending createFixtureContainer");
+	return fixtureMatchInfoDiv;
+}
+
+// Creates the container for the team information such as logo and name
+function createTeamInfoDiv(teamInfo, type) {
+	console.log("Starting createTeamInfoDiv");
+
+	const teamInfoDiv = document.createElement("div");
+	if (type === "home") {
+		teamInfoDiv.classList.add("homeTeam", "team");
+	} else {
+		teamInfoDiv.classList.add("awayTeam", "team");
+	}
+
+	const teamLogoImg = document.createElement("img");
+	teamLogoImg.setAttribute("src", teamInfo.teamLogo);
+	teamLogoImg.setAttribute("alt", `Logo for ${teamInfo.teamName}`);
+
+	const teamNamePara = document.createElement("p");
+	teamNamePara.innerText = teamInfo.teamName;
+
+	teamInfoDiv.append(teamLogoImg, teamNamePara);
+	console.log("Ending createTeamInfoDiv");
+	return teamInfoDiv;
+}
+
+// Creates the container for the score, time, and match status
+function createMatchInfoDiv(fixture, goals, score) {
+	console.log("Starting createMatchInfoDiv");
+	const matchStatusLong = fixture.status.long;
+	const matchStatusShort = fixture.status.short;
+	const fixtureid = fixture.id;
+	const dateLong = fixture.date;
+
+	const matchInfoDiv = document.createElement("div");
+	matchInfoDiv.classList.add("match-info");
+
+	const datePara = document.createElement("p");
+	const dateShort = dateLong.substring(0, dateLong.indexOf("T"));
+	datePara.innerText = dateShort;
+
+	const timePara = document.createElement("p");
+	const time = dateLong.substring(
+		dateLong.indexOf("T") + 1,
+		dateLong.indexOf("T") + 6
+	);
+	timePara.innerText = `${time} UTC`;
+
+	const statusPara = document.createElement("p");
+	if (matchStatusShort === "FT") {
+		statusPara.innerText = `FT - ${score.fulltime.home} : ${score.fulltime.away}`;
+	} else if (matchStatusShort === "HT") {
+		statusPara.innerText = `HT - ${score.halftime.home} : ${score.halftime.away}`;
+	} else if (matchStatusShort === "CANC") {
+		statusPara.innerText = `Canceled`;
+	} else if (matchStatusShort === "PST") {
+		statusPara.innerText = `Postponed`;
+	} else if (matchStatusShort === "NS") {
+		statusPara.innerText = "Not Started";
+	}
+
+	matchInfoDiv.append(datePara, timePara, statusPara);
+
+	console.log("Ending createMatchInfoDiv");
+	return matchInfoDiv;
 }
