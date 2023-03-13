@@ -24,7 +24,7 @@ Users can view information such as statistics, lineups, and results for regular 
 
 ## Description
 
-This project draws inspiration from LiveScore.com. We wanted to create our version of this website using data obtained from API-Football and database storage.
+This project draws inspiration from LiveScore.com. We wanted to create our version of this website using data obtained from API-Football. Project was made during the Spring 2023 semester for CPS4951 - Senior Capstone.
 
 ### Technologies
 
