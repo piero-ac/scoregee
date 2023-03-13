@@ -55,27 +55,6 @@ app.get("/football", (req, res) => {
 	res.sendFile(__dirname + "/public/soccer.html");
 });
 
-// // Send the html file for displaying the lineup
-// app.get("/football/fixture-lineup", (req, res) => {
-// 	res.sendFile(__dirname + "/public/lineup.html");
-// });
-
-// // Send the JSON object containing the lineup information
-// app.get("/football/fixture-lineup/data", async (req, res) => {
-// 	const options = {
-// 		method: "GET",
-// 		url: "https://api-football-v1.p.rapidapi.com/v3/fixtures/lineups",
-// 		params: { fixture: "867946" },
-// 		headers: {
-// 			"X-RapidAPI-Key": config.RAPID_API_KEY,
-// 			"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com",
-// 		},
-// 	};
-
-// 	const response = await axios.request(options);
-// 	res.json(response.data.response);
-// });
-
 // Sends the html file for displaying league rankings
 app.get("/football/:league/:season", (req, res) => {
 	res.sendFile(__dirname + "/public/league.html");
