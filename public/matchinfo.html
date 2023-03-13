@@ -7,7 +7,7 @@
 		<title>Loading...</title>
 		<style>
 			.team {
-				border: 2px solid red;
+				/* border: 2px solid red; */
 				text-align: center;
 				width: 100px;
 				height: 140px;
@@ -17,7 +17,7 @@
 				text-align: center;
 			}
 
-			.fixture-match-info-div {
+			#fixture-match-info-div {
 				border: 1px solid black;
 				display: flex;
 				flex-direction: row;
@@ -28,7 +28,7 @@
 				column-gap: 30px;
 			}
 
-			.fixture-match-info-div img {
+			#fixture-match-info-div img {
 				width: 70px;
 				height: auto;
 			}
@@ -54,26 +54,7 @@
 		<a id="league-hp-link" href="">Go Back</a>
 		<header>
 			<h1 id="fixture-league">League Name - League Country</h1>
-			<div class="fixture-match-info-div">
-				<div class="homeTeam team">
-					<img
-						src="https://media.api-sports.io/football/teams/66.png"
-						alt="Logo for Aston Villa"
-					/>
-					<p>Aston Villa</p>
-				</div>
-				<div class="match-info">
-					<p>2022-09-16</p>
-					<p>19:00 UTC</p>
-				</div>
-				<div class="awayTeam team">
-					<img
-						src="https://media.api-sports.io/football/teams/41.png"
-						alt="Logo for Southampton"
-					/>
-					<p>Southampton</p>
-				</div>
-			</div>
+			<div id="fixture-match-info-div"></div>
 		</header>
 		<section id="match-info-sct">
 			<div id="quick-info">
