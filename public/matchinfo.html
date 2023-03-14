@@ -5,56 +5,13 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title id="match-info-title">Loading...</title>
-		<style>
-			.team {
-				/* border: 2px solid red; */
-				text-align: center;
-				width: 100px;
-				height: 140px;
-			}
-
-			.match-info {
-				text-align: center;
-			}
-
-			#fixture-match-info-div {
-				border: 1px solid black;
-				display: flex;
-				flex-direction: row;
-				justify-content: center;
-				align-items: center;
-				height: 200px;
-				width: 500px;
-				column-gap: 30px;
-			}
-
-			#fixture-match-info-div img {
-				width: 70px;
-				height: auto;
-			}
-
-			#match-info-sct {
-				display: flex;
-				flex-direction: column;
-			}
-			#quick-info div {
-				display: flex;
-				flex-direction: row;
-				column-gap: 15px;
-			}
-
-			#match-lineup {
-				display: flex;
-				flex-direction: row;
-				column-gap: 30px;
-			}
-		</style>
+		<link rel="stylesheet" href="/styles.css" />
 	</head>
 	<body>
 		<a id="league-hp-link" href="">Go Back</a>
 		<header>
 			<h1 id="fixture-league">League Name - League Country</h1>
-			<div id="fixture-match-info-div"></div>
+			<div class="fixture-match-info-div"></div>
 		</header>
 		<section id="match-info-sct">
 			<div id="quick-info">
