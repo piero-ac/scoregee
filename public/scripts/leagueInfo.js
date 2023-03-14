@@ -139,7 +139,6 @@ function createTeamInfoDiv(team, type) {
 	console.log("Starting createTeamInfoDiv");
 
 	const teamInfo = teamInfoObj.find((obj) => obj.teamID === team.teamID);
-	console.log(teamInfo);
 
 	const teamInfoDiv = document.createElement("div");
 	if (type === "home") {

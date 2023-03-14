@@ -1,6 +1,6 @@
 const matchInfoTitle = document.querySelector("#match-info-title");
 const fixtureLeague = document.querySelector("#fixture-league");
-const fixtureMatchInfoDiv = document.querySelector("#fixture-match-info-div");
+const fixtureMatchInfoDiv = document.querySelector(".fixture-match-info-div");
 const matchInfoSection = document.querySelector("#match-info-sct");
 const quickInfoDiv = document.querySelector("#quick-info");
 const quickInfoData = document.querySelector("#quick-info-data");
