@@ -1,194 +1,139 @@
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import express from "express";
+const app = express();
+import path from "path";
+import { fileURLToPath } from "url";
 
 // These lines make "require" available
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-
-const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const mongoose = require("mongoose");
+import axios from "axios";
 
-//function imports
-import { config } from './football-api/config.js';
-const axios = require("axios");
+import { Standing } from "./models/standing.js";
+import { Fixture } from "./models/fixture.js";
+import { Team } from "./models/team.js";
+import { League } from "./models/league.js";
+import { config } from "./football-api/config.js";
 
-//function imports
-import { config } from './football-api/config.js';
-const axios = require("axios");
+const cors = require("cors");
 
 const leagueIDs = {
-    'epl' : 'Premier League',
-    'seriea' : 'Seria A',
-    'ligue1' : 'Ligue 1',
-    'bundesliga' : 'Bundesliga',
-    'laliga' : 'La Liga'
+	epl: "Premier League",
+	seriea: "Seria A",
+	ligue1: "Ligue 1",
+	bundesliga: "Bundesliga",
+	laliga: "La Liga",
+};
+
+const ids = {
+	epl: "39",
+	seriea: "135",
+	ligue1: "61",
+	bundesliga: "78",
+	laliga: "140",
+};
+
+main()
+	.then(() => {
+		console.log("MONGO CONNECTION OPENED");
+	})
+	.catch((err) => console.log(err));
+
+async function main() {
+	await mongoose.connect("mongodb://127.0.0.1:27017/scoregee");
+
+	// use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 }
 
+app.use(express.static("public"));
+app.use(cors());
 
-app.use(express.urlencoded({extended: true}));
-app.use(express.json());
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+// Sends the ScoreGee - Football Homepage
+app.get("/football", (req, res) => {
+	res.sendFile(__dirname + "/public/soccer.html");
+});
 
+// Sends the html file for displaying league rankings
+app.get("/football/:league/:season", (req, res) => {
+	res.sendFile(__dirname + "/public/league.html");
+});
 
-app.get('/', (req, res) => {
-    res.send("Hello World");
-})
+// Sends the data containing league information for the season
+app.get("/football/:league/:season/overview", async (req, res) => {
+	const { league, season } = req.params;
+	const id = ids[league];
 
-// Football Homepage
-app.get('/football', (req, res) => {
-    res.render('football/index');
-})
+	// Get the league information for the specified league
+	const leagueInfo = await League.findOne({ leagueID: `${id}` });
 
-// Displays table of team standings in the specified league
-app.get('/football/:league', (req, res) => {
-    const { league } = req.params;
-    const options = {
-        method: 'GET',
-        url: 'https://api-football-v1.p.rapidapi.com/v3/standings',
-        params: {league: '', season: '2022'},
-        headers: {
-            'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
-            'x-rapidapi-key': config.RAPID_API_KEY
-        }   
-    }
-    if(league === 'epl'){
-        options.params.league = '39';
-    } else if (league === 'ligue1'){
-        options.params.league = '61';
-    }else if (league === 'laliga'){
-        options.params.league = '140';
-    } else if (league === 'bundesliga'){
-        options.params.league = '78';
-    } else if (league === 'seriea'){
-        options.params.league = '135';
-    }
+	// Get the standings for the specified league and season
+	const standings = await Standing.findOne({
+		leagueID: `${id}`,
+		leagueSeason: `${season}`,
+	});
 
-    axios.request(options)
-    .then((res) => {
-        const league = res.data.response[0].league;
-        const { id: leagueID, name: leagueName, country : leagueCountry, standings} = league;
-        return standings[0];
-    })
-    .then((leagueStandings) => {
-        res.render('football/league', { leagueName : leagueIDs[league], leagueStandings, league })
-    })
-    .catch((e) => {
-        console.error(e);
-    })
-})
+	// Get the team info for all the teams in the season
+	const { leagueStandings } = standings;
+	const teamIDs = leagueStandings.map((obj) => obj.teamID);
+	const teamsInfo = await Team.find({ teamID: { $in: teamIDs } });
 
-// Displays upcoming league matches until the end of the season
-app.get('/football/:league/fixtures', (req, res) => {
-    const { league } = req.params;
-    const options = {
-        method: 'GET',
-        url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures',
-        params: {league: '', season: '2022'},
-        headers: {
-            'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
-            'x-rapidapi-key': config.RAPID_API_KEY
-        }   
-    }
-    if(league === 'epl'){
-        options.params.league = '39';
-    } else if (league === 'ligue1'){
-        options.params.league = '61';
-    }else if (league === 'laliga'){
-        options.params.league = '140';
-    } else if (league === 'bundesliga'){
-        options.params.league = '78';
-    } else if (league === 'seriea'){
-        options.params.league = '135';
-    }
+	// Get the fixture information for the league and season
+	const fixtures = await Fixture.find({
+		"league.leagueID": id,
+		"league.leagueSeason": season,
+	});
 
-    axios.request(options)
-    .then((res) => {
-        const leagueFixtures = res.data.response;
-        return leagueFixtures;
-    })
-    .then((leagueFixtures) => {
-        const dates = [];
-        for(let i = 0; i < leagueFixtures.length; i++) { 
-            const { fixture } = leagueFixtures[i]; 
-            const { date } = fixture;
-            
-            const dateShortened = date.substring(0, date.indexOf('T'));
-            if(!dates.includes(dateShortened)){
-                dates.push(dateShortened);
-            }
-        }
-        return dates;
-    }).then((dates) => {
-        res.render('football/fixtures', { leagueName : leagueIDs[league], dates, league })
-    })
-    .catch((e) => {
-        console.error(e);
-    })
-})
+	// Send an object containing the league standings and their corresponding teams
+	res.json({ leagueInfo, standings, teamsInfo, fixtures });
+});
 
-app.get('/football/:league/fixtures/:date', (req, res) => {
-    const { league, date } = req.params;
-    const options = {
-        method: 'GET',
-        url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures',
-        params: {league: '', season: '2022', from: date, to: date},
-        headers: {
-            'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
-            'x-rapidapi-key': config.RAPID_API_KEY
-        }   
-    }
-    if(league === 'epl'){
-        options.params.league = '39';
-    } else if (league === 'ligue1'){
-        options.params.league = '61';
-    }else if (league === 'laliga'){
-        options.params.league = '140';
-    } else if (league === 'bundesliga'){
-        options.params.league = '78';
-    } else if (league === 'seriea'){
-        options.params.league = '135';
-    }
+// Sends the html file for displaying the fixture information
+app.get("/football/:league/:season/fixture/:fixtureid", (req, res) => {
+	res.sendFile(__dirname + "/public/matchinfo.html");
+});
 
-    axios.request(options)
-    .then((res) => {
-        const leagueFixturesByDate = res.data.response;
-        return leagueFixturesByDate;
-    })
-    .then((leagueFixturesByDate) => {
-        res.render('football/matches', { leagueName : leagueIDs[league], leagueFixturesByDate, league, date })
-    })
-    .catch((e) => {
-        console.error(e);
-    })
-})
+// Send data containing fixture information for the specified fixture
+app.get(
+	"/football/:league/:season/fixture/:fixtureid/info",
+	async (req, res) => {
+		const { league, season, fixtureid } = req.params;
+		const id = ids[league];
 
-app.get('/football/:league/fixture-linenup/:fixtureid', (req, res) => {
-    const { league, fixtureid } = req.params;
-    const options = {
-        method: 'GET',
-        url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures/lineups',
-        params: {fixture: fixtureid},
-        headers: {
-            'X-RapidAPI-Key': config.RAPID_API_KEY,
-            'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
-        }
-    };
+		// Get the league information for the specified league
+		const leagueInfo = await League.findOne({ leagueID: `${id}` });
 
-    axios.request(options)
-    .then(function (response) {
-        const fixturelineup=response.data.response;
-        res.render('football/Lineup', { fixturelineup });
+		// Get the fixture information for the league and season
+		const fixture = await Fixture.findOne({
+			"league.leagueID": id,
+			"league.leagueSeason": season,
+			"fixture.id": fixtureid,
+		});
+		// console.log(fixture);
+		const { teams } = fixture;
+		const homeTeamInfo = await Team.find({ teamID: teams.home.teamID });
+		const awayTeamInfo = await Team.find({ teamID: teams.away.teamID });
 
-    })
-    .catch(function (error) {
-        console.error(error);
-    });
-})
+		const teamsInfo = [homeTeamInfo[0], awayTeamInfo[0]];
+
+		// Make axios request for lineup
+		const options = {
+			method: "GET",
+			url: "https://api-football-v1.p.rapidapi.com/v3/fixtures/lineups",
+			params: { fixture: fixtureid },
+			headers: {
+				"X-RapidAPI-Key": config.RAPID_API_KEY,
+				"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com",
+			},
+		};
+
+		const lineupResponse = await axios.request(options);
+		const { response: lineup } = lineupResponse.data;
+		res.json({ leagueInfo, teamsInfo, fixture, lineup });
+	}
+);
 
 app.listen(3000, () => {
-    console.log("LISTENING ON PORT 3000");
-})
-
+	console.log("LISTENING ON PORT 3000");
+});

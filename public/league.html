@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>League Rankings</title>
+		<link rel="stylesheet" href="/styles.css" />
+	</head>
+	<body>
+		<nav>
+			<a href="/football">Back to Home</a>
+		</nav>
+		<header>
+			<h1 id="leagueName-hd">Loading...</h1>
+			<h2 id="leagueSeason-hd">Loading...</h2>
+		</header>
+		<main id="leagueInfo-main">
+			<section id="rankings-sct">
+				<h3 id="rankings-hd">League Table</h3>
+				<div id="rankings-ctn"></div>
+			</section>
+			<section id="fixtures-sct">
+				<h3 id="fixtures-hd">Fixtures</h3>
+				<div id="fixtures-info-div">
+					<div id="fixture-display-div">
+						<h4 id="fixture-display-date-hd">Choose a Fixture Date</h4>
+						<div id="fixtures-for-date"></div>
+					</div>
+					<div id="fixture-dates-div">
+						<h4>Fixture Dates</h4>
+					</div>
+				</div>
+			</section>
+		</main>
+		<script
+			type="application/javascript"
+			src="/scripts/displayLeagueInfo.js"
+		></script>
+		<script src="/scripts/createFixtureFunctions.js"></script>
+		<script type="application/javascript" src="/scripts/leagueInfo.js"></script>
+	</body>
+</html>
