@@ -76,22 +76,3 @@ fixtureInfoPromise
 		displayPlayers(lineup[1].substitutes, awayTeamSubs);
 	})
 	.catch((err) => console.log(err));
-
-// Displays the time, referee, and stadium of the fixture
-function displayFixtureInfo(data) {
-	const { teamsInfo, fixture } = data;
-
-	// DISPLAY MATCH INFO UP TOP
-	const homeTeam = teamsInfo[0];
-	const awayTeam = teamsInfo[1];
-
-	createSingleFixtureContainer(
-		fixtureMatchInfoDiv,
-		homeTeam,
-		awayTeam,
-		fixture
-	);
-	displayQuickFixtureInfo(quickInfoData, fixture);
-
-	return data;
-}

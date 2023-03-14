@@ -181,3 +181,21 @@ function displayPlayers(players, playersDiv) {
 		playersDiv.append(playerP);
 	}
 }
+
+function displayFixtureInfo(data) {
+	const { teamsInfo, fixture } = data;
+
+	// DISPLAY MATCH INFO UP TOP
+	const homeTeam = teamsInfo[0];
+	const awayTeam = teamsInfo[1];
+
+	createSingleFixtureContainer(
+		fixtureMatchInfoDiv,
+		homeTeam,
+		awayTeam,
+		fixture
+	);
+	displayQuickFixtureInfo(quickInfoData, fixture);
+
+	return data;
+}
