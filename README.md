@@ -47,4 +47,6 @@ Currently, due to the design of API-Football, we aren't able to obtain lineup in
 <li> Display match statistics when viewing lineup </li>
 <li> Improve Website Visuals </li>
 <li> Edit routes to attain specific objects, instead of all at once </li>
+<li> Investigate why some fixtures have wrong league round </li>
+<li> Create scripts to periodically update fixture information </li>
 </ul>
