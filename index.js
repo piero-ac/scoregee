@@ -134,6 +134,26 @@ app.get(
 	}
 );
 
+app.get(
+	"/football/:league/:season/fixture/:fixtureid/statistics",
+	async (req, res) => {
+		const { fixtureid } = req.params;
+		const options = {
+			method: "GET",
+			url: "https://api-football-v1.p.rapidapi.com/v3/fixtures/statistics",
+			params: { fixture: fixtureid },
+			headers: {
+				"X-RapidAPI-Key": config.RAPID_API_KEY,
+				"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com",
+			},
+		};
+
+		const statisticsResponse = await axios.request(options);
+		const { response: statistics } = statisticsResponse.data;
+		res.json({ statistics });
+	}
+);
+
 app.listen(3000, () => {
 	console.log("LISTENING ON PORT 3000");
 });
