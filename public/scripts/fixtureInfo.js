@@ -95,5 +95,29 @@ fixtureStatisticsPromise
 		return response.json();
 	})
 	.then((data) => {
-		console.log(data.statistics);
+		const { statistics } = data;
+		if (statistics.length === 0) {
+			matchStatisticsContainer.textContent =
+				"Information is not available yet.";
+		} else {
+			// console.log(statistics);
+			const homeTeam = statistics[0];
+			const awayTeam = statistics[1];
+
+			displayStatistics(homeTeam, matchStatisticsContainer);
+			displayStatistics(awayTeam, matchStatisticsContainer);
+		}
 	});
+
+function displayStatistics(objectStats, statsContainer) {
+	const teamHeading = document.createElement("h4");
+	teamHeading.innerText = objectStats.team.name;
+	statsContainer.append(teamHeading);
+	for (let stat of objectStats.statistics) {
+		const { type, value } = stat;
+		const p = document.createElement("p");
+		p.innerText = `${type}: ${value}`;
+		statsContainer.append(p);
+	}
+	console.log(`Done displaying ${objectStats.team.name}'s stats`);
+}
