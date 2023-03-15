@@ -3,6 +3,7 @@ const fixtureLeague = document.querySelector("#fixture-league");
 const fixtureMatchInfoDiv = document.querySelector(".fixture-match-info-div");
 const matchInfoSection = document.querySelector("#match-info-sct");
 const matchLineupContainer = document.querySelector("#match-lineup");
+const matchStatisticsContainer = document.querySelector("#match-statistics");
 const quickInfoDiv = document.querySelector("#quick-info");
 const quickInfoData = document.querySelector("#quick-info-data");
 const leagueHomepageLink = document.querySelector("#league-hp-link");
@@ -21,6 +22,10 @@ const fixtureID = urlParts[urlParts.length - 1];
 
 const fixtureInfoPromise = fetch(
 	`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/info`
+);
+
+const fixtureStatisticsPromise = fetch(
+	`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/statistics`
 );
 
 fixtureInfoPromise
@@ -81,3 +86,14 @@ fixtureInfoPromise
 		}
 	})
 	.catch((err) => console.log(err));
+
+fixtureStatisticsPromise
+	.then((response) => {
+		if (!response.ok) {
+			throw new Error(`HTTP error: ${response.status}`);
+		}
+		return response.json();
+	})
+	.then((data) => {
+		console.log(data.statistics);
+	});
