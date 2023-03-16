@@ -114,7 +114,8 @@ function displayStatistics(objectStats, statsContainer) {
 	teamHeading.innerText = objectStats.team.name;
 	statsContainer.append(teamHeading);
 	for (let stat of objectStats.statistics) {
-		const { type, value } = stat;
+		let { type, value } = stat;
+		value = value === null ? 0 : value;
 		const p = document.createElement("p");
 		p.innerText = `${type}: ${value}`;
 		statsContainer.append(p);
