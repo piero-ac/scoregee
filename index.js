@@ -134,6 +134,97 @@ app.get(
 	}
 );
 
+// Route to obtain league information
+app.get("/football/:league/overview", async (req, res) => {
+	const { league } = req.params;
+	const id = ids[league];
+
+	// Get the league information for the specified league
+	const leagueInfo = await League.findOne({ leagueID: `${id}` });
+	res.json({ leagueInfo });
+});
+
+// Route to obtain league standings for the specific season
+app.get("/football/:league/:season/standings", async (req, res) => {
+	const { league, season } = req.params;
+	const id = ids[league];
+
+	// Get the standings for the specified league and season
+	const standings = await Standing.findOne({
+		leagueID: `${id}`,
+		leagueSeason: `${season}`,
+	});
+
+	// Get the team info for all the teams in the season
+	const { leagueStandings } = standings;
+	const teamIDs = leagueStandings.map((obj) => obj.teamID);
+	const teamsInfo = await Team.find({ teamID: { $in: teamIDs } });
+
+	res.json({ standings, teamsInfo });
+});
+
+// Route to obtain league fixtures for the specific season
+app.get("/football/:league/:season/fixtures", async (req, res) => {
+	const { league, season } = req.params;
+	const id = ids[league];
+
+	// Get the fixture information for the league and season
+	const fixtures = await Fixture.find({
+		"league.leagueID": id,
+		"league.leagueSeason": season,
+	});
+
+	res.json({ fixtures });
+});
+
+// Route to obtain single fixture information
+app.get(
+	"/football/:league/:season/fixture/:fixtureid/info",
+	async (req, res) => {
+		const { league, season, fixtureid } = req.params;
+		const id = ids[league];
+
+		// Get the fixture information for the league and season
+		const fixture = await Fixture.findOne({
+			"league.leagueID": id,
+			"league.leagueSeason": season,
+			"fixture.id": fixtureid,
+		});
+
+		const { teams } = fixture;
+		const homeTeamInfo = await Team.find({ teamID: teams.home.teamID });
+		const awayTeamInfo = await Team.find({ teamID: teams.away.teamID });
+
+		const teamsInfo = [homeTeamInfo[0], awayTeamInfo[0]];
+
+		res.json({ fixture, teamsInfo });
+	}
+);
+
+// Route to obtain the fixture lineup (if available)
+app.get(
+	"/football/:league/:season/fixture/:fixtureid/lineup",
+	async (req, res) => {
+		const { fixtureid } = req.params;
+
+		// Make axios request for lineup
+		const options = {
+			method: "GET",
+			url: "https://api-football-v1.p.rapidapi.com/v3/fixtures/lineups",
+			params: { fixture: fixtureid },
+			headers: {
+				"X-RapidAPI-Key": config.RAPID_API_KEY,
+				"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com",
+			},
+		};
+
+		const lineupResponse = await axios.request(options);
+		const { response: lineup } = lineupResponse.data;
+		res.json({ lineup });
+	}
+);
+
+// Route to obtain the fixture statistics
 app.get(
 	"/football/:league/:season/fixture/:fixtureid/statistics",
 	async (req, res) => {
