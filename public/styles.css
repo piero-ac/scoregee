@@ -81,3 +81,31 @@
     flex-direction: row;
     column-gap: 30px;
 }
+
+#match-statistics {
+    display: flex;
+    flex-direction: row;
+    column-gap: 15px;
+}
+
+.homeTeam-stats .stats{
+    text-align: right;
+}
+
+.stat-type{
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.stat-value {
+    font-size: 1rem;
+}
+
+
+.stats {
+    margin-bottom: 10px;
+}
+.stats p {
+    margin: 0;
+    padding: 0;
+}

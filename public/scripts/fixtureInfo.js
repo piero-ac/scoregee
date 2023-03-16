@@ -3,6 +3,7 @@ const fixtureLeague = document.querySelector("#fixture-league");
 const fixtureMatchInfoDiv = document.querySelector(".fixture-match-info-div");
 const matchInfoSection = document.querySelector("#match-info-sct");
 const matchLineupContainer = document.querySelector("#match-lineup");
+const matchStatisticsContainer = document.querySelector("#match-statistics");
 const quickInfoDiv = document.querySelector("#quick-info");
 const quickInfoData = document.querySelector("#quick-info-data");
 const leagueHomepageLink = document.querySelector("#league-hp-link");
@@ -21,6 +22,10 @@ const fixtureID = urlParts[urlParts.length - 1];
 
 const fixtureInfoPromise = fetch(
 	`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/info`
+);
+
+const fixtureStatisticsPromise = fetch(
+	`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/statistics`
 );
 
 fixtureInfoPromise
@@ -81,3 +86,61 @@ fixtureInfoPromise
 		}
 	})
 	.catch((err) => console.log(err));
+
+fixtureStatisticsPromise
+	.then((response) => {
+		if (!response.ok) {
+			throw new Error(`HTTP error: ${response.status}`);
+		}
+		return response.json();
+	})
+	.then((data) => {
+		const { statistics } = data;
+		if (statistics.length === 0) {
+			matchStatisticsContainer.textContent =
+				"Information is not available yet.";
+		} else {
+			// console.log(statistics);
+			const homeTeam = statistics[0];
+			const awayTeam = statistics[1];
+
+			displayStatistics(homeTeam, matchStatisticsContainer, "home");
+			displayStatistics(awayTeam, matchStatisticsContainer, "away");
+		}
+	});
+
+function displayStatistics(objectStats, statsContainer, type) {
+	const teamStatsDiv = document.createElement("div");
+	if (type === "home") teamStatsDiv.classList.add("homeTeam-stats");
+	else teamStatsDiv.classList.add("awayTeam-stats");
+
+	const teamHeading = document.createElement("h4");
+	teamHeading.innerText = objectStats.team.name;
+	teamStatsDiv.append(teamHeading);
+
+	for (let stat of objectStats.statistics) {
+		const statsDiv = createTeamStatsContainer(stat);
+		teamStatsDiv.append(statsDiv);
+	}
+
+	statsContainer.append(teamStatsDiv);
+	console.log(`Done displaying ${objectStats.team.name}'s stats`);
+}
+
+function createTeamStatsContainer(stat) {
+	const statsDiv = document.createElement("div");
+	statsDiv.classList.add("stats");
+
+	let { type, value } = stat;
+	value = value === null ? 0 : value;
+	const statType = document.createElement("p");
+	statType.classList.add("stat-type");
+	statType.innerText = type;
+
+	const statValue = document.createElement("p");
+	statValue.classList.add("stat-value");
+	statValue.innerText = value;
+
+	statsDiv.append(statType, statValue);
+	return statsDiv;
+}
