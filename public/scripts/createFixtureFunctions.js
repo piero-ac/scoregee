@@ -116,7 +116,7 @@ function displayQuickFixtureInfo(quickInfoDataDiv, fixture) {
 	const time = getLocalTime(dateLong);
 
 	const refereePara = document.createElement("p");
-	refereePara.innerText = referee;
+	refereePara.innerText = referee === "NA" ? "Not Announced" : referee;
 
 	const timePara = document.createElement("p");
 	timePara.innerText = time;
