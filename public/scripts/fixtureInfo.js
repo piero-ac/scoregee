@@ -104,21 +104,43 @@ fixtureStatisticsPromise
 			const homeTeam = statistics[0];
 			const awayTeam = statistics[1];
 
-			displayStatistics(homeTeam, matchStatisticsContainer);
-			displayStatistics(awayTeam, matchStatisticsContainer);
+			displayStatistics(homeTeam, matchStatisticsContainer, "home");
+			displayStatistics(awayTeam, matchStatisticsContainer, "away");
 		}
 	});
 
-function displayStatistics(objectStats, statsContainer) {
+function displayStatistics(objectStats, statsContainer, type) {
+	const teamStatsDiv = document.createElement("div");
+	if (type === "home") teamStatsDiv.classList.add("homeTeam-stats");
+	else teamStatsDiv.classList.add("awayTeam-stats");
+
 	const teamHeading = document.createElement("h4");
 	teamHeading.innerText = objectStats.team.name;
-	statsContainer.append(teamHeading);
+	teamStatsDiv.append(teamHeading);
+
 	for (let stat of objectStats.statistics) {
-		let { type, value } = stat;
-		value = value === null ? 0 : value;
-		const p = document.createElement("p");
-		p.innerText = `${type}: ${value}`;
-		statsContainer.append(p);
+		const statsDiv = createTeamStatsContainer(stat);
+		teamStatsDiv.append(statsDiv);
 	}
+
+	statsContainer.append(teamStatsDiv);
 	console.log(`Done displaying ${objectStats.team.name}'s stats`);
+}
+
+function createTeamStatsContainer(stat) {
+	const statsDiv = document.createElement("div");
+	statsDiv.classList.add("stats");
+
+	let { type, value } = stat;
+	value = value === null ? 0 : value;
+	const statType = document.createElement("p");
+	statType.classList.add("stat-type");
+	statType.innerText = type;
+
+	const statValue = document.createElement("p");
+	statValue.classList.add("stat-value");
+	statValue.innerText = value;
+
+	statsDiv.append(statType, statValue);
+	return statsDiv;
 }
