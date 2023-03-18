@@ -84,6 +84,11 @@ fixtureInfoPromise
 			// Display away team subs
 			displayPlayers(lineup[1].substitutes, awayTeamSubs);
 		}
+
+		return data;
+	})
+	.then((data) => {
+		//document.write(JSON.stringify(data));
 	})
 	.catch((err) => console.log(err));
 
@@ -107,7 +112,13 @@ fixtureStatisticsPromise
 			displayStatistics(homeTeam, matchStatisticsContainer, "home");
 			displayStatistics(awayTeam, matchStatisticsContainer, "away");
 		}
-	});
+
+		return data;
+	})
+	.then((data) => {
+		//document.write(JSON.stringify(data));
+	})
+	.catch((err) => console.log(err));
 
 function displayStatistics(objectStats, statsContainer, type) {
 	const teamStatsDiv = document.createElement("div");
