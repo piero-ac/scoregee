@@ -135,7 +135,7 @@ app.get(
 );
 
 // Route to obtain league information
-app.get("/football/:league/overview", async (req, res) => {
+app.get("/football/:league/:season/overview", async (req, res) => {
 	const { league } = req.params;
 	const id = ids[league];
 
