@@ -1,6 +1,6 @@
 // Creates the containers that will go inside a fixture container
 function createFixtureContainer(fixt, teamsInfo) {
-	console.log("Starting createFixtureContainer");
+	// console.log("Starting createFixtureContainer");
 	const { fixture, teams, goals, score } = fixt;
 	const { home: homeTeamInfo, away: awayTeamInfo } = teams;
 
@@ -17,13 +17,13 @@ function createFixtureContainer(fixt, teamsInfo) {
 
 	fixtureMatchInfoDiv.append(homeTeamInfoDiv, matchInfoDiv, awayTeamInfoDiv);
 
-	console.log("Ending createFixtureContainer");
+	// console.log("Ending createFixtureContainer");
 	return fixtureMatchInfoDiv;
 }
 
 // Creates the container for the team information such as logo and name
 function createTeamInfoDiv(team, type, teamInfoObj) {
-	console.log("Starting createTeamInfoDiv");
+	// console.log("Starting createTeamInfoDiv");
 
 	const teamInfo = teamInfoObj.find((obj) => obj.teamID === team.teamID);
 
@@ -42,13 +42,13 @@ function createTeamInfoDiv(team, type, teamInfoObj) {
 	teamNamePara.innerText = teamInfo.teamName;
 
 	teamInfoDiv.append(teamLogoImg, teamNamePara);
-	console.log("Ending createTeamInfoDiv");
+	// console.log("Ending createTeamInfoDiv");
 	return teamInfoDiv;
 }
 
 // Creates the container for the score, time, and match status
 function createMatchInfoDiv(fixture, goals, score, addfixtureLink = false) {
-	console.log("Starting createMatchInfoDiv");
+	// console.log("Starting createMatchInfoDiv");
 	const matchStatusLong = fixture.status.long;
 	const matchStatusShort = fixture.status.short;
 	const fixtureid = fixture.id;
@@ -93,7 +93,7 @@ function createMatchInfoDiv(fixture, goals, score, addfixtureLink = false) {
 		matchInfoDiv.append(datePara, timePara, statusPara);
 	}
 
-	console.log("Ending createMatchInfoDiv");
+	// console.log("Ending createMatchInfoDiv");
 	return matchInfoDiv;
 }
 
@@ -148,7 +148,7 @@ function createSingleFixtureContainer(
 }
 
 function createTeamFixtureInfo(teamInfo, type) {
-	console.log("Starting createTeamFixtureInfo");
+	// console.log("Starting createTeamFixtureInfo");
 
 	const teamInfoDiv = document.createElement("div");
 	if (type === "home") {
@@ -165,7 +165,7 @@ function createTeamFixtureInfo(teamInfo, type) {
 	teamNamePara.innerText = teamInfo.teamName;
 
 	teamInfoDiv.append(teamLogoImg, teamNamePara);
-	console.log("Ending createTeamFixtureInfo");
+	// console.log("Ending createTeamFixtureInfo");
 	return teamInfoDiv;
 }
 
