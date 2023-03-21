@@ -35,8 +35,6 @@ async function getLeagueInfo() {
 			console.error(`Could not get league information: ${error}`);
 		});
 
-	displayLeagueInfo(leagueInfo);
-
 	// obtain the league standings
 	const { standings: leagueStandings, teamsInfo: leagueTeamsInfo } =
 		await fetch(`/football/${leagueNameShort}/${leagueSeason}/standings`)
@@ -49,7 +47,7 @@ async function getLeagueInfo() {
 					`Could not get league standings and teams info: ${error}`
 				);
 			});
-
+	displayLeagueInfo(leagueInfo, leagueStandings);
 	displayLeagueStandings(rankingsContainer, leagueStandings, leagueTeamsInfo);
 
 	// obtain the league fixtures
@@ -75,9 +73,9 @@ async function getLeagueInfo() {
 	);
 }
 
-function displayLeagueInfo(data) {
+function displayLeagueInfo(leagueInfo, standings) {
 	// Display the League Name and Season
-	leagueNameHeading.innerText = data.leagueInfo.leagueName;
-	const season = parseInt(data.standings.leagueSeason);
+	leagueNameHeading.innerText = leagueInfo.leagueInfo.leagueName;
+	const season = parseInt(standings.leagueSeason);
 	leagueSeasonHeading.innerText = `${season}-${season + 1} Season`;
 }
