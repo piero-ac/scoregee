@@ -101,22 +101,41 @@ async function getFixtureInfo() {
 			console.error(`Could not get league information: ${error}`);
 		});
 
-	const { statistics: fixtureStatistics } = await fetch(
-		`/football/{leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/statistics`
-	)
-		.then((response) => {
-			fixtureStatisticsAvailable = true;
-			return response.json();
-		})
-		.catch((error) => {
-			fixtureStatisticsAvailable = false;
-			console.error(`Could not get league information: ${error}`);
-		});
+	let fixtureStatisticsCache = localStorage.getItem(`${fixtureID}-stats`);
+	if (fixtureStatisticsCache) {
+		fixtureStatisticsAvailable = true;
+		const fixtureStatistics = JSON.parse(fixtureStatisticsCache);
+		displayStatisticsStatus(fixtureStatistics);
+		console.log("Using cached information for statistics");
+	} else {
+		// Fetch statistics data from backend
+		const { statistics: fixtureStatistics } = await fetch(
+			`/football/{leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/statistics`
+		)
+			.then((response) => {
+				fixtureStatisticsAvailable = true;
+				return response.json();
+			})
+			.catch((error) => {
+				fixtureStatisticsAvailable = false;
+				console.error(`Could not get league information: ${error}`);
+			});
+
+		// cache statistics in localStorage
+		if (fixtureStatisticsAvailable) {
+			localStorage.setItem(
+				`${fixtureID}-stats`,
+				JSON.stringify(fixtureStatistics)
+			);
+			console.log("No cached information for statistics found, caching now");
+		}
+
+		displayStatisticsStatus(fixtureStatistics);
+	}
 
 	displayFixtureTitle(leagueInfo, teamsInfo);
 	displayFixtureInfo({ teamsInfo, fixture });
 	displayTeamCoaches(fixtureLineup);
-	displayStatisticsStatus(fixtureStatistics);
 }
 
 function displayFixtureTitle(leagueInfo, teamsInfo) {
