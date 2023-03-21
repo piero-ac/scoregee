@@ -89,17 +89,35 @@ async function getFixtureInfo() {
 			console.error(`Could not get league fixture and teams info: ${error}`);
 		});
 
-	const { lineup: fixtureLineup } = await fetch(
-		`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/lineup`
-	)
-		.then((response) => {
-			fixtureLineupsAvailable = true;
-			return response.json();
-		})
-		.catch((error) => {
-			fixtureLineupsAvailable = false;
-			console.error(`Could not get league information: ${error}`);
-		});
+	let fixtureLineupCache = localStorage.getItem(`${fixtureID}-lineup`);
+	if (fixtureLineupCache) {
+		fixtureLineupsAvailable = true;
+		const fixtureLineup = JSON.parse(fixtureLineupCache);
+		displayTeamCoaches(fixtureLineup);
+		console.log("Using cached information for lineup");
+	} else {
+		const { lineup: fixtureLineup } = await fetch(
+			`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/lineup`
+		)
+			.then((response) => {
+				fixtureLineupsAvailable = true;
+				return response.json();
+			})
+			.catch((error) => {
+				fixtureLineupsAvailable = false;
+				console.error(`Could not get league information: ${error}`);
+			});
+		// cache statistics in localStorage
+		if (fixtureLineupsAvailable) {
+			localStorage.setItem(
+				`${fixtureID}-lineup`,
+				JSON.stringify(fixtureLineup)
+			);
+			console.log("No cached information for lineups found, caching now");
+		}
+
+		displayTeamCoaches(fixtureLineup);
+	}
 
 	let fixtureStatisticsCache = localStorage.getItem(`${fixtureID}-stats`);
 	if (fixtureStatisticsCache) {
@@ -135,7 +153,6 @@ async function getFixtureInfo() {
 
 	displayFixtureTitle(leagueInfo, teamsInfo);
 	displayFixtureInfo({ teamsInfo, fixture });
-	displayTeamCoaches(fixtureLineup);
 }
 
 function displayFixtureTitle(leagueInfo, teamsInfo) {
