@@ -15,46 +15,67 @@ const urlParts = url.split("/");
 const leagueNameShort = urlParts[urlParts.length - 2];
 const leagueSeason = urlParts[urlParts.length - 1];
 
-let teamInfoObj;
-let fixturesObj;
+let leagueInfoAvailable = false;
+let leagueFixturesAvailable = false;
+let leagueStandingsAndInfoAvailable = false;
 
-// make request for data to backend
-const responsePromise = fetch(
-	`/football/${leagueNameShort}/${leagueSeason}/overview`
-);
+getLeagueInfo();
 
-responsePromise
-	.then((response) => {
-		if (!response.ok) {
-			throw new Error(`HTTP error: ${response.status}`);
-		}
-		return response.json();
-	})
-	.then((data) => {
-		// Display the League Name and Season
-		leagueNameHeading.innerText = data.leagueInfo.leagueName;
-		const season = parseInt(data.standings.leagueSeason);
-		leagueSeasonHeading.innerText = `${season}-${season + 1} Season`;
-		return data;
-	})
-	.then((data) => {
-		const { standings, teamsInfo } = data;
-		displayLeagueStandings(rankingsContainer, standings, teamsInfo);
-		return data;
-	})
-	.then((data) => {
-		const { fixtures, teamsInfo } = data;
-		displayFixtureDates(
-			fixtureDatesDiv,
-			fixtures,
-			teamsInfo,
-			leagueNameShort,
-			leagueSeason,
-			fixtureDisplayDateHeading,
-			fixturesForDateDiv
-		);
-		return data;
-	})
-	.catch((error) => {
-		console.error(`Could not get league information: ${error}`);
-	});
+async function getLeagueInfo() {
+	// obtain the league information
+	const leagueInfo = await fetch(
+		`/football/${leagueNameShort}/${leagueSeason}/overview`
+	)
+		.then((response) => {
+			leagueInfoAvailable = true;
+			return response.json();
+		})
+		.catch((error) => {
+			leagueInfoAvailable = false;
+			console.error(`Could not get league information: ${error}`);
+		});
+
+	// obtain the league standings
+	const { standings: leagueStandings, teamsInfo: leagueTeamsInfo } =
+		await fetch(`/football/${leagueNameShort}/${leagueSeason}/standings`)
+			.then((response) => {
+				leagueStandingsAndInfoAvailable = true;
+				return response.json();
+			})
+			.catch((error) => {
+				console.error(
+					`Could not get league standings and teams info: ${error}`
+				);
+			});
+	displayLeagueInfo(leagueInfo, leagueStandings);
+	displayLeagueStandings(rankingsContainer, leagueStandings, leagueTeamsInfo);
+
+	// obtain the league fixtures
+	const { fixtures: leagueFixtures } = await fetch(
+		`/football/${leagueNameShort}/${leagueSeason}/fixtures`
+	)
+		.then((response) => {
+			leagueFixturesAvailable = true;
+			return response.json();
+		})
+		.catch((error) => {
+			console.error(`Could not get league fixtures: ${error}`);
+		});
+
+	displayFixtureDates(
+		fixtureDatesDiv,
+		leagueFixtures,
+		leagueTeamsInfo,
+		leagueNameShort,
+		leagueSeason,
+		fixtureDisplayDateHeading,
+		fixturesForDateDiv
+	);
+}
+
+function displayLeagueInfo(leagueInfo, standings) {
+	// Display the League Name and Season
+	leagueNameHeading.innerText = leagueInfo.leagueInfo.leagueName;
+	const season = parseInt(standings.leagueSeason);
+	leagueSeasonHeading.innerText = `${season}-${season + 1} Season`;
+}
