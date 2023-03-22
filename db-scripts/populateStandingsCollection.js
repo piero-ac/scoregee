@@ -86,8 +86,8 @@ const leagues = ["39", "140", "61", "135", "78"];
 // 	}
 // }
 
-const standings = await getLeagueStandings("39", "2022");
-populateStandingsCollection(standings);
+// const standings = await getLeagueStandings("39", "2022");
+// populateStandingsCollection(standings);
 
 // Get the Standings for the premier league - DONE
 // const eplStandings = await getLeagueStandings('39', '2022');
