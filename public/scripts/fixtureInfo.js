@@ -107,7 +107,7 @@ async function getFixtureInfo() {
 				fixtureLineupsAvailable = false;
 				console.error(`Could not get league information: ${error}`);
 			});
-		// cache statistics in localStorage
+		// cache fixture lineup in localStorage
 		if (fixtureLineupsAvailable) {
 			localStorage.setItem(
 				`${fixtureID}-lineup`,
