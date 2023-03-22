@@ -39,7 +39,6 @@ function parseStandingsData(leagueStdg) {
 
 		leagueStandings.push({ teamID, teamPoints, teamRanking });
 	}
-
 	return { leagueID, leagueSeason, leagueStandings };
 }
 
@@ -70,8 +69,11 @@ async function updateStandingsCollection(standings) {
 			.catch((err) => console.log("Error saving standings", err));
 	} else {
 		// Update only the league standings value, not the entire document
-		Standing.updateOne({ leagueID: leagueID, leagueSeason: leagueSeason })
-			.set("leagueStandings", leagueStandings)
+		Standing.updateOne(
+			{ leagueID: leagueID, leagueSeason: leagueSeason },
+			{ $set: { leagueStandings: leagueStandings } }
+		)
+			.exec()
 			.then(() =>
 				console.log(
 					`Updated league standings for leagueid: ${leagueID} and season: ${leagueSeason}`
@@ -83,74 +85,7 @@ async function updateStandingsCollection(standings) {
 
 const leagues = ["39", "140", "61", "135", "78"];
 
-// Get the standings for top 5 leagues for the past 4 years
-for (let l of leagues) {
-	const standings = await getLeagueStandings(l, "2022");
-	updateStandingsCollection(standings);
-}
-
-//42 (63), 50 (58), 33 (39), 47 (45), 34, 40, 36, 51, 55
-// Get the Standings for the premier league - DONE
-// const eplStandings = await getLeagueStandings('39', '2022');
-// const premierLeagueStandings = new Standing(eplStandings);
-// premierLeagueStandings.save()
-// .then((data) => {
-//     console.log("IT WORKED");
-//     console.log(data);
-// })
-// .catch((err) => {
-//     console.log("OH NO ERROR");
-//     console.log(err);
-// })
-
-// League Name: Serie A - ID: 135 - DONE
-// const itDiv1Standings = await getLeagueStandings('135', '2022');
-// const serieAStandings = new Standing(itDiv1Standings);
-// serieAStandings.save()
-// .then((data) => {
-//     console.log("IT WORKED");
-//     console.log(data);
-// })
-// .catch((err) => {
-//     console.log("OH NO ERROR");
-//     console.log(err);
-// })
-
-// League Name: Ligue 1 - ID: 61 - DONE
-// const frDiv1Standings = await getLeagueStandings('61', '2022');
-// const ligue1Standings = new Standing(frDiv1Standings);
-// ligue1Standings.save()
-// .then((data) => {
-//     console.log("IT WORKED");
-//     console.log(data);
-// })
-// .catch((err) => {
-//     console.log("OH NO ERROR");
-//     console.log(err);
-// })
-
-// League Name: Bundesliga - ID: 78 - DONE
-// const geDiv1Standings = await getLeagueStandings('78', '2022');
-// const bundesligaStandings = new Standing(geDiv1Standings);
-// bundesligaStandings.save()
-// .then((data) => {
-//     console.log("IT WORKED");
-//     console.log(data);
-// })
-// .catch((err) => {
-//     console.log("OH NO ERROR");
-//     console.log(err);
-// })
-
-// League Name: La Liga - ID: 140 - DONE
-// const spDiv1Standings = await getLeagueStandings('140', '2022');
-// const spainStandings = new Standing(spDiv1Standings);
-// spainStandings.save()
-// .then((data) => {
-//     console.log("IT WORKED");
-//     console.log(data);
-// })
-// .catch((err) => {
-//     console.log("OH NO ERROR");
-//     console.log(err);
-// })
+// for (let l of leagues) {
+// 	const standings = await getLeagueStandings(l, "2022");
+// 	updateStandingsCollection(standings);
+// }
