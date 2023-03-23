@@ -43,9 +43,6 @@ Currently, due to the design of API-Football, we aren't able to obtain lineup in
 ### To-Do
 
 <ul>
-<li> Implement client-side caching of lineup information to reduce API calls </li>
 <li> Improve Website Visuals </li>
 <li> Create scripts to periodically update fixture information </li>
-<li> Edit client side code to retrive data separately using new routes</li>
-<li> Move from displaying matchdate fixtures, to fixtures by month</li>
 </ul>

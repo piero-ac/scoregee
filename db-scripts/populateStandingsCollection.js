@@ -79,12 +79,15 @@ const season = ["2022", "2021", "2020", "2019"];
 const leagues = ["39", "140", "61", "135", "78"];
 
 // Get the standings for top 5 leagues for the past 4 years
-for (let l of leagues) {
-	for (let s of season) {
-		const standings = await getLeagueStandings(l, s);
-		populateStandingsCollection(standings);
-	}
-}
+// for (let l of leagues) {
+// 	for (let s of season) {
+// 		const standings = await getLeagueStandings(l, s);
+// 		populateStandingsCollection(standings);
+// 	}
+// }
+
+// const standings = await getLeagueStandings("39", "2022");
+// populateStandingsCollection(standings);
 
 // Get the Standings for the premier league - DONE
 // const eplStandings = await getLeagueStandings('39', '2022');
