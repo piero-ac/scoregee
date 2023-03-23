@@ -6,41 +6,56 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title id="match-info-title">Loading...</title>
 		<link rel="stylesheet" href="/styles.css" />
+		<link rel="stylesheet" href="/styling.css" />
 	</head>
 	<body>
+		<h1>Welcome to Scoregee!</h1>
+		<div class="navbar">
+			<a class="active" href="projecthp.html">Home</a>
+			<a href="league.html">Soccer Scores</a>
+			<a href="scoregeecontact.html">Contact</a>
+			<a href="scoregeeabout.html">About</a>
+			<a href="faq.html">Faq</a>
+		</div>
 		<a id="league-hp-link" href="">Go Back</a>
 		<header>
 			<h1 id="fixture-league">League Name - League Country</h1>
 			<div class="fixture-match-info-div"></div>
 		</header>
 		<section id="match-info-sct">
-			<div id="quick-info">
-				<h3>Info</h3>
-				<div id="quick-info-data"></div>
-			</div>
-			<h3>Lineups</h3>
-			<div id="match-lineup">
-				<div id="homeTeam-lineup">
-					<p id="homeTeam-coach"></p>
-					<div id="homeTeam-starters">
-						<h3>Starters</h3>
+			<details>
+				<summary><h3 class="dropdown-heading">Info</h3></summary>
+				<div id="quick-info">
+					<div id="quick-info-data"></div>
+				</div>
+			</details>
+			<details>
+				<summary><h3 class="dropdown-heading">Lineups</h3></summary>
+				<div id="match-lineup">
+					<div id="homeTeam-lineup">
+						<p id="homeTeam-coach"></p>
+						<div id="homeTeam-starters">
+							<h3>Starters</h3>
+						</div>
+						<div id="homeTeam-subs">
+							<h3>Substitutes</h3>
+						</div>
 					</div>
-					<div id="homeTeam-subs">
-						<h3>Substitutes</h3>
+					<div id="awayTeam-lineup">
+						<p id="awayTeam-coach"></p>
+						<div id="awayTeam-starters">
+							<h3>Starters</h3>
+						</div>
+						<div id="awayTeam-subs">
+							<h3>Substitutes</h3>
+						</div>
 					</div>
 				</div>
-				<div id="awayTeam-lineup">
-					<p id="awayTeam-coach"></p>
-					<div id="awayTeam-starters">
-						<h3>Starters</h3>
-					</div>
-					<div id="awayTeam-subs">
-						<h3>Substitutes</h3>
-					</div>
-				</div>
-			</div>
-			<h3>Statistics</h3>
-			<div id="match-statistics"></div>
+			</details>
+			<details>
+				<summary><h3 class="dropdown-heading">Statistics</h3></summary>
+				<div id="match-statistics"></div>
+			</details>
 		</section>
 		<script src="/scripts/createFixtureFunctions.js"></script>
 		<script src="/scripts/fixtureInfo.js"></script>
