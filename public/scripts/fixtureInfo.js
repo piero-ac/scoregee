@@ -24,6 +24,10 @@ let leagueInfoAvailable = false;
 let leagueFixtureAvailable = false;
 let fixtureLineupsAvailable = false;
 let fixtureStatisticsAvailable = false;
+const ONGOING_LINEUP_TTL = 900000; // for ongoing matches, lineup caches only available for 15 minutes
+const ONGOING_STATS_TTL = 60000; // for ongoing matches, statistics caches only available for 1 minute
+const FINISHED_LINEUP_TTL = 86400000; // for finished matches, lineup caches only available for 24 hours
+const FINISHED_STATS_TTL = 86400000; // for finished matches, statistics caches only available for 24 minutes
 
 getFixtureInfo();
 
@@ -89,11 +93,10 @@ async function getFixtureInfo() {
 			console.error(`Could not get league fixture and teams info: ${error}`);
 		});
 
-	let fixtureLineupCache = localStorage.getItem(`${fixtureID}-lineup`);
+	let fixtureLineupCache = getCacheInformationWithExpiry(`${fixtureID}-lineup`);
 	if (fixtureLineupCache) {
 		fixtureLineupsAvailable = true;
-		const fixtureLineup = JSON.parse(fixtureLineupCache);
-		displayTeamCoaches(fixtureLineup);
+		displayTeamCoaches(fixtureLineupCache);
 		console.log("Using cached information for lineup");
 	} else {
 		const { lineup: fixtureLineup } = await fetch(
@@ -107,23 +110,32 @@ async function getFixtureInfo() {
 				fixtureLineupsAvailable = false;
 				console.error(`Could not get league information: ${error}`);
 			});
-		// cache fixture lineup in localStorage
 		if (fixtureLineupsAvailable) {
-			localStorage.setItem(
-				`${fixtureID}-lineup`,
-				JSON.stringify(fixtureLineup)
-			);
+			if (fixture.fixture.status.short === "FT") {
+				setCacheInformationWithExpiry(
+					`${fixtureID}-lineup`,
+					fixtureLineup,
+					FINISHED_LINEUP_TTL
+				);
+			} else {
+				setCacheInformationWithExpiry(
+					`${fixtureID}-lineup`,
+					fixtureLineup,
+					ONGOING_LINEUP_TTL
+				);
+			}
+
 			console.log("No cached information for lineups found, caching now");
 		}
-
 		displayTeamCoaches(fixtureLineup);
 	}
 
-	let fixtureStatisticsCache = localStorage.getItem(`${fixtureID}-stats`);
+	let fixtureStatisticsCache = getCacheInformationWithExpiry(
+		`${fixtureID}-stats`
+	);
 	if (fixtureStatisticsCache) {
 		fixtureStatisticsAvailable = true;
-		const fixtureStatistics = JSON.parse(fixtureStatisticsCache);
-		displayStatisticsStatus(fixtureStatistics);
+		displayStatisticsStatus(fixtureStatisticsCache);
 		console.log("Using cached information for statistics");
 	} else {
 		// Fetch statistics data from backend
@@ -141,10 +153,20 @@ async function getFixtureInfo() {
 
 		// cache statistics in localStorage
 		if (fixtureStatisticsAvailable) {
-			localStorage.setItem(
-				`${fixtureID}-stats`,
-				JSON.stringify(fixtureStatistics)
-			);
+			if (fixture.fixture.status.short === "FT") {
+				setCacheInformationWithExpiry(
+					`${fixtureID}-stats`,
+					fixtureStatistics,
+					FINISHED_STATS_TTL
+				);
+			} else {
+				setCacheInformationWithExpiry(
+					`${fixtureID}-stats`,
+					fixtureStatistics,
+					ONGOING_STATS_TTL
+				);
+			}
+
 			console.log("No cached information for statistics found, caching now");
 		}
 
@@ -153,6 +175,36 @@ async function getFixtureInfo() {
 
 	displayFixtureTitle(leagueInfo, teamsInfo);
 	displayFixtureInfo({ teamsInfo, fixture });
+}
+
+function setCacheInformationWithExpiry(key, value, ttl) {
+	const now = new Date();
+
+	const item = {
+		value: value,
+		expiry: now.getTime() + ttl,
+	};
+
+	localStorage.setItem(key, JSON.stringify(item));
+}
+
+function getCacheInformationWithExpiry(key) {
+	const itemStr = localStorage.getItem(key);
+	// if the item doesn't exist, return null
+	if (!itemStr) {
+		return null;
+	}
+	const item = JSON.parse(itemStr);
+	const now = new Date();
+	// compare the expiry time of the item with the current time
+	if (now.getTime() > item.expiry) {
+		// If the item is expired, delete the item from storage
+		// and return null
+		localStorage.removeItem(key);
+		console.log("Cache information outdate, removing cache");
+		return null;
+	}
+	return item.value;
 }
 
 function displayFixtureTitle(leagueInfo, teamsInfo) {
