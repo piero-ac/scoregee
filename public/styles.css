@@ -39,7 +39,7 @@
 }
 
 .fixture-match-info-div {
-    border: 1px solid black;
+    border: 1px solid #262626;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -47,6 +47,7 @@
     height: 200px;
     width: 500px;
     column-gap: 30px;
+    
 }
 
 .fixture-match-info-div img {
@@ -55,7 +56,7 @@
 }
 
 .team {
-    border: 2px solid red;
+    border: 2px solid #262626;
     text-align: center;
     width: 100px;
     height: 140px;
@@ -68,24 +69,36 @@
 #match-info-sct {
     display: flex;
     flex-direction: column;
+    width:900px;
+    border:1px solid #262626;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #quick-info div {
     display: flex;
     flex-direction: row;
     column-gap: 15px;
+    width:900px;
+    justify-content: center;
+    align-items: center;
+    height:0;
 }
 
 #match-lineup {
     display: flex;
     flex-direction: row;
     column-gap: 30px;
+    justify-content: center;
+    align-items: center;
 }
 
 #match-statistics {
     display: flex;
     flex-direction: row;
     column-gap: 15px;
+    justify-content: center;
+    align-items: center;
 }
 
 .homeTeam-stats .stats{
@@ -109,3 +122,28 @@
     margin: 0;
     padding: 0;
 }
+
+.dropdown-heading{
+    display: inline-block ;
+}
+
+h3 {
+    text-align: center;
+    vertical-align: middle;
+    line-height: 90px;
+}
+
+header {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+body {
+    background: #262626;
+    color: white;
+  }
