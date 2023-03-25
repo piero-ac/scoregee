@@ -1,18 +1,12 @@
-// Displays the rankings for the league
-function displayLeagueStandings(standingsCont, standings, teamsInfo) {
+// Returns a standings array containing the team name, their rankings, and points
+function mapTeamsForLeagueStandings(standings, teamsInfo){
+	const leagueStandings = []; 
 	for (let team of standings.leagueStandings) {
-		const { teamID, teamPoints, teamRanking } = team;
-
-		// find the obj with matching teamID
-		const { teamName, teamCode } = teamsInfo.find(
-			(obj) => teamID == obj.teamID
-		);
-
-		//Create the paragraph element
-		const p = document.createElement("p");
-		p.innerText = `${teamRanking}. ${teamName} (${teamCode}) - ${teamPoints}`;
-		standingsCont.appendChild(p);
+		// find the team name based on the teamID that matches
+		const { teamName, teamCode } = teamsInfo.find((obj) => team.teamID == obj.teamID);
+		leagueStandings.push({teamName, teamCode, team});
 	}
+	return leagueStandings;
 }
 
 // Creates the buttons that query the fixtures for the matchdate
