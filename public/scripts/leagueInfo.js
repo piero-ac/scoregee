@@ -2,7 +2,6 @@ const leagueNameHeading = document.querySelector("#leagueName-hd");
 const leagueSeasonHeading = document.querySelector("#leagueSeason-hd");
 const rankingsHeading = document.querySelector("#rankings-hd");
 const rankingsContainer = document.querySelector("#rankings-ctn");
-// const viewFixturesLink = document.querySelector("#viewfixtures");
 const fixtureDatesDiv = document.querySelector("#fixture-dates-div");
 const fixturesForDateDiv = document.querySelector("#fixtures-for-date");
 const fixtureDisplayDateHeading = document.querySelector(
@@ -21,7 +20,7 @@ let leagueStandingsAndInfoAvailable = false;
 
 // Import standings functions
 import { displayLeagueStandings, mapTeamsForLeagueStandings } from "./displayStandings.js";
-
+import { displayLeagueFixtures, linkFixturesToMDButtons } from "./displayFixtures.js";
 getLeagueInfo();
 
 async function getLeagueInfo() {
@@ -68,15 +67,16 @@ async function getLeagueInfo() {
 	displayLeagueInfo(leagueInfo, leagueStandings);
 	displayLeagueStandings(mappedLeagueStandings, rankingsContainer);
 
-	displayFixtureDates(
+	displayLeagueFixtures(
 		fixtureDatesDiv,
 		leagueFixtures,
-		leagueTeamsInfo,
 		leagueNameShort,
-		leagueSeason,
-		fixtureDisplayDateHeading,
-		fixturesForDateDiv
+		leagueSeason
 	);
+	
+	const mdButtons = document.querySelectorAll(".mdButton");
+	// console.log(mdButtons);
+	linkFixturesToMDButtons(mdButtons, fixtureDisplayDateHeading, fixturesForDateDiv, leagueFixtures, leagueTeamsInfo);
 }
 
 function displayLeagueInfo(leagueInfo, standings) {
