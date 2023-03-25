@@ -47,8 +47,8 @@ async function getLeagueInfo() {
 					`Could not get league standings and teams info: ${error}`
 				);
 			});
-	displayLeagueInfo(leagueInfo, leagueStandings);
-	displayLeagueStandings(rankingsContainer, leagueStandings, leagueTeamsInfo);
+	
+	const mappedLeagueStandings = mapTeamsForLeagueStandings(leagueStandings, leagueTeamsInfo);
 
 	// obtain the league fixtures
 	const { fixtures: leagueFixtures } = await fetch(
@@ -61,6 +61,9 @@ async function getLeagueInfo() {
 		.catch((error) => {
 			console.error(`Could not get league fixtures: ${error}`);
 		});
+
+	displayLeagueInfo(leagueInfo, leagueStandings);
+	displayLeagueStandings(mappedLeagueStandings);
 
 	displayFixtureDates(
 		fixtureDatesDiv,
@@ -78,4 +81,16 @@ function displayLeagueInfo(leagueInfo, standings) {
 	leagueNameHeading.innerText = leagueInfo.leagueInfo.leagueName;
 	const season = parseInt(standings.leagueSeason);
 	leagueSeasonHeading.innerText = `${season}-${season + 1} Season`;
+}
+
+// Displays the rankings for the league
+function displayLeagueStandings(leagueStandings) {
+	for(let team of leagueStandings){
+		const { teamID, teamPoints, teamRanking } = team.team;
+
+		//Create the paragraph element to add to the league standings container
+		const p = document.createElement("p");
+		p.innerText = `${teamRanking}. ${team.teamName} (${team.teamCode}) - ${teamPoints}`;
+		rankingsContainer.appendChild(p);
+	}
 }
