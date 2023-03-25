@@ -1,16 +1,5 @@
-// Returns a standings array containing the team name, their rankings, and points
-function mapTeamsForLeagueStandings(standings, teamsInfo){
-	const leagueStandings = []; 
-	for (let team of standings.leagueStandings) {
-		// find the team name based on the teamID that matches
-		const { teamName, teamCode } = teamsInfo.find((obj) => team.teamID == obj.teamID);
-		leagueStandings.push({teamName, teamCode, team});
-	}
-	return leagueStandings;
-}
-
 // Creates the buttons that query the fixtures for the matchdate
-function displayFixtureDates(
+export function displayFixtureDates(
 	fixtureDatesDiv,
 	fixtures,
 	teamsInfo,
@@ -48,7 +37,7 @@ function displayFixtureDates(
 	}
 }
 
-function displayMatchdateFixtures(
+export function displayMatchdateFixtures(
 	fixtureMatchdateHeading,
 	fixtureMatchdateCont,
 	fixturesObj,
