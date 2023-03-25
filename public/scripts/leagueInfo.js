@@ -19,6 +19,9 @@ let leagueInfoAvailable = false;
 let leagueFixturesAvailable = false;
 let leagueStandingsAndInfoAvailable = false;
 
+// Import standings functions
+import { displayLeagueStandings, mapTeamsForLeagueStandings } from "./displayStandings.js";
+
 getLeagueInfo();
 
 async function getLeagueInfo() {
@@ -63,7 +66,7 @@ async function getLeagueInfo() {
 		});
 
 	displayLeagueInfo(leagueInfo, leagueStandings);
-	displayLeagueStandings(mappedLeagueStandings);
+	displayLeagueStandings(mappedLeagueStandings, rankingsContainer);
 
 	displayFixtureDates(
 		fixtureDatesDiv,
@@ -81,16 +84,4 @@ function displayLeagueInfo(leagueInfo, standings) {
 	leagueNameHeading.innerText = leagueInfo.leagueInfo.leagueName;
 	const season = parseInt(standings.leagueSeason);
 	leagueSeasonHeading.innerText = `${season}-${season + 1} Season`;
-}
-
-// Displays the rankings for the league
-function displayLeagueStandings(leagueStandings) {
-	for(let team of leagueStandings){
-		const { teamID, teamPoints, teamRanking } = team.team;
-
-		//Create the paragraph element to add to the league standings container
-		const p = document.createElement("p");
-		p.innerText = `${teamRanking}. ${team.teamName} (${team.teamCode}) - ${teamPoints}`;
-		rankingsContainer.appendChild(p);
-	}
 }
