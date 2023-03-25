@@ -60,35 +60,6 @@ app.get("/football/:league/:season", (req, res) => {
 	res.sendFile(__dirname + "/public/league.html");
 });
 
-// Sends the data containing league information for the season
-// app.get("/football/:league/:season/overview", async (req, res) => {
-// 	const { league, season } = req.params;
-// 	const id = ids[league];
-
-// 	// Get the league information for the specified league
-// 	const leagueInfo = await League.findOne({ leagueID: `${id}` });
-
-// 	// Get the standings for the specified league and season
-// 	const standings = await Standing.findOne({
-// 		leagueID: `${id}`,
-// 		leagueSeason: `${season}`,
-// 	});
-
-// 	// Get the team info for all the teams in the season
-// 	const { leagueStandings } = standings;
-// 	const teamIDs = leagueStandings.map((obj) => obj.teamID);
-// 	const teamsInfo = await Team.find({ teamID: { $in: teamIDs } });
-
-// 	// Get the fixture information for the league and season
-// 	const fixtures = await Fixture.find({
-// 		"league.leagueID": id,
-// 		"league.leagueSeason": season,
-// 	});
-
-// 	// Send an object containing the league standings and their corresponding teams
-// 	res.json({ leagueInfo, standings, teamsInfo, fixtures });
-// });
-
 // Sends the html file for displaying the fixture information
 app.get("/football/:league/:season/fixture/:fixtureid", (req, res) => {
 	res.sendFile(__dirname + "/public/matchinfo.html");
