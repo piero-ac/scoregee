@@ -2,7 +2,6 @@ const leagueNameHeading = document.querySelector("#leagueName-hd");
 const leagueSeasonHeading = document.querySelector("#leagueSeason-hd");
 const rankingsHeading = document.querySelector("#rankings-hd");
 const rankingsContainer = document.querySelector("#rankings-ctn");
-// const viewFixturesLink = document.querySelector("#viewfixtures");
 const fixtureDatesDiv = document.querySelector("#fixture-dates-div");
 const fixturesForDateDiv = document.querySelector("#fixtures-for-date");
 const fixtureDisplayDateHeading = document.querySelector(
@@ -19,6 +18,9 @@ let leagueInfoAvailable = false;
 let leagueFixturesAvailable = false;
 let leagueStandingsAndInfoAvailable = false;
 
+// Import standings functions
+import { displayLeagueStandings, mapTeamsForLeagueStandings } from "./displayStandings.js";
+import { displayLeagueFixtures, linkFixturesToMDButtons } from "./displayFixtures.js";
 getLeagueInfo();
 
 async function getLeagueInfo() {
@@ -47,8 +49,8 @@ async function getLeagueInfo() {
 					`Could not get league standings and teams info: ${error}`
 				);
 			});
-	displayLeagueInfo(leagueInfo, leagueStandings);
-	displayLeagueStandings(rankingsContainer, leagueStandings, leagueTeamsInfo);
+	
+	const mappedLeagueStandings = mapTeamsForLeagueStandings(leagueStandings, leagueTeamsInfo);
 
 	// obtain the league fixtures
 	const { fixtures: leagueFixtures } = await fetch(
@@ -62,15 +64,19 @@ async function getLeagueInfo() {
 			console.error(`Could not get league fixtures: ${error}`);
 		});
 
-	displayFixtureDates(
+	displayLeagueInfo(leagueInfo, leagueStandings);
+	displayLeagueStandings(mappedLeagueStandings, rankingsContainer);
+
+	displayLeagueFixtures(
 		fixtureDatesDiv,
 		leagueFixtures,
-		leagueTeamsInfo,
 		leagueNameShort,
-		leagueSeason,
-		fixtureDisplayDateHeading,
-		fixturesForDateDiv
+		leagueSeason
 	);
+	
+	const mdButtons = document.querySelectorAll(".mdButton");
+	// console.log(mdButtons);
+	linkFixturesToMDButtons(mdButtons, fixtureDisplayDateHeading, fixturesForDateDiv, leagueFixtures, leagueTeamsInfo);
 }
 
 function displayLeagueInfo(leagueInfo, standings) {

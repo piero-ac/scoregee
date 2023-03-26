@@ -1,22 +1,5 @@
-// Displays the rankings for the league
-function displayLeagueStandings(standingsCont, standings, teamsInfo) {
-	for (let team of standings.leagueStandings) {
-		const { teamID, teamPoints, teamRanking } = team;
-
-		// find the obj with matching teamID
-		const { teamName, teamCode } = teamsInfo.find(
-			(obj) => teamID == obj.teamID
-		);
-
-		//Create the paragraph element
-		const p = document.createElement("p");
-		p.innerText = `${teamRanking}. ${teamName} (${teamCode}) - ${teamPoints}`;
-		standingsCont.appendChild(p);
-	}
-}
-
 // Creates the buttons that query the fixtures for the matchdate
-function displayFixtureDates(
+export function displayFixtureDates(
 	fixtureDatesDiv,
 	fixtures,
 	teamsInfo,
@@ -54,7 +37,7 @@ function displayFixtureDates(
 	}
 }
 
-function displayMatchdateFixtures(
+export function displayMatchdateFixtures(
 	fixtureMatchdateHeading,
 	fixtureMatchdateCont,
 	fixturesObj,
