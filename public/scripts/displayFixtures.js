@@ -125,7 +125,7 @@ function createTeamInfoDiv(team, type, teamInfoObj) {
 	return teamInfoDiv;
 }
 
-function createMatchInfoDiv(fixture, goals, score, addfixtureLink = false, leagueNameShort, leagueSeason) {
+export function createMatchInfoDiv(fixture, goals, score, addfixtureLink = false, leagueNameShort = "", leagueSeason = "") {
 	// console.log("Starting createMatchInfoDiv");
 	const matchStatusLong = fixture.status.long;
 	const matchStatusShort = fixture.status.short;
