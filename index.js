@@ -16,24 +16,9 @@ import { Fixture } from "./models/fixture.js";
 import { Team } from "./models/team.js";
 import { League } from "./models/league.js";
 import { config } from "./football-api/config.js";
+import { ids } from "./ids.js";
 
 const cors = require("cors");
-
-const leagueIDs = {
-	epl: "Premier League",
-	seriea: "Seria A",
-	ligue1: "Ligue 1",
-	bundesliga: "Bundesliga",
-	laliga: "La Liga",
-};
-
-const ids = {
-	epl: "39",
-	seriea: "135",
-	ligue1: "61",
-	bundesliga: "78",
-	laliga: "140",
-};
 
 main()
 	.then(() => {
