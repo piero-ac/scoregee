@@ -20,7 +20,9 @@ let leagueStandingsAndInfoAvailable = false;
 
 // Import standings functions
 import { displayLeagueStandings, mapTeamsForLeagueStandings } from "./displayStandings.js";
-import { displayLeagueFixtures, linkFixturesToMDButtons } from "./displayFixtures.js";
+import { displayFixturesOnLoadFromCache, displayLeagueFixtures, linkFixturesToMDButtons } from "./displayFixtures.js";
+import { getCacheForRegularSeason } from "./caching.js";
+
 getLeagueInfo();
 
 async function getLeagueInfo() {
@@ -77,6 +79,14 @@ async function getLeagueInfo() {
 	const mdButtons = document.querySelectorAll(".mdButton");
 	// console.log(mdButtons);
 	linkFixturesToMDButtons(mdButtons, fixtureDisplayDateHeading, fixturesForDateDiv, leagueFixtures, leagueTeamsInfo);
+	
+
+	// Check if cache for displaying regular season is set
+	const regularSeasonCache = getCacheForRegularSeason(`${leagueNameShort}/${leagueSeason}`);
+	if(regularSeasonCache){
+		// call function to load regular season info
+		displayFixturesOnLoadFromCache(regularSeasonCache, fixtureDisplayDateHeading, fixturesForDateDiv, leagueFixtures, leagueTeamsInfo);
+	}
 }
 
 function displayLeagueInfo(leagueInfo, standings) {

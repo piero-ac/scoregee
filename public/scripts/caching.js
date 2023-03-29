@@ -27,3 +27,16 @@ export function getCacheInformationWithExpiry(key) {
 	}
 	return item.value;
 }
+
+export function setCacheForRegularSeason(key, data){
+	localStorage.setItem(key, JSON.stringify(data));
+}
+
+export function getCacheForRegularSeason(key){
+	const regularSeasonCache = localStorage.getItem(key);
+	if(!regularSeasonCache){
+		return null;
+	}
+
+	return JSON.parse(regularSeasonCache);
+}
