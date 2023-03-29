@@ -1,3 +1,4 @@
+import { setCacheForRegularSeason } from "./caching.js";
 import { getLocalTime} from "./formatTime.js"
 
 export function displayLeagueFixtures(fixtureMDSearchBtnsDiv, fixtures, leagueName, leagueSeason){
@@ -14,6 +15,9 @@ export function linkFixturesToMDButtons(mdButtons, fixtureDisplayDateHeading, fi
     for(let btn of mdButtons){
         const btnText =  btn.textContent;
         const btnValue = btn.value;
+		const leagueNameShort = btnValue.split("/")[0];
+    	const leagueSeason = btnValue.split("/")[1];
+
         btn.addEventListener("click", function() {
             fixtureDisplayDateHeading.textContent = "";
             fixturesForDateDiv.textContent = "";
@@ -24,12 +28,24 @@ export function linkFixturesToMDButtons(mdButtons, fixtureDisplayDateHeading, fi
                 leagueTeamsInfo,
                 btnValue, btnText
             );
-        })
+        });
 
+		btn.addEventListener("click", function(){
+			setCacheForRegularSeason(`${leagueNameShort}/${leagueSeason}`, {btnText, btnValue});
+		})
     }
-
 }
 
+export function displayFixturesOnLoadFromCache(regularSeasonCache, fixtureDisplayDateHeading, fixturesForDateDiv, leagueFixtures, leagueTeamsInfo){
+	const { btnText, btnValue } = regularSeasonCache;
+	displayMatchdateFixtures(
+		fixtureDisplayDateHeading,
+		fixturesForDateDiv,
+		leagueFixtures,
+		leagueTeamsInfo,
+		btnValue, btnText
+	);
+}
 function getFixtureMatchdates(fixtures){
     const matchdates = new Set();
     for(let f of fixtures){
