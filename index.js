@@ -40,6 +40,21 @@ app.get("/football", (req, res) => {
 	res.sendFile(__dirname + "/public/soccer.html");
 });
 
+// Sends the About Page for ScoreGee
+app.get("/football/about", (req, res) => {
+	res.sendFile(__dirname + "/public/about.html")
+})
+
+// Sends the Contact Page for ScoreGee
+app.get("/football/contact", (req, res) => {
+	res.sendFile(__dirname + "/public/contact.html")
+})
+
+// Sends the Contact Page for ScoreGee
+app.get("/football/faq", (req, res) => {
+	res.sendFile(__dirname + "/public/faq.html")
+})
+
 // Sends the html file for displaying league rankings
 app.get("/football/:league/:season", (req, res) => {
 	res.sendFile(__dirname + "/public/league.html");

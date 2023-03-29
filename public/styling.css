@@ -310,3 +310,11 @@ h3 {
   text-transform: uppercase;
   color: white;
 }
+
+#member-contacts h2, #scoregee-contacts h2 {
+  text-align: center;
+}
+
+.question {
+  margin-bottom: 20px;
+}
