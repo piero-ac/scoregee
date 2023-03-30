@@ -33,9 +33,10 @@ let fixtureStatisticsAvailable = false;
 const ONGOING_LINEUP_TTL = 900000; // for ongoing matches, lineup caches only available for 15 minutes
 const ONGOING_STATS_TTL = 180000; // for ongoing matches, statistics caches only available for 3 minute
 const FINISHED_LINEUP_TTL = 86400000; // for finished matches, lineup caches only available for 24 hours
-const FINISHED_STATS_TTL = 86400000; // for finished matches, statistics caches only available for 24 minutes
+const FINISHED_STATS_TTL = 86400000; // for finished matches, statistics caches only available for 24 hours
 
 
+// Initial Loading of Data for Page
 getFixtureInfo();
 
 async function getFixtureInfo() {
