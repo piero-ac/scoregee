@@ -146,4 +146,20 @@ async function getFixtureInfo() {
 
 	displayFixtureTitle(leagueInfo, teamsInfo, fixtureLeague, leagueHomepageLink, matchInfoTitle, leagueNameShort, leagueSeason);
 	displayFixtureInfo({ teamsInfo, fixture }, quickInfoData, fixtureMatchInfoDiv);
+	getevents(fixtureID);
+}
+
+function getevents (ID) {
+	const options = {
+	method: 'GET',
+	headers: {
+		'X-RapidAPI-Key': '3929d7ffd1mshebbaec9f369e0efp1f8b5bjsn5b5ffa6ed367',
+		'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
+	}
+};
+
+fetch(`https://api-football-v1.p.rapidapi.com/v3/fixtures/events?fixture=${ID}`, options)
+	.then(response => response.json())
+	.then(response => console.log(response))
+	.catch(err => console.error(err));
 }
