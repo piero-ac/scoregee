@@ -176,6 +176,25 @@ app.get(
 	}
 );
 
+// Route to obtain the fixture events
+app.get("/football/:league/:season/fixture/:fixtureid/events",
+	async(req, res) => {
+		const { fixtureid } = req.params;
+		const options = {
+			method: 'GET',
+			url: 'https://api-football-v1.p.rapidapi.com/v3/fixtures/events',
+			params: {fixture: fixtureid },
+			headers: {
+			  'X-RapidAPI-Key': config.RAPID_API_KEY,
+			  'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
+			}
+		  };
+
+		const eventsResponse = await axios.request(options);
+		const { reponse: events } = eventsResponse.data;
+		res.json({ events });
+});
+
 app.listen(3000, () => {
 	console.log("LISTENING ON PORT 3000");
 });
