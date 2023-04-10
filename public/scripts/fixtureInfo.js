@@ -160,6 +160,33 @@ function getevents (ID) {
 
 fetch(`https://api-football-v1.p.rapidapi.com/v3/fixtures/events?fixture=${ID}`, options)
 	.then(response => response.json())
-	.then(response => console.log(response))
+	.then(response => 
+		{ 
+			const eventsarray= response.response; 
+			console.log (eventsarray);
+			for (let event of eventsarray) {
+				const type = event.type;
+				const time = event.time.elapsed;
+				const team = event.team.id;
+				const name = event.team.name;
+				const logo = event.team.logo;
+				const pid = event.player.id;
+				const player = event.player.name;
+				const detail = event.detail;
+				const comments = event.comments;
+				const assist = event.assist;
+				console.log(type);
+				console.log(time);
+				console.log(team);
+				console.log(name);
+				console.log(logo);
+				console.log(pid);
+				console.log(player);
+				console.log(detail);
+				console.log(comments);
+				console.log(assist);
+
+			} }
+	 ) 
 	.catch(err => console.error(err));
 }
