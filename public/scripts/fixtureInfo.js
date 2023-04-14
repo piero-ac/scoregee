@@ -32,12 +32,7 @@ const TTLs = {
 	ONGOING_STATS_TTL : 180000, // for ongoing matches, statistics caches only available for 3 minute
 	FINISHED_TTL : 86400000 // for finished matches, lineup and stats valid for 24 hours
 }
-const ONGOING_LINEUP_TTL = 900000; // for ongoing matches, lineup caches only available for 15 minutes
-const ONGOING_STATS_TTL = 180000; // for ongoing matches, statistics caches only available for 3 minute
-const FINISHED_LINEUP_TTL = 86400000; // for finished matches, lineup caches only available for 24 hours
-const FINISHED_STATS_TTL = 86400000; // for finished matches, statistics caches only available for 24 hours
 const inPlayStatusCodes = ["1H", "HT", "2H", "ET", "BT", "P", "INT"];
-
 
 // Initial Loading of Data for Page
 getFixtureInfo();
@@ -109,7 +104,6 @@ function scheduleStatisticsUpdate(fixture, TTLs){
 }
 
 function scheduleLineupsUpdate(fixture, TTLs) {
-	
 	const matchStatus = fixture.fixture.status.short;
 	let lineupUpdateInterval;
   
