@@ -27,10 +27,6 @@ const leagueNameShort = urlParts[urlParts.length - 4];
 const leagueSeason = urlParts[urlParts.length - 3];
 const fixtureID = urlParts[urlParts.length - 1];
 
-let leagueInfoAvailable = false;
-let leagueFixtureAvailable = false;
-let fixtureLineupsAvailable = false;
-let fixtureStatisticsAvailable = false;
 const ONGOING_LINEUP_TTL = 900000; // for ongoing matches, lineup caches only available for 15 minutes
 const ONGOING_STATS_TTL = 180000; // for ongoing matches, statistics caches only available for 3 minute
 const FINISHED_LINEUP_TTL = 86400000; // for finished matches, lineup caches only available for 24 hours
@@ -42,25 +38,24 @@ getFixtureInfo();
 
 async function getFixtureInfo() {
 	// Fetch the league information
-	const leagueInfo = await fetchLeagueInfo(); // fetch once
+	const leagueInfo = await fetchLeagueInfo(leagueNameShort, leagueSeason); // fetch once
 
 	// Fetch the Fixture Information and Teams Playing Information
-	const { fixture, teamsInfo } = await fetchFixtureAndTeamsInfo();
+	const { fixture, teamsInfo } = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
 
 	// Check if Cache Containing Fixture Lineup is available
 	let fixtureLineupCache = getCacheInformationWithExpiry(`${fixtureID}-lineup`);
 
 	if (fixtureLineupCache) {
-		fixtureLineupsAvailable = true;
 		// Display Team Coaches and Lineup Information using Cached Data
 		displayTeamCoaches(fixtureLineupCache, matchLineupContainer, lineupCoachContainers, lineupPlayerContainers);
 		console.log("Using cached information for lineup");
 	} else {
 		// Otherwise, Fetch the Fixture Lineup
-		const fixtureLineup = await fetchFixtureLineup();
+		const fixtureLineup = await fetchFixtureLineup(leagueNameShort, leagueSeason, fixtureID);
 
 		// If fixture lineup was obtained, then create a cache for it
-		if (fixtureLineupsAvailable) {
+		if (fixtureLineup) {
 			// If fixture is over, then set cache for lineup to last 24 hours
 			if (fixture.fixture.status.short === "FT") {
 				setCacheInformationWithExpiry(
@@ -86,16 +81,15 @@ async function getFixtureInfo() {
 	// Check if Cache Containing Fixture Statistics is available
 	let fixtureStatisticsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`);
 	if (fixtureStatisticsCache) {
-		fixtureStatisticsAvailable = true;
 		// Display Fixture Statistics using cached data
 		displayStatisticsStatus(fixtureStatisticsCache, matchStatisticsContainer);
 		console.log("Using cached information for statistics");
 	} else {
 		// Fetch statistics data from backend
-		const fixtureStatistics = await fetchFixtureStatistics();
+		const fixtureStatistics = await fetchFixtureStatistics(leagueNameShort, leagueSeason, fixtureID);
 
 		// If fixture statistics was obtained, then create a cache for it
-		if (fixtureStatisticsAvailable) {
+		if (fixtureStatistics) {
 			// If fixture is over, then set cache to last 24 hours
 			if (fixture.fixture.status.short === "FT") {
 				setCacheInformationWithExpiry(
@@ -123,11 +117,4 @@ async function getFixtureInfo() {
 
 	// Display Fixture Information (Top of the page)
 	displayFixtureInfo({ teamsInfo, fixture }, quickInfoData, fixtureMatchInfoDiv);
-}
-
-
-async function updateStatistics(){
-	const stats = await fetchFixtureStatistics();
-	// Display Fixture Statistics using API Data
-	displayStatisticsStatus(stats, matchStatisticsContainer);
 }
