@@ -1,4 +1,5 @@
-// Imports
+// Import necessary modules
+import { fetchLeagueInfo, fetchFixtureAndTeamsInfo, fetchFixtureLineup, fetchFixtureStatistics } from "./fetchingData.js";
 import { displayTeamCoaches, displayStatisticsStatus, displayFixtureTitle, displayFixtureInfo, displayQuickFixtureInfo } from "./displayFixture.js";
 import { setCacheInformationWithExpiry, getCacheInformationWithExpiry } from "./caching.js";
 
@@ -41,7 +42,7 @@ getFixtureInfo();
 
 async function getFixtureInfo() {
 	// Fetch the league information
-	const leagueInfo = await fetchLeagueInfo();
+	const leagueInfo = await fetchLeagueInfo(); // fetch once
 
 	// Fetch the Fixture Information and Teams Playing Information
 	const { fixture, teamsInfo } = await fetchFixtureAndTeamsInfo();
@@ -125,57 +126,8 @@ async function getFixtureInfo() {
 }
 
 
-async function fetchLeagueInfo(){
-	const leagueInfo = await fetch(`/football/${leagueNameShort}/${leagueSeason}/overview`)
-		.then((response) => {
-			leagueInfoAvailable = true;
-			return response.json();
-		})
-		.catch((error) => {
-			leagueInfoAvailable = false;
-			console.error(`Could not get league information: ${error}`);
-		});
-
-	return leagueInfo;
-}
-
-async function fetchFixtureAndTeamsInfo(){
-	const { fixture, teamsInfo } = await fetch(`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/info`)
-		.then((response) => {
-			leagueFixtureAvailable = true;
-			return response.json();
-		})
-		.catch((error) => {
-			leagueFixtureAvailable = false;
-			console.error(`Could not get league fixture and teams info: ${error}`);
-		});
-
-	return { fixture, teamsInfo };
-}
-
-async function fetchFixtureLineup(){
-	const { lineup: fixtureLineup } = await fetch(`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/lineup`)
-		.then((response) => {
-			fixtureLineupsAvailable = true;
-			return response.json();
-		})
-		.catch((error) => {
-			fixtureLineupsAvailable = false;
-			console.error(`Could not get league information: ${error}`);
-		});
-	
-	return fixtureLineup;
-}
-
-async function fetchFixtureStatistics(){
-	const { statistics: fixtureStatistics } = await fetch(`/football/{leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/statistics`)
-		.then((response) => {
-			fixtureStatisticsAvailable = true;
-			return response.json();
-		})
-		.catch((error) => {
-			fixtureStatisticsAvailable = false;
-			console.error(`Could not get league information: ${error}`);
-		});
-	return fixtureStatistics;
+async function updateStatistics(){
+	const stats = await fetchFixtureStatistics();
+	// Display Fixture Statistics using API Data
+	displayStatisticsStatus(stats, matchStatisticsContainer);
 }
