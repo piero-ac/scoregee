@@ -2,6 +2,7 @@ import { createMatchInfoDiv } from "./displayFixtures.js";
 import { getLocalTime } from "./formatTime.js";
 
 export function displayTeamCoaches(lineupObj, matchLineupContainer, coachContainers, playerContainers){
+	matchLineupContainer.innerHTML = ""; // reset information in match lineup container
     if (lineupObj.length === 0) {
 		matchLineupContainer.textContent = "Information is not available yet.";
 	} else {
@@ -43,6 +44,7 @@ export function displayStatisticsStatus(statisticsObj, matchStatisticsContainer)
     if(statisticsObj.length === 0){
         matchStatisticsContainer.textContent = "Information is not available.";
     } else {
+		matchStatisticsContainer.innerHTML = ""; // reset the stats container to be empty
         const homeTeam = statisticsObj[0];
 		const awayTeam = statisticsObj[1];
 
@@ -153,6 +155,7 @@ function createSingleFixtureContainer(
 		fixture.score
 	);
 
+	fixtureMatchInfoDiv.innerHTML = ""; // reset the information in fixture match info div
 	fixtureMatchInfoDiv.append(homeTeamInfoDiv, matchInfoDiv, awayTeamInfoDiv);
 }
 
