@@ -28,6 +28,7 @@ const leagueSeason = urlParts[urlParts.length - 3];
 const fixtureID = urlParts[urlParts.length - 1];
 
 const TTLs = {
+	ONGOING_FIXTURE_TTL : 180000, // for ongoing matches, update fixture info every 3 minutes
 	ONGOING_LINEUP_TTL : 900000,  // for ongoing matches, lineup caches only available for 15 minutes
 	ONGOING_STATS_TTL : 180000, // for ongoing matches, statistics caches only available for 3 minute
 	FINISHED_TTL : 86400000 // for finished matches, lineup and stats valid for 24 hours
@@ -77,6 +78,8 @@ async function getFixtureInfo() {
 		scheduleStatisticsUpdate(fixture, TTLs);
 		// Schedule the lineups update
 		scheduleLineupsUpdate(fixture, TTLs);
+		// Schedule the fixture info update
+		scheduleFixtureInfoUpdate(fixture, TTLs);
 
 	} catch (error){
 		console.error(`An error occurred while fetching and displaying data: ${error}`);
@@ -85,19 +88,14 @@ async function getFixtureInfo() {
 
 function scheduleStatisticsUpdate(fixture, TTLs){
 	const matchStatus = fixture.fixture.status.short;
-	let statsUpdateInterval;
+	let statsUpdateInterval = inPlayStatusCodes.includes(matchStatus) ? TTLs.ONGOING_STATS_TTL : TTLs.FINISHED_TTL;
 
-	if(inPlayStatusCodes.includes(matchStatus)){
-		statsUpdateInterval = TTLs.ONGOING_STATS_TTL // 15 minutes
-	} else {
-		statsUpdateInterval = TTLs.FINISHED_TTL; // 24 hours
-	}
+	console.log(`Scheduling statistics update for every ${statsUpdateInterval}`);
 
-	console.log(`Scheduling statistics update for every ${statsUpdateInterval}`)
 	setTimeout(async () => {
 		const updatedFixture = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
 		const updatedStats = await fetchFixtureStatistics(leagueNameShort, leagueSeason, fixtureID);
-		displayStatisticsStatus(updatedStats, elements.matchStatisticsContainer);
+		displayStatisticsStatus(updatedStats, matchStatisticsContainer);
 		scheduleStatisticsUpdate(updatedFixture.fixture, TTLs);
 		console.log(`Fetching statistics data`);
 	}, statsUpdateInterval);
@@ -105,15 +103,10 @@ function scheduleStatisticsUpdate(fixture, TTLs){
 
 function scheduleLineupsUpdate(fixture, TTLs) {
 	const matchStatus = fixture.fixture.status.short;
-	let lineupUpdateInterval;
-  
-	if(inPlayStatusCodes.includes(matchStatus)){
-		lineupUpdateInterval = TTLs.ONGOING_LINEUP_TTL // 15 minutes
-	} else {
-		lineupUpdateInterval = TTLs.FINISHED_TTL; // 24 hours
-	}
+	let lineupUpdateInterval = (inPlayStatusCodes.includes(matchStatus)) ? TTLs.ONGOING_LINEUP_TTL : TTLs.FINISHED_TTL;
 	
-	console.log(`Scheduling lineup update for every ${lineupUpdateInterval}`)
+	console.log(`Scheduling lineup update for every ${lineupUpdateInterval}`);
+	
 	setTimeout(async () => {
 	  const updatedFixture = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
 	  const updatedLineup = await fetchFixtureLineup(leagueNameShort, leagueSeason, fixtureID);
@@ -123,3 +116,15 @@ function scheduleLineupsUpdate(fixture, TTLs) {
 	}, lineupUpdateInterval);
   }
 
+function scheduleFixtureInfoUpdate(fixture, TTLs){
+	const matchStatus = fixture.fixture.status.short;
+	let fixtureInfoUpdateInterval = inPlayStatusCodes.includes(matchStatus) ? TTLs.ONGOING_FIXTURE_TTL : TTLs.FINISHED_TTL; 
+
+	console.log(`Scheduling fixture info update for every ${fixtureInfoUpdateInterval}`);
+
+	setTimeout(async () => {
+		const { teamsInfo, fixture } = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
+		displayFixtureInfo({ teamsInfo, fixture }, quickInfoData, fixtureMatchInfoDiv);
+		console.log(`Fetching fixture data`);
+	}, fixtureInfoUpdateInterval);
+}
