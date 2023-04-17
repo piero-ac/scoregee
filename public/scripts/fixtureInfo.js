@@ -63,7 +63,7 @@ async function getFixtureInfo() {
 			setCacheInformationWithExpiry(
 			  `${fixtureID}-stats`,
 			  fixtureStatistics,
-			  fixture.fixture.status.short === "FT" ? TTLs.FINISHED_STATS_TTL : TTLs.ONGOING_STATS_TTL
+			  fixture.fixture.status.short === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_STATS_TTL
 			);
 			statsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`);
 		}
