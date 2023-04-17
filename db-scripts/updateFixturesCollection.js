@@ -1,3 +1,4 @@
+// This Script Will Update All Fixtures in the Fixtures Table
 import mongoose from "mongoose";
 import { Fixture } from "../models/fixture.js";
 import axios from "axios";
@@ -75,26 +76,6 @@ async function checkLeagueSeasonFixtureExists(fixtureID) {
 	return fixture.length !== 0;
 }
 
-// Insert fixture information individually
-async function populateFixturesCollection(fixtures) {
-	const fixturesArr = parseFixtureData(fixtures);
-	for (const fixt of fixturesArr) {
-		const {
-			fixture: { id: fixtureID },
-		} = fixt;
-		const fixtureExists = await checkLeagueSeasonFixtureExists(fixtureID);
-		if (!fixtureExists) {
-			const newFixture = new Fixture(fixt);
-			newFixture
-				.save()
-				.then(() => console.log(`Saved fixture with id: ${fixtureID}`))
-				.catch((err) => console.log(`Error saving fixture`, err));
-		} else {
-			console.log(`Fixture information already exists, ID: ${fixtureID}`);
-		}
-	}
-}
-
 async function updateFixturesCollection(fixtures) {
 	const fixturesArr = parseFixtureData(fixtures);
 	for (const fixt of fixturesArr) {
@@ -130,8 +111,12 @@ function replaceNull(obj, replacement) {
 
 const leagues = ["39", "140", "61", "135", "78"];
 
-// Update the fixture information for the 2022-2023 season
+// Update the all fixture information for the 2022-2023 season
 for (let l of leagues) {
 	const fixtures = await getLeagueSeasonFixtures(l, "2022");
 	updateFixturesCollection(fixtures);
 }
+
+/**
+ * Recommended Calls : 1 call per minute for the leagues, teams, fixtures who have at least one fixture in progress otherwise 1 call per day.
+ */

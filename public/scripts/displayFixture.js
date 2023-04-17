@@ -5,6 +5,16 @@ export function displayTeamCoaches(lineupObj, matchLineupContainer, coachContain
     if (lineupObj.length === 0) {
 		matchLineupContainer.textContent = "Information is not available yet.";
 	} else {
+		// Reset coach containers
+		coachContainers[0].innerHTML = "";
+		coachContainers[1].innerHTML = "";
+
+		// Reset lineup containers
+		playerContainers[0].innerHTML = `<h3>Starters</h3>`;
+		playerContainers[1].innerHTML = `<h3>Substitutes</h3>`;
+		playerContainers[2].innerHTML = `<h3>Starters</h3>`;
+		playerContainers[3].innerHTML = `<h3>Substitutes</h3>`;
+
 		const {
 			coach: hCoach,
 			formation: hFormation,
@@ -43,6 +53,7 @@ export function displayStatisticsStatus(statisticsObj, matchStatisticsContainer)
     if(statisticsObj.length === 0){
         matchStatisticsContainer.textContent = "Information is not available.";
     } else {
+		matchStatisticsContainer.innerHTML = ""; // reset the stats container to be empty
         const homeTeam = statisticsObj[0];
 		const awayTeam = statisticsObj[1];
 
@@ -153,6 +164,7 @@ function createSingleFixtureContainer(
 		fixture.score
 	);
 
+	fixtureMatchInfoDiv.innerHTML = ""; // reset the information in fixture match info div
 	fixtureMatchInfoDiv.append(homeTeamInfoDiv, matchInfoDiv, awayTeamInfoDiv);
 }
 
