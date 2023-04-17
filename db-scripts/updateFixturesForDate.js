@@ -32,6 +32,7 @@ async function findFixturesForCurrentDate(){
         return [];
     } else {
         const fixtureIDs = fixtures.map(obj => obj.fixture.id );
+        console.log(`Will update following fixtures: ${fixtureIDs}`);
         return fixtureIDs.join("-");
     }
 }
@@ -113,19 +114,39 @@ async function updateSpecificFixtures(fixtures) {
 	}
 }
 
-// Step 1. Get the fixtures for the current date
-const ids = await findFixturesForCurrentDate();
+// should update 882075, 878224, 868249
+async function updateFixtures(){
+    const currentTimeDate = new Date().toJSON();
+    // Step 1. Get the fixtures for the current date
+    const ids = await findFixturesForCurrentDate();
 
-if(ids.length !== 0){
-    // Step 2. Call route to get fixture information for specified ids
-    const fixturesNotParsed = await getFixturesFromID(ids);
-    // Step 3. Parse the data
-    const fixturesParsed = parseFixtureData(fixturesNotParsed);
-    console.log(fixturesParsed);
-    // Step 4. Update the fixtures 
-    updateSpecificFixtures(fixturesParsed);
-} else {
-    console.log("No fixtures happening today");
+    if(ids.length !== 0){
+        console.log(`Updating fixtures. Current Time and Date is: ${currentTimeDate}`);
+
+        // Step 2. Call route to get fixture information for specified ids
+        const fixturesNotParsed = await getFixturesFromID(ids);
+        // Step 3. Parse the data
+        const fixturesParsed = parseFixtureData(fixturesNotParsed);
+        // console.log(fixturesParsed);
+        // Step 4. Update the fixtures 
+        updateSpecificFixtures(fixturesParsed);
+        return true;
+    } else {
+        console.log("No fixtures happening today");
+        return false;
+    }
 }
 
-// should update 882075, 878224, 868249
+// Call update fixtures initially
+const fixturesOccuringToday = await updateFixtures();
+
+// Check if fixtures are occuring today, before calling setInterval
+if(fixturesOccuringToday){
+    // Set an interval to call updateFixtures every 3 minutes
+    const interval = setInterval(updateFixtures, 180000); // 3 * 60 * 1000
+
+    // Clear the interval after 8 hours
+    setTimeout(() => {
+        clearInterval(interval);
+    }, 28800000); // 8 * 60 * 60 * 1000
+}
