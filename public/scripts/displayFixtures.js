@@ -142,9 +142,11 @@ function createTeamInfoDiv(team, type, teamInfoObj) {
 }
 
 export function createMatchInfoDiv(fixture, goals, score, addfixtureLink = false, leagueNameShort = "", leagueSeason = "") {
+	const inPlayStatusCodes = ["1H", "HT", "2H", "ET", "BT", "P", "INT"];
 	// console.log("Starting createMatchInfoDiv");
 	const matchStatusLong = fixture.status.long;
 	const matchStatusShort = fixture.status.short;
+	const matchStatusElapsed = fixture.status.elapsed;
 	const fixtureid = fixture.id;
 	const dateLong = fixture.date;
 
@@ -160,7 +162,9 @@ export function createMatchInfoDiv(fixture, goals, score, addfixtureLink = false
 	timePara.innerText = time;
 
 	const statusPara = document.createElement("p");
-	if (matchStatusShort === "FT") {
+	if(inPlayStatusCodes.includes(matchStatusShort)){
+		statusPara.innerText = `${matchStatusShort} ${matchStatusElapsed}' - ${goals.home} : ${goals.away}`;
+	} else if (matchStatusShort === "FT") {
 		statusPara.innerText = `FT - ${score.fulltime.home} : ${score.fulltime.away}`;
 	} else if (matchStatusShort === "HT") {
 		statusPara.innerText = `HT - ${score.halftime.home} : ${score.halftime.away}`;

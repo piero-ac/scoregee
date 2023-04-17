@@ -1,4 +1,5 @@
-// Imports
+// Import necessary modules
+import { fetchLeagueInfo, fetchFixtureAndTeamsInfo, fetchFixtureLineup, fetchFixtureStatistics } from "./fetchingData.js";
 import { displayTeamCoaches, displayStatisticsStatus, displayFixtureTitle, displayFixtureInfo, displayQuickFixtureInfo } from "./displayFixture.js";
 import { setCacheInformationWithExpiry, getCacheInformationWithExpiry } from "./caching.js";
 
@@ -27,127 +28,106 @@ const leagueNameShort = urlParts[urlParts.length - 4];
 const leagueSeason = urlParts[urlParts.length - 3];
 const fixtureID = urlParts[urlParts.length - 1];
 
-let leagueInfoAvailable = false;
-let leagueFixtureAvailable = false;
-let fixtureLineupsAvailable = false;
-let fixtureStatisticsAvailable = false;
-const ONGOING_LINEUP_TTL = 900000; // for ongoing matches, lineup caches only available for 15 minutes
-const ONGOING_STATS_TTL = 60000; // for ongoing matches, statistics caches only available for 1 minute
-const FINISHED_LINEUP_TTL = 86400000; // for finished matches, lineup caches only available for 24 hours
-const FINISHED_STATS_TTL = 86400000; // for finished matches, statistics caches only available for 24 minutes
+const TTLs = {
+	ONGOING_FIXTURE_TTL : 180000, // for ongoing matches, update fixture info every 3 minutes
+	ONGOING_LINEUP_TTL : 900000,  // for ongoing matches, lineup caches only available for 15 minutes
+	ONGOING_STATS_TTL : 180000, // for ongoing matches, statistics caches only available for 3 minute
+	FINISHED_TTL : 86400000 // for finished matches, lineup and stats valid for 24 hours
+}
+const inPlayStatusCodes = ["1H", "HT", "2H", "ET", "BT", "P", "INT"];
 
-
+// Initial Loading of Data for Page
 getFixtureInfo();
 
 async function getFixtureInfo() {
-	// obtain the league information
-	const leagueInfo = await fetch(
-		`/football/${leagueNameShort}/${leagueSeason}/overview`
-	)
-		.then((response) => {
-			leagueInfoAvailable = true;
-			return response.json();
-		})
-		.catch((error) => {
-			leagueInfoAvailable = false;
-			console.error(`Could not get league information: ${error}`);
-		});
+	try {
+		// Fetch fixture data
+		const leagueInfo = await fetchLeagueInfo(leagueNameShort, leagueSeason);
+		const { fixture, teamsInfo } = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
+		let lineupCache = getCacheInformationWithExpiry(`${fixtureID}-lineup`); 
+		let statsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`); 
 
-	const { fixture, teamsInfo } = await fetch(
-		`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/info`
-	)
-		.then((response) => {
-			leagueFixtureAvailable = true;
-			return response.json();
-		})
-		.catch((error) => {
-			leagueFixtureAvailable = false;
-			console.error(`Could not get league fixture and teams info: ${error}`);
-		});
 
-	let fixtureLineupCache = getCacheInformationWithExpiry(`${fixtureID}-lineup`);
-	if (fixtureLineupCache) {
-		fixtureLineupsAvailable = true;
-		displayTeamCoaches(fixtureLineupCache, matchLineupContainer, lineupCoachContainers, lineupPlayerContainers);
-		console.log("Using cached information for lineup");
-	} else {
-		const { lineup: fixtureLineup } = await fetch(
-			`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/lineup`
-		)
-			.then((response) => {
-				fixtureLineupsAvailable = true;
-				return response.json();
-			})
-			.catch((error) => {
-				fixtureLineupsAvailable = false;
-				console.error(`Could not get league information: ${error}`);
-			});
-		if (fixtureLineupsAvailable) {
-			if (fixture.fixture.status.short === "FT") {
-				setCacheInformationWithExpiry(
-					`${fixtureID}-lineup`,
-					fixtureLineup,
-					FINISHED_LINEUP_TTL
-				);
-			} else {
-				setCacheInformationWithExpiry(
-					`${fixtureID}-lineup`,
-					fixtureLineup,
-					ONGOING_LINEUP_TTL
-				);
-			}
-
-			console.log("No cached information for lineups found, caching now");
-		}
-		displayTeamCoaches(fixtureLineup, matchLineupContainer, lineupCoachContainers, lineupPlayerContainers);
-	}
-
-	let fixtureStatisticsCache = getCacheInformationWithExpiry(
-		`${fixtureID}-stats`
-	);
-	if (fixtureStatisticsCache) {
-		fixtureStatisticsAvailable = true;
-		displayStatisticsStatus(fixtureStatisticsCache, matchStatisticsContainer);
-		console.log("Using cached information for statistics");
-	} else {
-		// Fetch statistics data from backend
-		const { statistics: fixtureStatistics } = await fetch(
-			`/football/{leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/statistics`
-		)
-			.then((response) => {
-				fixtureStatisticsAvailable = true;
-				return response.json();
-			})
-			.catch((error) => {
-				fixtureStatisticsAvailable = false;
-				console.error(`Could not get league information: ${error}`);
-			});
-
-		// cache statistics in localStorage
-		if (fixtureStatisticsAvailable) {
-			if (fixture.fixture.status.short === "FT") {
-				setCacheInformationWithExpiry(
-					`${fixtureID}-stats`,
-					fixtureStatistics,
-					FINISHED_STATS_TTL
-				);
-			} else {
-				setCacheInformationWithExpiry(
-					`${fixtureID}-stats`,
-					fixtureStatistics,
-					ONGOING_STATS_TTL
-				);
-			}
-
-			console.log("No cached information for statistics found, caching now");
+		// Cache data if not already cached
+		if (!lineupCache) {
+			const fixtureLineup = await fetchFixtureLineup(leagueNameShort, leagueSeason, fixtureID);
+			setCacheInformationWithExpiry(
+			  `${fixtureID}-lineup`,
+			  fixtureLineup,
+			  fixture.fixture.status.short === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_LINEUP_TTL
+			);
+			lineupCache = getCacheInformationWithExpiry(`${fixtureID}-lineup`);
 		}
 
-		displayStatisticsStatus(fixtureStatistics, matchStatisticsContainer);
-	}
+		if (!statsCache) {
+			const fixtureStatistics = await fetchFixtureStatistics(leagueNameShort, leagueSeason, fixtureID);
+			setCacheInformationWithExpiry(
+			  `${fixtureID}-stats`,
+			  fixtureStatistics,
+			  fixture.fixture.status.short === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_STATS_TTL
+			);
+			statsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`);
+		}
 
-	displayFixtureTitle(leagueInfo, teamsInfo, fixtureLeague, leagueHomepageLink, matchInfoTitle, leagueNameShort, leagueSeason);
-	displayFixtureInfo({ teamsInfo, fixture }, quickInfoData, fixtureMatchInfoDiv);
-	getevents(fixtureID);
+		// Display data
+		displayTeamCoaches(lineupCache,  matchLineupContainer, lineupCoachContainers, lineupPlayerContainers);
+		displayStatisticsStatus(statsCache, matchStatisticsContainer);
+		displayFixtureTitle(leagueInfo, teamsInfo, fixtureLeague, leagueHomepageLink, matchInfoTitle, leagueNameShort, leagueSeason);
+		displayFixtureInfo({ teamsInfo, fixture }, quickInfoData, fixtureMatchInfoDiv);
+
+		// Schedule the statistics update
+		scheduleStatisticsUpdate(fixture, TTLs);
+		// Schedule the lineups update
+		scheduleLineupsUpdate(fixture, TTLs);
+		// Schedule the fixture info update
+		scheduleFixtureInfoUpdate(fixture, TTLs);
+
+	} catch (error){
+		console.error(`An error occurred while fetching and displaying data: ${error}`);
+	}
+}
+
+function scheduleStatisticsUpdate(fixture, TTLs){
+	const matchStatus = fixture.fixture.status.short;
+	let statsUpdateInterval = inPlayStatusCodes.includes(matchStatus) ? TTLs.ONGOING_STATS_TTL : TTLs.FINISHED_TTL;
+
+	console.log(`Scheduling statistics update for every ${statsUpdateInterval}`);
+
+	setTimeout(async () => {
+		const updatedFixture = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
+		const updatedStats = await fetchFixtureStatistics(leagueNameShort, leagueSeason, fixtureID);
+		displayStatisticsStatus(updatedStats, matchStatisticsContainer);
+		scheduleStatisticsUpdate(updatedFixture.fixture, TTLs);
+		console.log(`Fetching statistics data`);
+	}, statsUpdateInterval);
+}
+
+function scheduleLineupsUpdate(fixture, TTLs) {
+	const matchStatus = fixture.fixture.status.short;
+	let lineupUpdateInterval = (inPlayStatusCodes.includes(matchStatus)) ? TTLs.ONGOING_LINEUP_TTL : TTLs.FINISHED_TTL;
+	
+	console.log(`Scheduling lineup update for every ${lineupUpdateInterval}`);
+	
+	setTimeout(async () => {
+	  const updatedFixture = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
+	  const updatedLineup = await fetchFixtureLineup(leagueNameShort, leagueSeason, fixtureID);
+	  displayTeamCoaches(updatedLineup, matchLineupContainer, lineupCoachContainers, lineupPlayerContainers);
+	  scheduleLineupUpdate(updatedFixture.fixture, TTLs);
+	  console.log(`Fetching lineup data`);
+	}, lineupUpdateInterval);
+  }
+
+function scheduleFixtureInfoUpdate(fixture, TTLs){
+	const matchStatus = fixture.fixture.status.short;
+	let fixtureInfoUpdateInterval = inPlayStatusCodes.includes(matchStatus) ? TTLs.ONGOING_FIXTURE_TTL : TTLs.FINISHED_TTL; 
+
+	console.log(`Scheduling fixture info update for every ${fixtureInfoUpdateInterval}`);
+  
+	setTimeout(async () => {
+		const { teamsInfo, fixture } = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
+		displayFixtureInfo({ teamsInfo, fixture }, quickInfoData, fixtureMatchInfoDiv);
+		console.log(`Fetching fixture data`);
+	}, fixtureInfoUpdateInterval);
 }
 
 function getevents (ID) {

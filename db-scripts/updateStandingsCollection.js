@@ -85,7 +85,11 @@ async function updateStandingsCollection(standings) {
 
 const leagues = ["39", "140", "61", "135", "78"];
 
-// for (let l of leagues) {
-// 	const standings = await getLeagueStandings(l, "2022");
-// 	updateStandingsCollection(standings);
-// }
+for (let l of leagues) {
+	const standings = await getLeagueStandings(l, "2022");
+	updateStandingsCollection(standings);
+}
+
+/**
+ * Recommended Calls : 1 call per hour for the leagues or teams who have at least one fixture in progress otherwise 1 call per day.
+ */
