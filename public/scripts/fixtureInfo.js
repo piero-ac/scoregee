@@ -1,5 +1,5 @@
 // Import necessary modules
-import { fetchLeagueInfo, fetchFixtureAndTeamsInfo, fetchFixtureLineup, fetchFixtureStatistics } from "./fetchingData.js";
+import { fetchLeagueInfo, fetchFixtureAndTeamsInfo, fetchFixtureLineup, fetchFixtureStatistics, fetchFixtureEvents } from "./fetchingData.js";
 import { displayTeamCoaches, displayStatisticsStatus, displayFixtureTitle, displayFixtureInfo, displayQuickFixtureInfo } from "./displayFixture.js";
 import { setCacheInformationWithExpiry, getCacheInformationWithExpiry } from "./caching.js";
 
@@ -44,6 +44,7 @@ async function getFixtureInfo() {
 		// Fetch fixture data
 		const leagueInfo = await fetchLeagueInfo(leagueNameShort, leagueSeason);
 		const { fixture, teamsInfo } = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
+		const fixtureEvents = await fetchFixtureEvents(leagueNameShort, leagueSeason, fixtureID);
 		let lineupCache = getCacheInformationWithExpiry(`${fixtureID}-lineup`); 
 		let statsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`); 
 
