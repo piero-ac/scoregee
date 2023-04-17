@@ -2,10 +2,19 @@ import { createMatchInfoDiv } from "./displayFixtures.js";
 import { getLocalTime } from "./formatTime.js";
 
 export function displayTeamCoaches(lineupObj, matchLineupContainer, coachContainers, playerContainers){
-	matchLineupContainer.innerHTML = ""; // reset information in match lineup container
     if (lineupObj.length === 0) {
 		matchLineupContainer.textContent = "Information is not available yet.";
 	} else {
+		// Reset coach containers
+		coachContainers[0].innerHTML = "";
+		coachContainers[1].innerHTML = "";
+
+		// Reset lineup containers
+		playerContainers[0].innerHTML = `<h3>Starters</h3>`;
+		playerContainers[1].innerHTML = `<h3>Substitutes</h3>`;
+		playerContainers[2].innerHTML = `<h3>Starters</h3>`;
+		playerContainers[3].innerHTML = `<h3>Substitutes</h3>`;
+
 		const {
 			coach: hCoach,
 			formation: hFormation,
