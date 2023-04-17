@@ -84,6 +84,7 @@ export function displayFixtureInfo(data, quickInfoDataDiv, fixtureMatchInfoDiv){
 		awayTeam,
 		fixture
 	);
+	quickInfoDataDiv.innerHTML = ""; // reset quick info data div
 	displayQuickFixtureInfo(quickInfoDataDiv, fixture);
 
 	return data;
