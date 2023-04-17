@@ -8,6 +8,7 @@ const fixtureMatchInfoDiv = document.querySelector(".fixture-match-info-div");
 const matchInfoSection = document.querySelector("#match-info-sct");
 const matchLineupContainer = document.querySelector("#match-lineup");
 const matchStatisticsContainer = document.querySelector("#match-statistics");
+const matchEventsContainer = document.querySelector("#match-events");
 const quickInfoDiv = document.querySelector("#quick-info");
 const quickInfoData = document.querySelector("#quick-info-data");
 const leagueHomepageLink = document.querySelector("#league-hp-link");
@@ -174,7 +175,8 @@ fetch(`https://api-football-v1.p.rapidapi.com/v3/fixtures/events?fixture=${ID}`,
 				const player = event.player.name;
 				const detail = event.detail;
 				const comments = event.comments;
-				const assist = event.assist;
+				const ai = event.assist.id;
+				const an = event.assist.name;
 				console.log(type);
 				console.log(time);
 				console.log(team);
@@ -184,9 +186,27 @@ fetch(`https://api-football-v1.p.rapidapi.com/v3/fixtures/events?fixture=${ID}`,
 				console.log(player);
 				console.log(detail);
 				console.log(comments);
-				console.log(assist);
+				console.log(ai);
+				console.log(an);
+				let output = " ";
+				output += `${time}' `;
+				output += `${player} `;
+				if (type === "Card") {
+					output += `${detail} `;
+				}
+				else if (type === "subst") {
+					output += 'Substitution ' ;
+				}
+				else if (type === "Goal") {
+					output += 'Goal' ;
+				}
 
-			} }
+				const Eventparagraph = document.createElement("p");
+				Eventparagraph.textContent = output;
+				matchEventsContainer.append(Eventparagraph); 
+
+			}
+			 }
 	 ) 
 	.catch(err => console.error(err));
 }
