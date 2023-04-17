@@ -9,6 +9,7 @@ const fixtureMatchInfoDiv = document.querySelector(".fixture-match-info-div");
 const matchInfoSection = document.querySelector("#match-info-sct");
 const matchLineupContainer = document.querySelector("#match-lineup");
 const matchStatisticsContainer = document.querySelector("#match-statistics");
+const matchEventsContainer = document.querySelector("#match-events");
 const quickInfoDiv = document.querySelector("#quick-info");
 const quickInfoData = document.querySelector("#quick-info-data");
 const leagueHomepageLink = document.querySelector("#league-hp-link");
@@ -121,10 +122,71 @@ function scheduleFixtureInfoUpdate(fixture, TTLs){
 	let fixtureInfoUpdateInterval = inPlayStatusCodes.includes(matchStatus) ? TTLs.ONGOING_FIXTURE_TTL : TTLs.FINISHED_TTL; 
 
 	console.log(`Scheduling fixture info update for every ${fixtureInfoUpdateInterval}`);
-
+  
 	setTimeout(async () => {
 		const { teamsInfo, fixture } = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
 		displayFixtureInfo({ teamsInfo, fixture }, quickInfoData, fixtureMatchInfoDiv);
 		console.log(`Fetching fixture data`);
 	}, fixtureInfoUpdateInterval);
+}
+
+function getevents (ID) {
+	const options = {
+	method: 'GET',
+	headers: {
+		'X-RapidAPI-Key': '3929d7ffd1mshebbaec9f369e0efp1f8b5bjsn5b5ffa6ed367',
+		'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
+	}
+};
+
+fetch(`https://api-football-v1.p.rapidapi.com/v3/fixtures/events?fixture=${ID}`, options)
+	.then(response => response.json())
+	.then(response => 
+		{ 
+			const eventsarray= response.response; 
+			console.log (eventsarray);
+			for (let event of eventsarray) {
+				const type = event.type;
+				const time = event.time.elapsed;
+				const team = event.team.id;
+				const name = event.team.name;
+				const logo = event.team.logo;
+				const pid = event.player.id;
+				const player = event.player.name;
+				const detail = event.detail;
+				const comments = event.comments;
+				const ai = event.assist.id;
+				const an = event.assist.name;
+				console.log(type);
+				console.log(time);
+				console.log(team);
+				console.log(name);
+				console.log(logo);
+				console.log(pid);
+				console.log(player);
+				console.log(detail);
+				console.log(comments);
+				console.log(ai);
+				console.log(an);
+				let output = " ";
+				output += `${time}' `;
+				output += `${player} `;
+				if (type === "Card") {
+					output += `${detail} `;
+				}
+				else if (type === "subst") {
+					output += 'Substitution ' ;
+				}
+				else if (type === "Goal") {
+					output += 'Goal' ;
+				}
+
+				const Eventparagraph = document.createElement("p");
+				Eventparagraph.textContent = output;
+				matchEventsContainer.append(Eventparagraph); 
+
+			}
+			 }
+	 ) 
+	.catch(err => console.error(err));
 }
