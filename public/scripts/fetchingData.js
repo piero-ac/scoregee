@@ -41,7 +41,6 @@ export async function fetchFixtureStatistics(leagueNameShort, leagueSeason, fixt
 		})
 		.catch((error) => {
 			console.error(`Could not get league information: ${error}`);
-			return [];
 		});
 	return fixtureStatistics;
 }
