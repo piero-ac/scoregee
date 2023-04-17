@@ -1,3 +1,4 @@
+// This Script Will Update All Fixtures in the Fixtures Table
 import mongoose from "mongoose";
 import { Fixture } from "../models/fixture.js";
 import axios from "axios";
