@@ -254,6 +254,10 @@ p {
   align-items: center;
 }
 
+#match-events {
+  text-align: center;
+}
+
 .homeTeam-stats .stats {
   text-align: right;
 }
