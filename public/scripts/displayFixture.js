@@ -203,3 +203,38 @@ function displayPlayers(players, playersDiv) {
 		playersDiv.append(playerP);
 	}
 }
+
+export function displayFixtureEvents(fixtureEvents, matchEventsContainer){
+	if(fixtureEvents.length === 0){
+		matchEventsContainer.textContent = "Information is not available yet."
+	} else {
+		matchEventsContainer.innerHTML = ""; // Reset matchEventsContainers
+		for(let event of fixtureEvents){
+			const type = event.type;
+			const time = event.time.elapsed;
+			const team = event.team.id;
+			const name = event.team.name;
+			const logo = event.team.logo;
+			const pid = event.player.id;
+			const player = event.player.name;
+			const detail = event.detail;
+			const comments = event.comments;
+			const ai = event.assist.id;
+			const an = event.assist.name;
+			let output = `${time}' ${player} `;
+			if (type === "Card") {
+				output += `${detail} `;
+			} else if (type === "subst") {
+				output += 'Substitution ' ;
+			} else if (type === "Goal") {
+				output += 'Goal' ;
+			} else if (type === "Var") {
+				output += `VAR - ${detail}`;
+			}
+
+			const eventParagraph = document.createElement("p");
+			eventParagraph.textContent = output;
+			matchEventsContainer.append(eventParagraph); 
+		}
+	}
+}

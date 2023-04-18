@@ -1,6 +1,6 @@
 // Import necessary modules
-import { fetchLeagueInfo, fetchFixtureAndTeamsInfo, fetchFixtureLineup, fetchFixtureStatistics } from "./fetchingData.js";
-import { displayTeamCoaches, displayStatisticsStatus, displayFixtureTitle, displayFixtureInfo, displayQuickFixtureInfo } from "./displayFixture.js";
+import { fetchLeagueInfo, fetchFixtureAndTeamsInfo, fetchFixtureLineup, fetchFixtureStatistics, fetchFixtureEvents } from "./fetchingData.js";
+import { displayTeamCoaches, displayStatisticsStatus, displayFixtureTitle, displayFixtureInfo, displayFixtureEvents } from "./displayFixture.js";
 import { setCacheInformationWithExpiry, getCacheInformationWithExpiry } from "./caching.js";
 
 const matchInfoTitle = document.querySelector("#match-info-title");
@@ -9,6 +9,7 @@ const fixtureMatchInfoDiv = document.querySelector(".fixture-match-info-div");
 const matchInfoSection = document.querySelector("#match-info-sct");
 const matchLineupContainer = document.querySelector("#match-lineup");
 const matchStatisticsContainer = document.querySelector("#match-statistics");
+const matchEventsContainer = document.querySelector("#match-events");
 const quickInfoDiv = document.querySelector("#quick-info");
 const quickInfoData = document.querySelector("#quick-info-data");
 const leagueHomepageLink = document.querySelector("#league-hp-link");
@@ -45,6 +46,7 @@ async function getFixtureInfo() {
 		const { fixture, teamsInfo } = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
 		let lineupCache = getCacheInformationWithExpiry(`${fixtureID}-lineup`); 
 		let statsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`); 
+		let eventsCache = getCacheInformationWithExpiry(`${fixtureID}-events`);
 
 
 		// Cache data if not already cached
@@ -68,11 +70,22 @@ async function getFixtureInfo() {
 			statsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`);
 		}
 
+		if(!eventsCache){
+			const fixtureEvents = await fetchFixtureEvents(leagueNameShort, leagueSeason, fixtureID);
+			setCacheInformationWithExpiry(
+				`${fixtureID}-events`,
+				fixtureEvents,
+				fixture.fixture.status.short === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_FIXTURE_TTL
+			);
+			eventsCache = getCacheInformationWithExpiry(`${fixtureID}-events`);
+		}
+
 		// Display data
 		displayTeamCoaches(lineupCache,  matchLineupContainer, lineupCoachContainers, lineupPlayerContainers);
 		displayStatisticsStatus(statsCache, matchStatisticsContainer);
 		displayFixtureTitle(leagueInfo, teamsInfo, fixtureLeague, leagueHomepageLink, matchInfoTitle, leagueNameShort, leagueSeason);
 		displayFixtureInfo({ teamsInfo, fixture }, quickInfoData, fixtureMatchInfoDiv);
+		displayFixtureEvents(eventsCache, matchEventsContainer);
 
 		// Schedule the statistics update
 		scheduleStatisticsUpdate(fixture, TTLs);
@@ -80,6 +93,8 @@ async function getFixtureInfo() {
 		scheduleLineupsUpdate(fixture, TTLs);
 		// Schedule the fixture info update
 		scheduleFixtureInfoUpdate(fixture, TTLs);
+		// Schedule the fixture events update
+		scheduleFixtureEventsUpdate(fixture, TTLs);
 
 	} catch (error){
 		console.error(`An error occurred while fetching and displaying data: ${error}`);
@@ -121,10 +136,22 @@ function scheduleFixtureInfoUpdate(fixture, TTLs){
 	let fixtureInfoUpdateInterval = inPlayStatusCodes.includes(matchStatus) ? TTLs.ONGOING_FIXTURE_TTL : TTLs.FINISHED_TTL; 
 
 	console.log(`Scheduling fixture info update for every ${fixtureInfoUpdateInterval}`);
-
+  
 	setTimeout(async () => {
 		const { teamsInfo, fixture } = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
 		displayFixtureInfo({ teamsInfo, fixture }, quickInfoData, fixtureMatchInfoDiv);
 		console.log(`Fetching fixture data`);
 	}, fixtureInfoUpdateInterval);
+}
+
+function scheduleFixtureEventsUpdate(fixture, TTLs){
+	const matchStatus = fixture.fixture.status.short;
+	let fixtureEventsUpdateInterval = inPlayStatusCodes.includes(matchStatus) ? TTLs.ONGOING_FIXTURE_TTL : TTLs.FINISHED_TTL; 
+
+	console.log(`Scheduling fixture events update for every ${fixtureEventsUpdateInterval}`);
+	setTimeout(async() => {
+		const fixtureEvents = await fetchFixtureEvents(leagueNameShort, leagueSeason, fixtureID);
+		displayFixtureEvents(fixtureEvents, matchEventsContainer);
+		console.log('Fetching fixture events');
+	}, fixtureEventsUpdateInterval);
 }

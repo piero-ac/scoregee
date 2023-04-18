@@ -44,3 +44,14 @@ export async function fetchFixtureStatistics(leagueNameShort, leagueSeason, fixt
 		});
 	return fixtureStatistics;
 }
+
+export async function fetchFixtureEvents(leagueNameShort, leagueSeason, fixtureID){
+	const { events: fixtureEvents } = await fetch(`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/events`)
+		.then((response) => {
+			return response.json();
+		})
+		.catch((error) => {
+			console.error(`Could not get league information: ${error}`);
+		});
+	return fixtureEvents;
+}

@@ -191,7 +191,7 @@ app.get("/football/:league/:season/fixture/:fixtureid/events",
 		  };
 
 		const eventsResponse = await axios.request(options);
-		const { reponse: events } = eventsResponse.data;
+		const { response: events } = eventsResponse.data;
 		res.json({ events });
 });
 
