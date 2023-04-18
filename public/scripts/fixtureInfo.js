@@ -1,6 +1,6 @@
 // Import necessary modules
 import { fetchLeagueInfo, fetchFixtureAndTeamsInfo, fetchFixtureLineup, fetchFixtureStatistics, fetchFixtureEvents } from "./fetchingData.js";
-import { displayTeamCoaches, displayStatisticsStatus, displayFixtureTitle, displayFixtureInfo, displayQuickFixtureInfo } from "./displayFixture.js";
+import { displayTeamCoaches, displayStatisticsStatus, displayFixtureTitle, displayFixtureInfo, displayFixtureEvents } from "./displayFixture.js";
 import { setCacheInformationWithExpiry, getCacheInformationWithExpiry } from "./caching.js";
 
 const matchInfoTitle = document.querySelector("#match-info-title");
@@ -44,9 +44,9 @@ async function getFixtureInfo() {
 		// Fetch fixture data
 		const leagueInfo = await fetchLeagueInfo(leagueNameShort, leagueSeason);
 		const { fixture, teamsInfo } = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
-		const fixtureEvents = await fetchFixtureEvents(leagueNameShort, leagueSeason, fixtureID);
 		let lineupCache = getCacheInformationWithExpiry(`${fixtureID}-lineup`); 
 		let statsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`); 
+		let eventsCache = getCacheInformationWithExpiry(`${fixtureID}-events`);
 
 
 		// Cache data if not already cached
@@ -70,11 +70,22 @@ async function getFixtureInfo() {
 			statsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`);
 		}
 
+		if(!eventsCache){
+			const fixtureEvents = await fetchFixtureEvents(leagueNameShort, leagueSeason, fixtureID);
+			setCacheInformationWithExpiry(
+				`${fixtureID}-events`,
+				fixtureEvents,
+				fixture.fixture.status.short === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_FIXTURE_TTL
+			);
+			eventsCache = getCacheInformationWithExpiry(`${fixtureID}-events`);
+		}
+
 		// Display data
 		displayTeamCoaches(lineupCache,  matchLineupContainer, lineupCoachContainers, lineupPlayerContainers);
 		displayStatisticsStatus(statsCache, matchStatisticsContainer);
 		displayFixtureTitle(leagueInfo, teamsInfo, fixtureLeague, leagueHomepageLink, matchInfoTitle, leagueNameShort, leagueSeason);
 		displayFixtureInfo({ teamsInfo, fixture }, quickInfoData, fixtureMatchInfoDiv);
+		displayFixtureEvents(eventsCache, matchEventsContainer);
 
 		// Schedule the statistics update
 		scheduleStatisticsUpdate(fixture, TTLs);
@@ -82,6 +93,8 @@ async function getFixtureInfo() {
 		scheduleLineupsUpdate(fixture, TTLs);
 		// Schedule the fixture info update
 		scheduleFixtureInfoUpdate(fixture, TTLs);
+		// Schedule the fixture events update
+		scheduleFixtureEventsUpdate(fixture, TTLs);
 
 	} catch (error){
 		console.error(`An error occurred while fetching and displaying data: ${error}`);
@@ -131,63 +144,14 @@ function scheduleFixtureInfoUpdate(fixture, TTLs){
 	}, fixtureInfoUpdateInterval);
 }
 
-function getevents (ID) {
-	const options = {
-	method: 'GET',
-	headers: {
-		'X-RapidAPI-Key': '3929d7ffd1mshebbaec9f369e0efp1f8b5bjsn5b5ffa6ed367',
-		'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
-	}
-};
+function scheduleFixtureEventsUpdate(fixture, TTLs){
+	const matchStatus = fixture.fixture.status.short;
+	let fixtureEventsUpdateInterval = inPlayStatusCodes.includes(matchStatus) ? TTLs.ONGOING_FIXTURE_TTL : TTLs.FINISHED_TTL; 
 
-fetch(`https://api-football-v1.p.rapidapi.com/v3/fixtures/events?fixture=${ID}`, options)
-	.then(response => response.json())
-	.then(response => 
-		{ 
-			const eventsarray= response.response; 
-			console.log (eventsarray);
-			for (let event of eventsarray) {
-				const type = event.type;
-				const time = event.time.elapsed;
-				const team = event.team.id;
-				const name = event.team.name;
-				const logo = event.team.logo;
-				const pid = event.player.id;
-				const player = event.player.name;
-				const detail = event.detail;
-				const comments = event.comments;
-				const ai = event.assist.id;
-				const an = event.assist.name;
-				console.log(type);
-				console.log(time);
-				console.log(team);
-				console.log(name);
-				console.log(logo);
-				console.log(pid);
-				console.log(player);
-				console.log(detail);
-				console.log(comments);
-				console.log(ai);
-				console.log(an);
-				let output = " ";
-				output += `${time}' `;
-				output += `${player} `;
-				if (type === "Card") {
-					output += `${detail} `;
-				}
-				else if (type === "subst") {
-					output += 'Substitution ' ;
-				}
-				else if (type === "Goal") {
-					output += 'Goal' ;
-				}
-
-				const Eventparagraph = document.createElement("p");
-				Eventparagraph.textContent = output;
-				matchEventsContainer.append(Eventparagraph); 
-
-			}
-			 }
-	 ) 
-	.catch(err => console.error(err));
+	console.log(`Scheduling fixture events update for every ${fixtureEventsUpdateInterval}`);
+	setTimeout(async() => {
+		const fixtureEvents = await fetchFixtureEvents(leagueNameShort, leagueSeason, fixtureID);
+		displayFixtureEvents(fixtureEvents, matchEventsContainer);
+		console.log('Fetching fixture events');
+	}, fixtureEventsUpdateInterval);
 }
