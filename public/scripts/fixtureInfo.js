@@ -35,6 +35,12 @@ const TTLs = {
 	FINISHED_TTL : 86400000 // for finished matches, lineup and stats valid for 24 hours
 }
 const inPlayStatusCodes = ["1H", "HT", "2H", "ET", "BT", "P", "INT"];
+let previousMatchStatus = undefined;
+let statisticsIntervalID = undefined;
+let lineupsIntervalID = undefined;
+let eventsIntervalID = undefined; 
+let infoIntervalID = undefined;
+let matchStatusIntervalID = undefined;
 
 // Initial Loading of Data for Page
 getFixtureInfo();
@@ -87,77 +93,120 @@ async function getFixtureInfo() {
 		displayFixtureInfo({ teamsInfo, fixture }, quickInfoData, fixtureMatchInfoDiv);
 		displayFixtureEvents(eventsCache, matchEventsContainer);
 
-		// Schedule the statistics update
-		scheduleStatisticsUpdate(fixture, TTLs);
-		// Schedule the lineups update
-		scheduleLineupsUpdate(fixture, TTLs);
-		// Schedule the fixture info update
-		scheduleFixtureInfoUpdate(fixture, TTLs);
-		// Schedule the fixture events update
-		scheduleFixtureEventsUpdate(fixture, TTLs);
+		// Start Interval To Monitor Match Status Every Minute
+		matchStatusIntervalID = setInterval(async() => {
+			const { fixture }  = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
+			const currentStatus = fixture.fixture.status.short;
+			
+			// on page load, previousMatchStatus will be undefined, then check what current status of fixture is
+			if(previousMatchStatus === undefined) {
+				console.log("Page has been refreshed, or initial page load")
+				// can only check current status of match
+				// check if current status is an inPlay status code
+				if(inPlayStatusCodes.includes(currentStatus)){
+					setSchedulingForOngoingMatch();
+					// check if the current status is FT or NS (match is over or hasn't started)
+				}  else if (currentStatus === "FT" || currentStatus === "NS"){
+					// call all scheduling tasks to run for there corresponding intervals for a finished match
+					setSchedulingForFinishedMatch();
+				}
+				previousMatchStatus = currentStatus;
+			} else if (previousMatchStatus !== currentStatus) { // compare most recent status with previous match status
+				// If the previous match status was previously NS & currentStatus is an inPlay status code (so match went from not started to inplay)
+				if (previousMatchStatus === "NS" && inPlayStatusCodes.includes(currentStatus)){
+					console.log("Match has gone from NS to In Play. Changing Interval Times for Updating Data to ONGOING times");
+					//then kill all timeouts as they will have a 24 hour interval
+					stopUpdating();
+					// call all scheduling tasks to run for there corresponding intervals for an ongoing match
+					setSchedulingForOngoingMatch();
+					previousMatchStatus = currentStatus;
+
+				// If previous match status is an inPlay status code and current status is FT (so match went from inplay to finished)
+				} else if (inPlayStatusCodes.includes(previousMatchStatus) && currentStatus === "FT"){
+					console.log("Match has gone from In Play to FT. Changing Interval Times for Updating Data to FINISHED times");
+					// then kill all timeoutes as they will have intervals for an ongoing match
+					stopUpdating();
+					// call all scheduling tasks to run for there corresponding intervals for a finished match
+					setSchedulingForFinishedMatch();
+					previousMatchStatus = currentStatus;
+
+				// If previous match status is FT (match is already over)
+				} else if (previousMatchStatus === "FT") {
+					console.log("Match is over. Killing all update functions")
+					stopUpdating(true);
+				}
+
+			} else if (previousMatchStatus === currentStatus && previousMatchStatus === "FT") {
+				console.log("Match is over. Killing all update functions")
+				stopUpdating(true);
+
+			} else if (previousMatchStatus === currentStatus){
+				console.log("Match Status Hasn't Changed");
+			}
+		}, 60000);
+
 
 	} catch (error){
 		console.error(`An error occurred while fetching and displaying data: ${error}`);
 	}
 }
 
-function scheduleStatisticsUpdate(fixture, TTLs){
-	const matchStatus = fixture.fixture.status.short;
-	let statsUpdateInterval = inPlayStatusCodes.includes(matchStatus) ? TTLs.ONGOING_STATS_TTL : TTLs.FINISHED_TTL;
-
-	console.log(`Scheduling statistics update for every ${statsUpdateInterval}`);
-
-	setTimeout(async () => {
-		const updatedFixture = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
+function scheduleStatisticsUpdate(interval){
+	console.log(`Scheduling statistics update for every ${interval}`);
+	return setInterval(async () => {
+		console.log("Displaying updated statistics information");
 		const updatedStats = await fetchFixtureStatistics(leagueNameShort, leagueSeason, fixtureID);
 		displayStatisticsStatus(updatedStats, matchStatisticsContainer);
-		scheduleStatisticsUpdate(updatedFixture.fixture, TTLs);
-		console.log(`Fetching statistics data`);
-	}, statsUpdateInterval);
+	}, interval);
 }
 
-function scheduleLineupsUpdate(fixture, TTLs) {
-	const matchStatus = fixture.fixture.status.short;
-	let lineupUpdateInterval = (inPlayStatusCodes.includes(matchStatus)) ? TTLs.ONGOING_LINEUP_TTL : TTLs.FINISHED_TTL;
+function scheduleLineupsUpdate(interval) {
+	console.log(`Scheduling lineup update for every ${interval}`);
 	
-	console.log(`Scheduling lineup update for every ${lineupUpdateInterval}`);
-	
-	setTimeout(async () => {
-	  const updatedFixture = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
-	  const updatedLineup = await fetchFixtureLineup(leagueNameShort, leagueSeason, fixtureID);
-	  displayTeamCoaches(updatedLineup, matchLineupContainer, lineupCoachContainers, lineupPlayerContainers);
-	  scheduleLineupsUpdate(updatedFixture.fixture, TTLs);
-	  console.log(`Fetching lineup data`);
-	}, lineupUpdateInterval);
+	return setInterval(async () => {
+		console.log("Displaying updated lineup information");
+	  	const updatedLineup = await fetchFixtureLineup(leagueNameShort, leagueSeason, fixtureID);
+	  	displayTeamCoaches(updatedLineup, matchLineupContainer, lineupCoachContainers, lineupPlayerContainers);
+	}, interval);
   }
 
-function scheduleFixtureInfoUpdate(fixture, TTLs){
-	const matchStatus = fixture.fixture.status.short;
-	let fixtureInfoUpdateInterval = inPlayStatusCodes.includes(matchStatus) ? TTLs.ONGOING_FIXTURE_TTL : TTLs.FINISHED_TTL; 
-
-	console.log(`Scheduling fixture info update for every ${fixtureInfoUpdateInterval}`);
+function scheduleFixtureInfoUpdate(interval){
+	console.log(`Scheduling fixture info update for every ${interval}`);
   
-	setTimeout(async () => {
+	return setInterval(async () => {
+		console.log("Displaying updated fixture information");
 		const { teamsInfo, fixture } = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
-		const updatedFixture = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
 		displayFixtureInfo({ teamsInfo, fixture }, quickInfoData, fixtureMatchInfoDiv);
-		scheduleFixtureInfoUpdate(updatedFixture, TTLs);
-		console.log(`Fetching fixture data`);
-	}, fixtureInfoUpdateInterval);
+	}, interval);
 }
 
-function scheduleFixtureEventsUpdate(fixture, TTLs){
-	const matchStatus = fixture.fixture.status.short;
-	let fixtureEventsUpdateInterval = inPlayStatusCodes.includes(matchStatus) ? TTLs.ONGOING_FIXTURE_TTL : TTLs.FINISHED_TTL; 
-
-	console.log(`Scheduling fixture events update for every ${fixtureEventsUpdateInterval}`);
-	setTimeout(async() => {
+function scheduleFixtureEventsUpdate(interval){
+	console.log(`Scheduling fixture events update for every ${interval}`);
+	return setInterval(async() => {
+		console.log("Displaying updated fixture events information");
 		const fixtureEvents = await fetchFixtureEvents(leagueNameShort, leagueSeason, fixtureID);
-		const updatedFixture = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
 		displayFixtureEvents(fixtureEvents, matchEventsContainer);
-		scheduleFixtureEventsUpdate(updatedFixture, TTLs);
-		console.log('Fetching fixture events');
-	}, fixtureEventsUpdateInterval);
+	}, interval);
 }
 
-// possibly have a thing that monitors fixture status outside of the scheduling functions
+function stopUpdating(stopCheckingMatchStatus = false) {
+	clearInterval(statisticsIntervalID);
+	clearInterval(lineupsIntervalID);
+	clearInterval(infoIntervalID);
+	clearInterval(eventsIntervalID);
+	if(stopCheckingMatchStatus) clearInterval(matchStatusIntervalID);
+}
+
+function setSchedulingForFinishedMatch(){
+	statisticsIntervalID = scheduleStatisticsUpdate(TTLs.FINISHED_TTL);
+	lineupsIntervalID = scheduleLineupsUpdate(TTLs.FINISHED_TTL);
+	infoIntervalID = scheduleFixtureInfoUpdate(TTLs.FINISHED_TTL);
+	eventsIntervalID =  scheduleFixtureEventsUpdate(TTLs.FINISHED_TTL);
+}
+
+function setSchedulingForOngoingMatch(){
+	statisticsIntervalID = scheduleStatisticsUpdate(TTLs.ONGOING_STATS_TTL);
+	lineupsIntervalID = scheduleLineupsUpdate(TTLs.ONGOING_LINEUP_TTL);
+	infoIntervalID = scheduleFixtureInfoUpdate(TTLs.ONGOING_FIXTURE_TTL);
+	eventsIntervalID =  scheduleFixtureEventsUpdate(TTLs.ONGOING_FIXTURE_TTL);
+}
