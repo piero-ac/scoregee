@@ -126,7 +126,7 @@ function scheduleLineupsUpdate(fixture, TTLs) {
 	  const updatedFixture = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
 	  const updatedLineup = await fetchFixtureLineup(leagueNameShort, leagueSeason, fixtureID);
 	  displayTeamCoaches(updatedLineup, matchLineupContainer, lineupCoachContainers, lineupPlayerContainers);
-	  scheduleLineupUpdate(updatedFixture.fixture, TTLs);
+	  scheduleLineupsUpdate(updatedFixture.fixture, TTLs);
 	  console.log(`Fetching lineup data`);
 	}, lineupUpdateInterval);
   }
@@ -139,7 +139,9 @@ function scheduleFixtureInfoUpdate(fixture, TTLs){
   
 	setTimeout(async () => {
 		const { teamsInfo, fixture } = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
+		const updatedFixture = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
 		displayFixtureInfo({ teamsInfo, fixture }, quickInfoData, fixtureMatchInfoDiv);
+		scheduleFixtureInfoUpdate(updatedFixture, TTLs);
 		console.log(`Fetching fixture data`);
 	}, fixtureInfoUpdateInterval);
 }
@@ -151,7 +153,11 @@ function scheduleFixtureEventsUpdate(fixture, TTLs){
 	console.log(`Scheduling fixture events update for every ${fixtureEventsUpdateInterval}`);
 	setTimeout(async() => {
 		const fixtureEvents = await fetchFixtureEvents(leagueNameShort, leagueSeason, fixtureID);
+		const updatedFixture = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
 		displayFixtureEvents(fixtureEvents, matchEventsContainer);
+		scheduleFixtureEventsUpdate(updatedFixture, TTLs);
 		console.log('Fetching fixture events');
 	}, fixtureEventsUpdateInterval);
 }
+
+// possibly have a thing that monitors fixture status outside of the scheduling functions
