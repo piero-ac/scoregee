@@ -35,14 +35,30 @@ export async function fetchFixtureLineup(leagueNameShort, leagueSeason, fixtureI
 }
 
 export async function fetchFixtureStatistics(leagueNameShort, leagueSeason, fixtureID){
-	const { statistics: fixtureStatistics } = await fetch(`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/statistics`)
-		.then((response) => {
-			return response.json();
-		})
-		.catch((error) => {
-			console.error(`Could not get league information: ${error}`);
-		});
-	return fixtureStatistics;
+
+	try {
+		const response = await fetch(`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/statistics`);
+
+		if(response.status === 200) {
+			const { statistics: fixtureStatistics } = response.json();
+			return fixtureStatistics;
+		} else if (response.status === 204) {
+			console.log("No data returned by API.");
+			return [];
+		} else if (response.status === 499 || response.status === 500) {
+			const { error: errorMessage } = response.json();
+			console.log(`API Returned Status Code: ${statusCode} with message: ${errorMessage}`);
+			return [];
+		} else {
+			// unexpected error code returned
+			const { error: errorMessage, actualStatusCode: statusCode} = response.json();
+			console.log(`API Returned Unexpected Status Code: ${statusCode} with message: ${errorMessage}`);
+			return [];
+		}
+	} catch (error) {
+		console.error(`Error during fetch: ${error.message}`)
+		return [];
+	}
 }
 
 export async function fetchFixtureEvents(leagueNameShort, leagueSeason, fixtureID){
@@ -54,7 +70,7 @@ export async function fetchFixtureEvents(leagueNameShort, leagueSeason, fixtureI
 			const { events: fixtureEvents } = response.json();
 			return fixtureEvents;
 		} else if (response.status === 204) {
-			console.log("No data returned.");
+			console.log("No data returned by API.");
 			return [];
 		} else if (response.status === 499 || response.status === 500) {
 			const { error: errorMessage } = response.json();
