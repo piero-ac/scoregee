@@ -149,9 +149,36 @@ app.get(
 			},
 		};
 
-		const lineupResponse = await axios.request(options);
-		const { response: lineup } = lineupResponse.data;
-		res.json({ lineup });
+		try {
+			const lineupResponse = await axios.request(options);
+			const statusCode = lineupResponse.status;
+
+			if(statusCode === 200) {
+				const { response: lineup } = lineupResponse.data;
+				res.status(statusCode).json({ lineup });
+			} else if (statusCode === 204) {
+				res.status(statusCode).json({ lineup: [] });
+			} else if (statusCode === 499 || statusCode === 500) {
+				const errorMessage = eventsResponse.data.message;
+				res.status(statusCode).json({ error: errorMessage });
+			} else {
+				// Unexpected status code
+				const errorMessage = `Unexpected status code: ${statusCode}.`;
+				res.status(statusCode).json({ error: errorMessage, actualStatusCode: statusCode});
+			}
+		} catch (error) {
+			// handle axios request error
+			console.log(`Error while fetching lineups for fixture ${fixtureid}:`, error.message);
+			let statusCode = 500;
+			let errorMessage = 'An error occurred while fetching lineups data.';
+
+			if(error.response) {
+				statusCode = error.response.status;
+				errorMessage = error.response.data.message || errorMessage;
+			}
+
+			res.status(statusCode).json({ error: errorMessage, actualStatusCode: statusCode });
+		}
 	}
 );
 
@@ -187,8 +214,7 @@ app.get(
 				const errorMessage = `Unexpected status code: ${statusCode}.`;
 				res.status(statusCode).json({ error: errorMessage, actualStatusCode: statusCode});
 			}
-
-
+			
 		} catch (error) {
 			// handle axios request error
 			console.log(`Error while fetching statistics for fixture ${fixtureid}:`, error.message);
