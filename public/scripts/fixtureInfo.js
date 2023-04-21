@@ -29,9 +29,9 @@ const leagueSeason = urlParts[urlParts.length - 3];
 const fixtureID = urlParts[urlParts.length - 1];
 
 const TTLs = {
-	ONGOING_FIXTURE_TTL : 180000, // for ongoing matches, update fixture info every 3 minutes
+	ONGOING_FIXTURE_TTL : 120000, // for ongoing matches, update fixture info every 3 minutes
 	ONGOING_LINEUP_TTL : 900000,  // for ongoing matches, lineup caches only available for 15 minutes
-	ONGOING_STATS_TTL : 180000, // for ongoing matches, statistics caches only available for 3 minute
+	ONGOING_STATS_TTL : 120000, // for ongoing matches, statistics caches only available for 3 minute
 	FINISHED_TTL : 86400000 // for finished matches, lineup and stats valid for 24 hours
 }
 const inPlayStatusCodes = ["1H", "HT", "2H", "ET", "BT", "P", "INT"];
@@ -41,6 +41,7 @@ let lineupsIntervalID = undefined;
 let eventsIntervalID = undefined; 
 let infoIntervalID = undefined;
 let matchStatusIntervalID = undefined;
+let lineupCache, statsCache, eventsCache;
 
 // Initial Loading of Data for Page
 getFixtureInfo();
@@ -50,9 +51,9 @@ async function getFixtureInfo() {
 		// Fetch fixture data
 		const leagueInfo = await fetchLeagueInfo(leagueNameShort, leagueSeason);
 		const { fixture, teamsInfo } = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
-		let lineupCache = getCacheInformationWithExpiry(`${fixtureID}-lineup`); 
-		let statsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`); 
-		let eventsCache = getCacheInformationWithExpiry(`${fixtureID}-events`);
+		lineupCache = getCacheInformationWithExpiry(`${fixtureID}-lineup`); 
+		statsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`); 
+		eventsCache = getCacheInformationWithExpiry(`${fixtureID}-events`);
 
 
 		// Cache data if not already cached
