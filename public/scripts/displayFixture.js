@@ -3,7 +3,7 @@ import { getLocalTime } from "./formatTime.js";
 
 export function displayTeamCoaches(lineupObj, matchLineupContainer, coachContainers, playerContainers){
     if (lineupObj.length === 0) {
-		matchLineupContainer.textContent = "Information is not available yet.";
+		matchLineupContainer.textContent = "Information is not available.";
 	} else {
 		// Reset coach containers
 		coachContainers[0].innerHTML = "";
@@ -206,7 +206,7 @@ function displayPlayers(players, playersDiv) {
 
 export function displayFixtureEvents(fixtureEvents, matchEventsContainer){
 	if(fixtureEvents.length === 0){
-		matchEventsContainer.textContent = "Information is not available yet."
+		matchEventsContainer.textContent = "Information is not available."
 	} else {
 		matchEventsContainer.innerHTML = ""; // Reset matchEventsContainers
 		for(let event of fixtureEvents){
