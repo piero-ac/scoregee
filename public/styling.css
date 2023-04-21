@@ -322,3 +322,36 @@ h3 {
 .question {
   margin-bottom: 20px;
 }
+
+.event-team-img {
+  width: 50px;
+  height: 50px;
+}
+
+.event-type {
+  width: 50px;
+  height: 50px;
+}
+
+#events-table {
+  width: 700px;
+  text-align: center;
+}
+
+#events-table td img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.event-hd-small {
+  width: 80px;
+}
+
+.event-hd-medium {
+  width: 100px;
+}
+
+.event-hd-large {
+  width: 420px;
+}
