@@ -1,5 +1,3 @@
-import res from "express/lib/response";
-
 export async function fetchLeagueInfo(leagueNameShort, leagueSeason){
 	const leagueInfo = await fetch(`/football/${leagueNameShort}/${leagueSeason}/overview`)
 		.then((response) => {
@@ -28,9 +26,9 @@ export async function fetchFixtureLineup(leagueNameShort, leagueSeason, fixtureI
 
 	try {
 		const response = await fetch(`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/lineup`);
-
+		
 		if(response.status === 200) {
-			const { lineup: fixtureLineup } = response.json();
+			const { lineup: fixtureLineup } = await response.json();
 			return fixtureLineup;
 		} else if (response.status === 204) {
 			console.log("No data returned by API.");
@@ -57,7 +55,7 @@ export async function fetchFixtureStatistics(leagueNameShort, leagueSeason, fixt
 		const response = await fetch(`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/statistics`);
 
 		if(response.status === 200) {
-			const { statistics: fixtureStatistics } = response.json();
+			const { statistics: fixtureStatistics } = await response.json();
 			return fixtureStatistics;
 		} else if (response.status === 204) {
 			console.log("No data returned by API.");
@@ -84,7 +82,7 @@ export async function fetchFixtureEvents(leagueNameShort, leagueSeason, fixtureI
 		const response = await fetch(`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/events`);
 
 		if(response.status === 200){
-			const { events: fixtureEvents } = response.json();
+			const { events: fixtureEvents } = await response.json();
 			return fixtureEvents;
 		} else if (response.status === 204) {
 			console.log("No data returned by API.");
