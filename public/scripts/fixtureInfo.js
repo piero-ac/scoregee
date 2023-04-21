@@ -51,6 +51,7 @@ async function getFixtureInfo() {
 		// Fetch fixture data
 		const leagueInfo = await fetchLeagueInfo(leagueNameShort, leagueSeason);
 		const { fixture, teamsInfo } = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
+		const initialMatchStatus = fixture.fixture.status.short;
 		lineupCache = getCacheInformationWithExpiry(`${fixtureID}-lineup`); 
 		statsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`); 
 		eventsCache = getCacheInformationWithExpiry(`${fixtureID}-events`);
@@ -60,11 +61,10 @@ async function getFixtureInfo() {
 		if (!lineupCache) {
 			const fixtureLineup = await fetchFixtureLineup(leagueNameShort, leagueSeason, fixtureID);
 			if(fixtureLineup.length !== 0) {
-				setCacheInformationWithExpiry(
-					`${fixtureID}-lineup`,
-					fixtureLineup,
-					fixture.fixture.status.short === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_LINEUP_TTL
-				);
+				setCacheInformationWithExpiry(`${fixtureID}-lineup`, fixtureLineup, initialMatchStatus === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_LINEUP_TTL);
+				lineupCache = getCacheInformationWithExpiry(`${fixtureID}-lineup`);
+			} else {
+				setCacheInformationWithExpiry(`${fixtureID}-lineup`, [], initialMatchStatus === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_LINEUP_TTL);
 				lineupCache = getCacheInformationWithExpiry(`${fixtureID}-lineup`);
 			}
 		}
@@ -72,23 +72,21 @@ async function getFixtureInfo() {
 		if (!statsCache) {
 			const fixtureStatistics = await fetchFixtureStatistics(leagueNameShort, leagueSeason, fixtureID);
 			if(fixtureStatistics.length !== 0){
-				setCacheInformationWithExpiry(
-					`${fixtureID}-stats`,
-					fixtureStatistics,
-					fixture.fixture.status.short === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_STATS_TTL
-				);
+				setCacheInformationWithExpiry(`${fixtureID}-stats`, fixtureStatistics, initialMatchStatus === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_STATS_TTL);
 				statsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`);
-			}	
+			} else {
+				setCacheInformationWithExpiry(`${fixtureID}-stats`, [], initialMatchStatus === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_STATS_TTL);
+				statsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`);
+			}
 		}
 
 		if(!eventsCache){
 			const fixtureEvents = await fetchFixtureEvents(leagueNameShort, leagueSeason, fixtureID);
 			if(fixtureEvents.length !== 0){
-				setCacheInformationWithExpiry(
-					`${fixtureID}-events`,
-					fixtureEvents,
-					fixture.fixture.status.short === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_FIXTURE_TTL
-				);
+				setCacheInformationWithExpiry(`${fixtureID}-events`, fixtureEvents, initialMatchStatus === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_FIXTURE_TTL);
+				eventsCache = getCacheInformationWithExpiry(`${fixtureID}-events`);	
+			} else {
+				setCacheInformationWithExpiry(`${fixtureID}-events`, [], initialMatchStatus === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_FIXTURE_TTL);
 				eventsCache = getCacheInformationWithExpiry(`${fixtureID}-events`);	
 			}
 		}
