@@ -197,6 +197,7 @@ function scheduleFixtureInfoUpdate(interval){
 
 function scheduleFixtureEventsUpdate(interval){
 	console.log(`Scheduling fixture events update for every ${interval}`);
+	
 	return setInterval(async() => {
 		console.log("Displaying updated fixture events information");
 		const response = await fetchFixtureEvents(leagueNameShort, leagueSeason, fixtureID);
