@@ -1,3 +1,5 @@
+import res from "express/lib/response";
+
 export async function fetchLeagueInfo(leagueNameShort, leagueSeason){
 	const leagueInfo = await fetch(`/football/${leagueNameShort}/${leagueSeason}/overview`)
 		.then((response) => {
@@ -23,15 +25,30 @@ export async function fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fi
 }
 
 export async function fetchFixtureLineup(leagueNameShort, leagueSeason, fixtureID){
-	const { lineup: fixtureLineup } = await fetch(`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/lineup`)
-		.then((response) => {
-			return response.json();
-		})
-		.catch((error) => {
-			console.error(`Could not get league information: ${error}`);
-		});
-	
-	return fixtureLineup;
+
+	try {
+		const response = await fetch(`/football/${leagueNameShort}/${leagueSeason}/fixture/${fixtureID}/lineup`);
+
+		if(response.status === 200) {
+			const { lineup: fixtureLineup } = response.json();
+			return fixtureLineup;
+		} else if (response.status === 204) {
+			console.log("No data returned by API.");
+			return [];
+		} else if (response.status === 499 || response.status === 500) {
+			const { error: errorMessage } = response.json();
+			console.log(`API Returned Status Code: ${statusCode} with message: ${errorMessage}`);
+			return [];
+		} else {
+			// unexpected error code returned
+			const { error: errorMessage, actualStatusCode: statusCode} = response.json();
+			console.log(`API Returned Unexpected Status Code: ${statusCode} with message: ${errorMessage}`);
+			return [];
+		}
+	} catch (error) {
+		console.error(`Error during fetch: ${error.message}`)
+		return [];
+	}
 }
 
 export async function fetchFixtureStatistics(leagueNameShort, leagueSeason, fixtureID){
