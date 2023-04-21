@@ -58,32 +58,38 @@ async function getFixtureInfo() {
 		// Cache data if not already cached
 		if (!lineupCache) {
 			const fixtureLineup = await fetchFixtureLineup(leagueNameShort, leagueSeason, fixtureID);
-			setCacheInformationWithExpiry(
-			  `${fixtureID}-lineup`,
-			  fixtureLineup,
-			  fixture.fixture.status.short === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_LINEUP_TTL
-			);
-			lineupCache = getCacheInformationWithExpiry(`${fixtureID}-lineup`);
+			if(fixtureLineup.length !== 0) {
+				setCacheInformationWithExpiry(
+					`${fixtureID}-lineup`,
+					fixtureLineup,
+					fixture.fixture.status.short === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_LINEUP_TTL
+				);
+				lineupCache = getCacheInformationWithExpiry(`${fixtureID}-lineup`);
+			}
 		}
 
 		if (!statsCache) {
 			const fixtureStatistics = await fetchFixtureStatistics(leagueNameShort, leagueSeason, fixtureID);
-			setCacheInformationWithExpiry(
-			  `${fixtureID}-stats`,
-			  fixtureStatistics,
-			  fixture.fixture.status.short === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_STATS_TTL
-			);
-			statsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`);
+			if(fixtureStatistics.length !== 0){
+				setCacheInformationWithExpiry(
+					`${fixtureID}-stats`,
+					fixtureStatistics,
+					fixture.fixture.status.short === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_STATS_TTL
+				);
+				statsCache = getCacheInformationWithExpiry(`${fixtureID}-stats`);
+			}	
 		}
 
 		if(!eventsCache){
 			const fixtureEvents = await fetchFixtureEvents(leagueNameShort, leagueSeason, fixtureID);
-			setCacheInformationWithExpiry(
-				`${fixtureID}-events`,
-				fixtureEvents,
-				fixture.fixture.status.short === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_FIXTURE_TTL
-			);
-			eventsCache = getCacheInformationWithExpiry(`${fixtureID}-events`);
+			if(fixtureEvents.length !== 0){
+				setCacheInformationWithExpiry(
+					`${fixtureID}-events`,
+					fixtureEvents,
+					fixture.fixture.status.short === "FT" ? TTLs.FINISHED_TTL : TTLs.ONGOING_FIXTURE_TTL
+				);
+				eventsCache = getCacheInformationWithExpiry(`${fixtureID}-events`);	
+			}
 		}
 
 		// Display data
