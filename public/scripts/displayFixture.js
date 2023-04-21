@@ -209,32 +209,114 @@ export function displayFixtureEvents(fixtureEvents, matchEventsContainer){
 		matchEventsContainer.textContent = "Information is not available."
 	} else {
 		matchEventsContainer.innerHTML = ""; // Reset matchEventsContainers
-		for(let event of fixtureEvents){
-			const type = event.type;
-			const time = event.time.elapsed;
-			const team = event.team.id;
-			const name = event.team.name;
-			const logo = event.team.logo;
-			const pid = event.player.id;
-			const player = event.player.name;
-			const detail = event.detail;
-			const comments = event.comments;
-			const ai = event.assist.id;
-			const an = event.assist.name;
-			let output = `${time}' ${player} `;
-			if (type === "Card") {
-				output += `${detail} `;
-			} else if (type === "subst") {
-				output += 'Substitution ' ;
-			} else if (type === "Goal") {
-				output += 'Goal' ;
-			} else if (type === "Var") {
-				output += `VAR - ${detail}`;
-			}
 
-			const eventParagraph = document.createElement("p");
-			eventParagraph.textContent = output;
-			matchEventsContainer.append(eventParagraph); 
+		// create table
+		const eventsTable = document.createElement("table");
+		eventsTable.setAttribute("id", "events-table");
+
+		// create table headings row
+		createEventsTableHeadings(eventsTable);
+
+		// create event rows
+		for(let event of fixtureEvents){
+			const eventRow = createEventRow(event);
+			eventsTable.append(eventRow);
 		}
+
+		matchEventsContainer.append(eventsTable);
 	}
+}
+
+function createEventsTableHeadings(eventsTable){
+	// create table headings row
+	const headingsRow = document.createElement("tr");
+	
+	const timeHeading = document.createElement("th");
+	timeHeading.classList.add("event-hd-small");
+	timeHeading.innerText = "Time";
+		
+	const teamHeading = document.createElement("th");
+	teamHeading.classList.add("event-hd-medium");
+	teamHeading.innerText = "Team";
+		
+	const eventHeading = document.createElement("th");
+	eventHeading.classList.add("event-hd-medium");
+	eventHeading.innerText = "Event";
+		
+	const infoHeading = document.createElement("th");
+	infoHeading.classList.add("event-hd-large");
+	infoHeading.innerText = "Info";
+		
+	headingsRow.append(timeHeading, teamHeading, eventHeading, infoHeading);
+	eventsTable.append(headingsRow);
+}
+
+function createEventRow(event){
+	const eventType = event.type;
+	const eventTypeDetails = event.detail;
+	const eventAssistName = event.assist.name;
+	const timeElapsed = event.time.elapsed;
+	const timeExtra = event.time.extra;
+	const teamName = event.team.name;
+	const teamLogoLink = event.team.logo;
+	const playerName = event.player.name;
+
+	const eventRow = document.createElement("tr");
+	eventRow.classList.add("event-row");
+
+	const timeData = document.createElement("td");
+	if(timeExtra){
+		timeData.innerText = `${timeElapsed}+${timeExtra}'`;
+	} else {
+		timeData.innerText = `${timeElapsed}'`;
+	}
+
+	const teamLogoData = document.createElement("td");
+	const teamLogoImg = document.createElement("img");
+	teamLogoImg.classList.add("event-team-img");
+	teamLogoImg.setAttribute("src", teamLogoLink);
+	teamLogoImg.setAttribute("alt", `Logo of ${teamName}`);
+	teamLogoData.append(teamLogoImg);
+
+	const eventTypeData = document.createElement("td");
+	const eventTypeImg = document.createElement("img");
+	eventTypeImg.classList.add("event-type");
+
+	if(eventType === "Card"){
+		if(eventTypeDetails === "Yellow Card"){
+			eventTypeImg.setAttribute("src", "/images/yellow-card.png");
+			eventTypeImg.setAttribute("alt", "Image of Yellow Card");
+		} else if (eventTypeDetails === "Red Card"){
+			eventTypeImg.setAttribute("src", "/images/red.png");
+			eventTypeImg.setAttribute("alt", "Image of Red Card");
+		}
+	} else if (eventType === "Goal"){
+		eventTypeImg.setAttribute("src", "/images/soccer-ball.png");
+		eventTypeImg.setAttribute("alt", "Image of Soccer Ball (indicating a goal)");
+	} else if (eventType === "subst") {
+		eventTypeImg.setAttribute("src", "/images/substitution.png");
+		eventTypeImg.setAttribute("alt", "Image of a Substitution Taking Place");
+	} else if (eventType == "var"){
+		eventTypeImg.setAttribute("src", "/images/var.png");
+		eventTypeImg.setAttribute("alt", "Image of a Virtual Assistant Referee Call");
+	}
+	eventTypeData.append(eventTypeImg);
+
+	const infoData = document.createElement("td");
+	if(eventType === "Card"){
+		infoData.innerText = playerName;
+	} else if (eventType === "Goal") {
+		let goalInfo = `Scorer: ${playerName} `;
+		if(eventAssistName){
+			goalInfo += `Assist: ${eventAssistName}`;
+		}
+		infoData.innerText = goalInfo;
+	} else if (eventType === "subst") {
+		infoData.innerText = `Out: ${eventAssistName} In: ${playerName}`;
+	} else if (eventType == "var") {
+		infoData.innerText = `VAR Decision: ${eventTypeDetails}`;
+	}
+
+	eventRow.append(timeData, teamLogoData, eventTypeData, infoData);
+	return eventRow;
 }
