@@ -103,7 +103,7 @@ async function getFixturesFromID(ids){
 
     const response = await axios.request(options);
 	console.log(response.status);
-	console.log(response.data.response);
+	// console.log(response.data.response);
 	return response.data.response;
 }
 
