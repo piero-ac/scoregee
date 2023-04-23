@@ -128,6 +128,9 @@ async function getFixtureInfo() {
 					console.log("Match has gone from In Play to FT. Changing Interval Times for Updating Data to FINISHED times");
 					// then kill all timeoutes as they will have intervals for an ongoing match
 					stopUpdating();
+					// fetch finished match information
+					const { fixture, teamsInfo } = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
+					displayFixtureInfo({ teamsInfo, fixture }, quickInfoData, fixtureMatchInfoDiv);
 					// call all scheduling tasks to run for there corresponding intervals for a finished match
 					setSchedulingForFinishedMatch();
 					previousMatchStatus = currentStatus;
