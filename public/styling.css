@@ -355,3 +355,63 @@ h3 {
 .event-hd-large {
   width: 420px;
 }
+
+.red-border-pulse {
+  border: 5px solid rgb(255, 35, 35);
+  animation: red-border-animation 3s infinite;
+  border-radius: 10px;
+}
+
+.blue-border-pulse {
+  border: 5px solid rgb(41, 41, 253);
+  animation: blue-border-animation 3s infinite;
+  border-radius: 10px;
+}
+
+.green-border-pulse {
+  border: 5px solid greenyellow;
+  animation: green-border-animation 3s infinite;
+  border-radius: 10px;
+}
+
+@keyframes red-border-animation {
+  0% {
+    border-color: rgb(255, 35, 35);
+  }
+
+  50% {
+    border-color: transparent;
+  }
+
+  100% {
+    border-color: rgb(255, 35, 35);
+  }
+}
+
+@keyframes blue-border-animation {
+  0% {
+    border-color: rgb(41, 41, 253);
+  }
+
+  50% {
+    border-color: transparent;
+  }
+
+  100% {
+    border-color: rgb(41, 41, 253);
+  }
+}
+
+@keyframes green-border-animation {
+  0% {
+    border-color: greenyellow;
+  }
+
+  50% {
+    border-color: transparent;
+  }
+
+  100% {
+    border-color: greenyellow;
+  }
+}
