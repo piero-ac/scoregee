@@ -74,6 +74,22 @@ export function displayFixtureTitle(leagueInfo, teamsInfo, leagueDisplay, league
 export function displayFixtureInfo(data, quickInfoDataDiv, fixtureMatchInfoDiv){
     const { teamsInfo, fixture } = data;
 
+	// set the color of the fixtureMatchInfoDiv based on fixture states
+	fixtureMatchInfoDiv.className = "";
+	fixtureMatchInfoDiv.classList.add("fixture-match-info-div");
+
+	const inPlayStatusCodes = ["1H", "HT", "2H", "ET", "BT", "P", "INT"];
+	const matchStatus = fixture.fixture.status.short;
+	if(inPlayStatusCodes.includes(matchStatus)){
+		if(matchStatus === "HT"){
+			fixtureMatchInfoDiv.classList.add("blue-border-pulse");
+		} else {
+			fixtureMatchInfoDiv.classList.add("green-border-pulse");
+		}
+	} else {
+		fixtureMatchInfoDiv.classList.add("red-border-pulse");
+	}
+
 	// DISPLAY MATCH INFO UP TOP
 	const homeTeam = teamsInfo[0];
 	const awayTeam = teamsInfo[1];
