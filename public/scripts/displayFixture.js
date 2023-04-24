@@ -386,15 +386,15 @@ function createEventRow(event){
 	if(eventType === "Card"){
 		infoData.innerText = playerName;
 	} else if (eventType === "Goal") {
-		let goalInfo = `Scorer: ${playerName} `;
+		let goalInfo = `Scorer: ${playerName} <br> `;
 		if(eventAssistName){
 			goalInfo += `Assist: ${eventAssistName}`;
 		}
-		infoData.innerText = goalInfo;
+		infoData.innerHTML = goalInfo;
 	} else if (eventType === "subst") {
-		infoData.innerText = `Out: ${eventAssistName} In: ${playerName}`;
+		infoData.innerHTML = `Out: ${eventAssistName} <br> In: ${playerName}`;
 	} else if (eventType === "Var") {
-		infoData.innerText = `VAR Decision: ${eventTypeDetails}`;
+		infoData.innerHTML = `VAR Decision <br> ${eventTypeDetails}`;
 	}
 
 	eventRow.append(timeData, teamLogoData, eventTypeData, infoData);
