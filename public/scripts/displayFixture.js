@@ -376,7 +376,7 @@ function createEventRow(event){
 	} else if (eventType === "subst") {
 		eventTypeImg.setAttribute("src", "/images/substitution.png");
 		eventTypeImg.setAttribute("alt", "Image of a Substitution Taking Place");
-	} else if (eventType == "var"){
+	} else if (eventType === "Var"){
 		eventTypeImg.setAttribute("src", "/images/var.png");
 		eventTypeImg.setAttribute("alt", "Image of a Virtual Assistant Referee Call");
 	}
@@ -393,7 +393,7 @@ function createEventRow(event){
 		infoData.innerText = goalInfo;
 	} else if (eventType === "subst") {
 		infoData.innerText = `Out: ${eventAssistName} In: ${playerName}`;
-	} else if (eventType == "var") {
+	} else if (eventType === "Var") {
 		infoData.innerText = `VAR Decision: ${eventTypeDetails}`;
 	}
 
