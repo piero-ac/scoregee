@@ -258,7 +258,7 @@ p {
   text-align: center;
 }
 
-.homeTeam-stats .stats {
+/* .homeTeam-stats .stats {
   text-align: right;
 }
 
@@ -279,7 +279,7 @@ p {
 .stats p {
   margin: 0;
   padding: 0;
-}
+} */
 
 .dropdown-heading {
   display: inline-block;
@@ -414,4 +414,21 @@ h3 {
   100% {
     border-color: greenyellow;
   }
+}
+
+#statistics-table {
+  width: 610px;
+  /* border: 1px solid red; */
+}
+
+#statistics-table tr {
+  text-align: center;
+}
+
+.team-title {
+  width: 300px;
+}
+
+.stats-heading {
+  border-top: 3px solid #f9f9f9;
 }
