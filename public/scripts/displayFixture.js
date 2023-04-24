@@ -54,12 +54,8 @@ export function displayStatisticsStatus(statisticsObj, matchStatisticsContainer)
         matchStatisticsContainer.textContent = "Information is not available.";
     } else {
 		matchStatisticsContainer.innerHTML = ""; // reset the stats container to be empty
-        const homeTeam = statisticsObj[0];
-		const awayTeam = statisticsObj[1];
-
-		displayStatisticsForTeam(homeTeam, matchStatisticsContainer, "home");
-		displayStatisticsForTeam(awayTeam, matchStatisticsContainer, "away");
-    }
+		displayStatisticsTable(statisticsObj, matchStatisticsContainer);
+	}
 }
 
 export function displayFixtureTitle(leagueInfo, teamsInfo, leagueDisplay, leagueHPLink, fixtureInfoTitle, leagueNameShort, leagueSeason){
@@ -126,6 +122,74 @@ export function displayQuickFixtureInfo(quickInfoDataDiv, fixture) {
 	stadiumPara.innerText = stadiumName;
 
 	quickInfoDataDiv.append(timePara, refereePara, stadiumPara);
+}
+
+function displayStatisticsTable(statisticsObj, matchStatisticsContainer){
+	const home = statisticsObj[0];
+	const away = statisticsObj[1];
+
+	// create table element
+	const statsTable = document.createElement("table");
+	statsTable.setAttribute("id", "statistics-table");
+
+	// add team headings
+	statsTable.append(createStatsTeamHeadings(home, away));
+
+	// append statistics information
+	createStatsRows(home, away, statsTable);
+
+	matchStatisticsContainer.append(statsTable);
+}
+
+function createStatsTeamHeadings(home, away){
+	const teamsRow = document.createElement("tr");
+	const homeName = home.team.name;
+	const awayName = away.team.name;
+
+	const homeNameHeading = document.createElement("th");
+	homeNameHeading.classList.add("team-title");
+	homeNameHeading.innerText = homeName;
+
+	const awayNameHeading = document.createElement("th");
+	awayNameHeading.classList.add("team-title");
+	awayNameHeading.innerText = awayName;
+
+	teamsRow.append(homeNameHeading, awayNameHeading);
+
+	return teamsRow;
+}
+
+function createStatsRows(home, away, statsTable){
+
+	for(let i = 0; i < home.statistics.length; i++){
+		const homeStatistic = home.statistics[i];
+		const awayStatistic = away.statistics[i];
+		let { type, value : homeValue } = homeStatistic;
+		let { value: awayValue } = awayStatistic;
+
+		if (type === "expected_goals") continue;
+
+		homeValue = homeValue === null ? 0 : homeValue;
+		awayValue = awayValue === null ? 0 : awayValue;
+
+		// row containing stats type
+		const statsHeadingRow = document.createElement("tr");
+		const statsTypeData = document.createElement("th");
+		statsTypeData.innerText = type.toUpperCase();
+		statsTypeData.setAttribute("colspan", "2");
+		statsTypeData.classList.add("stats-heading");
+		statsHeadingRow.append(statsTypeData);
+
+		// row containing stats data
+		const statsValuesRow = document.createElement("tr");
+		const homeTeamStat = document.createElement("td");
+		homeTeamStat.innerText = homeValue;
+		const awayTeamStat = document.createElement("td");
+		awayTeamStat.innerText = awayValue;
+		
+		statsValuesRow.append(homeTeamStat, awayTeamStat);
+		statsTable.append(statsHeadingRow, statsValuesRow);
+	}
 }
 
 function displayStatisticsForTeam(objectStats, statsContainer, type){
