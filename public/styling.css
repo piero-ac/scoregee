@@ -255,7 +255,11 @@ p {
 }
 
 #match-events {
-  text-align: center;
+  display: flex;
+  flex-direction: row;
+  column-gap: 15px;
+  justify-content: center;
+  align-items: center;
 }
 
 /* .homeTeam-stats .stats {
@@ -431,4 +435,9 @@ h3 {
 
 .stats-heading {
   border-top: 3px solid #f9f9f9;
+}
+
+.event-row td {
+  border-top: 3px solid #f9f9f9;
+  padding: 10px 0;
 }
