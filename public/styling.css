@@ -441,3 +441,25 @@ h3 {
   border-top: 3px solid #f9f9f9;
   padding: 10px 0;
 }
+
+#lineup-table {
+  /* border: 2px solid red; */
+  width: 650px;
+  text-align: center;
+}
+
+#lineup-table td {
+  padding-bottom: 10px;
+}
+
+#lineup-table tr th {
+  border-top: 3px solid #f9f9f9;
+}
+
+/* #lineup-table td[colspan="3"]:nth-child(1) {
+  border-right: 2.5px solid #f9f9f9;
+}
+
+#lineup-table td[colspan="3"]:nth-child(2) {
+  border-left: 2.5px solid #f9f9f9;
+} */
