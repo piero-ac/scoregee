@@ -5,48 +5,161 @@ export function displayTeamCoaches(lineupObj, matchLineupContainer, coachContain
     if (lineupObj.length === 0) {
 		matchLineupContainer.textContent = "Information is not available.";
 	} else {
-		// Reset coach containers
-		coachContainers[0].innerHTML = "";
-		coachContainers[1].innerHTML = "";
 
-		// Reset lineup containers
-		playerContainers[0].innerHTML = `<h3>Starters</h3>`;
-		playerContainers[1].innerHTML = `<h3>Substitutes</h3>`;
-		playerContainers[2].innerHTML = `<h3>Starters</h3>`;
-		playerContainers[3].innerHTML = `<h3>Substitutes</h3>`;
+		matchLineupContainer.innerText = "";
 
-		const {
-			coach: hCoach,
-			formation: hFormation,
-			team: { name: hName },
-		} = lineupObj[0];
+		const { coach: hCoach, formation: hFormation,team: { name: hName } } = lineupObj[0];
+		const { coach: aCoach, formation: aFormation, team: { name: aName } } = lineupObj[1];
+		const { startXI: homeStarters, substitutes: homeSubs }  = lineupObj[0];
+		const { startXI: awayStarters, substitutes: awaySubs }  = lineupObj[1];
 
-		const {
-			coach: aCoach,
-			formation: aFormation,
-			team: { name: aName },
-		} = lineupObj[1];
+		const lineupTable = document.createElement("table");
+		lineupTable.setAttribute("id", "lineup-table");
 
-		// Display the lineup subheaders
-	    coachContainers[0].innerText = `${hName.toUpperCase()} Coach: ${
-			hCoach.name
-		} Formation: ${hFormation}`;
-		coachContainers[1].innerText = `${aName.toUpperCase()} Coach: ${
-			aCoach.name
-		} Formation: ${aFormation}`;
+		// display team names, coaches, and formations
+		const teamsHeadingsRow = document.createElement("tr");
+		teamsHeadingsRow.append(
+			createLineupTeamHeading(hName),
+			createLineupTeamHeading(aName)
+		);
+		lineupTable.append(teamsHeadingsRow);
 
-		// Display home team starters
-		displayPlayers(lineupObj[0].startXI, playerContainers[0]);
+		const coachHeading = document.createElement("tr");
+		const coachTitle = document.createElement("th");
+		coachTitle.innerText = "Coach";
+		coachTitle.setAttribute("colspan", "6");
+		coachHeading.append(coachTitle);
+		lineupTable.append(coachHeading);
 
-		// Display away team starters
-		displayPlayers(lineupObj[1].startXI, playerContainers[2]);
+		const coachNamesRow = document.createElement("tr");
+		coachNamesRow.append(
+			createLineupInfo(hCoach.name),
+			createLineupInfo(aCoach.name)
+		);
+		lineupTable.append(coachNamesRow);
 
-		// Display home team subs
-		displayPlayers(lineupObj[0].substitutes, playerContainers[1]);
+		const formationHeading = document.createElement("tr");
+		const formationTitle = document.createElement("th");
+		formationTitle.innerText = "Formation";
+		formationTitle.setAttribute("colspan", "6");
+		formationHeading.append(formationTitle);
+		lineupTable.append(formationHeading);
 
-		// Display away team subs
-		displayPlayers(lineupObj[1].substitutes, playerContainers[3]);
+		const formationsDataRow = document.createElement("tr");
+		formationsDataRow.append(
+			createLineupInfo(hFormation),
+			createLineupInfo(aFormation)
+		);
+		lineupTable.append(formationsDataRow);
+
+		// display starters and substitutes
+		createPlayerRows(homeStarters, awayStarters, lineupTable, "Starters");
+		createPlayerRows(homeSubs, awaySubs, lineupTable, "Substitutes");
+		
+		matchLineupContainer.append(lineupTable);
+
+
+
+		// // Reset coach containers
+		// coachContainers[0].innerHTML = "";
+		// coachContainers[1].innerHTML = "";
+
+		// // Reset lineup containers
+		// playerContainers[0].innerHTML = `<h3>Starters</h3>`;
+		// playerContainers[1].innerHTML = `<h3>Substitutes</h3>`;
+		// playerContainers[2].innerHTML = `<h3>Starters</h3>`;
+		// playerContainers[3].innerHTML = `<h3>Substitutes</h3>`;
+
+		// // Display the lineup subheaders
+	    // coachContainers[0].innerText = `${hName.toUpperCase()} Coach: ${
+		// 	hCoach.name
+		// } Formation: ${hFormation}`;
+		// coachContainers[1].innerText = `${aName.toUpperCase()} Coach: ${
+		// 	aCoach.name
+		// } Formation: ${aFormation}`;
+
+		// // Display home team starters
+		// displayPlayers(lineupObj[0].startXI, playerContainers[0]);
+
+		// // Display away team starters
+		// displayPlayers(lineupObj[1].startXI, playerContainers[2]);
+
+		// // Display home team subs
+		// displayPlayers(lineupObj[0].substitutes, playerContainers[1]);
+
+		// // Display away team subs
+		// displayPlayers(lineupObj[1].substitutes, playerContainers[3]);
 	}
+}
+function createPlayerRows(homeData, awayData, lineupTable, titleValue){
+	const title = createLineupTitles(titleValue);
+	lineupTable.append(title);
+	const playerTitles = createLineupPlayerTitles();
+	lineupTable.append(playerTitles);
+
+	for(let i = 0; i < homeData.length; i++){
+		const row = document.createElement("tr");
+		const hPlayer = homeData[i].player;
+		const aPlayer = awayData[i].player;
+		createPlayerRow(hPlayer, row);
+		createPlayerRow(aPlayer, row);
+		lineupTable.append(row);
+	}
+}
+
+function createLineupTitles(name){
+	const row = document.createElement("tr");
+	const title = document.createElement("th");
+	title.setAttribute("colspan", "6");
+	title.innerText = name;
+	row.append(title);
+	return row;
+}
+
+function createPlayerRow(player, row){
+	const { name, number, pos } = player;
+	const numberData = document.createElement("td");
+	numberData.innerText = number;
+	const nameData = document.createElement("td");
+	nameData.innerText = name;
+	const positionData = document.createElement("td");
+	positionData.innerText = pos;
+	row.append(numberData, nameData, positionData);
+}
+
+function createLineupPlayerTitles(){
+	const row = document.createElement("tr");
+	const number1 = document.createElement("th");
+	number1.innerText = "Number";
+	const name1 = document.createElement("th");
+	name1.innerText = "Name";
+	const position1 = document.createElement("th");
+	position1.innerText = "Position";
+
+	const number2 = document.createElement("th");
+	number2.innerText = "Number";
+	const name2 = document.createElement("th");
+	name2.innerText = "Name";
+	const position2 = document.createElement("th");
+	position2.innerText = "Position";
+
+	row.append(number1, name1, position1);
+	row.append(number2, name2, position2);
+	return row;
+}
+
+function createLineupTeamHeading(name){
+	const teamHeading = document.createElement("th");
+	teamHeading.setAttribute("colspan", "3");
+	teamHeading.innerText = name;
+	return teamHeading;
+}
+
+function createLineupInfo(name){
+	const coachHeading = document.createElement("td");
+	coachHeading.setAttribute("colspan", "3");
+	coachHeading.innerText = name;
+	return coachHeading;
 }
 
 export function displayStatisticsStatus(statisticsObj, matchStatisticsContainer){
