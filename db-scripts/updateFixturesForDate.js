@@ -117,7 +117,6 @@ async function updateSpecificFixtures(fixtures) {
 	}
 }
 
-// should update 882075, 878224, 868249
 async function updateFixtures(){
     const currentTimeDate = new Date().toJSON();
     // Step 1. Get the fixtures for the current date
