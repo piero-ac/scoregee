@@ -163,8 +163,8 @@ const fixturesOccuringToday = await updateFixtures();
 
 // Check if fixtures are occuring today, before calling setInterval
 if(fixturesOccuringToday){
-    // Set an interval to call updateFixtures every 3 minutes
-    const interval = setInterval(updateFixtures, 120000); // 3 * 60 * 1000
+    // Set an interval to call updateFixtures every 1 minute
+    const interval = setInterval(updateFixtures, 60000); // 3 * 60 * 1000
 
     // Clear the interval after 8 hours
     setTimeout(() => {

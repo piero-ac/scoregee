@@ -29,9 +29,9 @@ const leagueSeason = urlParts[urlParts.length - 3];
 const fixtureID = urlParts[urlParts.length - 1];
 
 const TTLs = {
-	ONGOING_FIXTURE_TTL : 120000, // for ongoing matches, update fixture info every 3 minutes
+	ONGOING_FIXTURE_TTL : 60000, // for ongoing matches, update fixture info every 1 minute
 	ONGOING_LINEUP_TTL : 900000,  // for ongoing matches, lineup caches only available for 15 minutes
-	ONGOING_STATS_TTL : 120000, // for ongoing matches, statistics caches only available for 3 minute
+	ONGOING_STATS_TTL : 60000, // for ongoing matches, statistics caches only available for 1 minute
 	FINISHED_TTL : 86400000 // for finished matches, lineup and stats valid for 24 hours
 }
 const inPlayStatusCodes = ["1H", "HT", "2H", "ET", "BT", "P", "INT"];
@@ -119,6 +119,9 @@ async function getFixtureInfo() {
 					console.log("Match has gone from NS to In Play. Changing Interval Times for Updating Data to ONGOING times");
 					//then kill all timeouts as they will have a 24 hour interval
 					stopUpdating();
+					// fetch ongoing match information
+					const { fixture, teamsInfo } = await fetchFixtureAndTeamsInfo(leagueNameShort, leagueSeason, fixtureID);
+					displayFixtureInfo({ teamsInfo, fixture }, quickInfoData, fixtureMatchInfoDiv);
 					// call all scheduling tasks to run for there corresponding intervals for an ongoing match
 					setSchedulingForOngoingMatch();
 					previousMatchStatus = currentStatus;
