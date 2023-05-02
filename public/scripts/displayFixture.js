@@ -5,7 +5,6 @@ export function displayTeamCoaches(lineupObj, matchLineupContainer, coachContain
     if (lineupObj.length === 0) {
 		matchLineupContainer.textContent = "Information is not available.";
 	} else {
-
 		matchLineupContainer.innerText = "";
 
 		const { coach: hCoach, formation: hFormation,team: { name: hName } } = lineupObj[0];
@@ -55,40 +54,7 @@ export function displayTeamCoaches(lineupObj, matchLineupContainer, coachContain
 		// display starters and substitutes
 		createPlayerRows(homeStarters, awayStarters, lineupTable, "Starters");
 		createPlayerRows(homeSubs, awaySubs, lineupTable, "Substitutes");
-		
 		matchLineupContainer.append(lineupTable);
-
-
-
-		// // Reset coach containers
-		// coachContainers[0].innerHTML = "";
-		// coachContainers[1].innerHTML = "";
-
-		// // Reset lineup containers
-		// playerContainers[0].innerHTML = `<h3>Starters</h3>`;
-		// playerContainers[1].innerHTML = `<h3>Substitutes</h3>`;
-		// playerContainers[2].innerHTML = `<h3>Starters</h3>`;
-		// playerContainers[3].innerHTML = `<h3>Substitutes</h3>`;
-
-		// // Display the lineup subheaders
-	    // coachContainers[0].innerText = `${hName.toUpperCase()} Coach: ${
-		// 	hCoach.name
-		// } Formation: ${hFormation}`;
-		// coachContainers[1].innerText = `${aName.toUpperCase()} Coach: ${
-		// 	aCoach.name
-		// } Formation: ${aFormation}`;
-
-		// // Display home team starters
-		// displayPlayers(lineupObj[0].startXI, playerContainers[0]);
-
-		// // Display away team starters
-		// displayPlayers(lineupObj[1].startXI, playerContainers[2]);
-
-		// // Display home team subs
-		// displayPlayers(lineupObj[0].substitutes, playerContainers[1]);
-
-		// // Display away team subs
-		// displayPlayers(lineupObj[1].substitutes, playerContainers[3]);
 	}
 }
 function createPlayerRows(homeData, awayData, lineupTable, titleValue){
@@ -97,10 +63,11 @@ function createPlayerRows(homeData, awayData, lineupTable, titleValue){
 	const playerTitles = createLineupPlayerTitles();
 	lineupTable.append(playerTitles);
 
-	for(let i = 0; i < homeData.length; i++){
+	const maxLength = Math.max(homeData.length, awayData.length);
+	for(let i = 0; i < maxLength; i++){
 		const row = document.createElement("tr");
-		const hPlayer = homeData[i].player;
-		const aPlayer = awayData[i].player;
+		const hPlayer = i < homeData.length ? homeData[i].player : null;
+        const aPlayer = i < awayData.length ? awayData[i].player : null;
 		createPlayerRow(hPlayer, row);
 		createPlayerRow(aPlayer, row);
 		lineupTable.append(row);
@@ -117,13 +84,17 @@ function createLineupTitles(name){
 }
 
 function createPlayerRow(player, row){
-	const { name, number, pos } = player;
+	const name = player ? player.name : '';
+    const number = player ? player.number : '';
+    const pos = player ? player.pos : '';
+    
 	const numberData = document.createElement("td");
-	numberData.innerText = number;
-	const nameData = document.createElement("td");
-	nameData.innerText = name;
-	const positionData = document.createElement("td");
-	positionData.innerText = pos;
+    numberData.innerText = number;
+    const nameData = document.createElement("td");
+    nameData.innerText = name;
+    const positionData = document.createElement("td");
+    positionData.innerText = pos;
+    
 	row.append(numberData, nameData, positionData);
 }
 
