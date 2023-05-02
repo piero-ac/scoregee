@@ -136,61 +136,6 @@ function createLineupInfo(name){
 	return coachHeading;
 }
 
-function createLineupTitles(name){
-	const row = document.createElement("tr");
-	const title = document.createElement("th");
-	title.setAttribute("colspan", "6");
-	title.innerText = name;
-	row.append(title);
-	return row;
-}
-
-function createPlayerRow(player, row){
-	const { name, number, pos } = player;
-	const numberData = document.createElement("td");
-	numberData.innerText = number;
-	const nameData = document.createElement("td");
-	nameData.innerText = name;
-	const positionData = document.createElement("td");
-	positionData.innerText = pos;
-	row.append(numberData, nameData, positionData);
-}
-
-function createLineupPlayerTitles(){
-	const row = document.createElement("tr");
-	const number1 = document.createElement("th");
-	number1.innerText = "Number";
-	const name1 = document.createElement("th");
-	name1.innerText = "Name";
-	const position1 = document.createElement("th");
-	position1.innerText = "Position";
-
-	const number2 = document.createElement("th");
-	number2.innerText = "Number";
-	const name2 = document.createElement("th");
-	name2.innerText = "Name";
-	const position2 = document.createElement("th");
-	position2.innerText = "Position";
-
-	row.append(number1, name1, position1);
-	row.append(number2, name2, position2);
-	return row;
-}
-
-function createLineupTeamHeading(name){
-	const teamHeading = document.createElement("th");
-	teamHeading.setAttribute("colspan", "3");
-	teamHeading.innerText = name;
-	return teamHeading;
-}
-
-function createLineupInfo(name){
-	const coachHeading = document.createElement("td");
-	coachHeading.setAttribute("colspan", "3");
-	coachHeading.innerText = name;
-	return coachHeading;
-}
-
 export function displayStatisticsStatus(statisticsObj, matchStatisticsContainer){
     if(statisticsObj.length === 0){
         matchStatisticsContainer.textContent = "Information is not available.";
