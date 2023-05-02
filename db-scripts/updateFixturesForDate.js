@@ -32,8 +32,9 @@ async function findFixturesForCurrentDate(){
         return [];
     } else {
         const fixtureIDs = fixtures.map(obj => obj.fixture.id );
+		const parsedFixtureIDs = splitFixtureIDs(fixtureIDs);
         console.log(`Will update following fixtures: ${fixtureIDs}`);
-        return fixtureIDs.join("-");
+        return parsedFixtureIDs;
     }
 }
 
@@ -101,9 +102,11 @@ async function getFixturesFromID(ids){
       };
 
     const response = await axios.request(options);
+	console.log(response.status);
+	// console.log(response.data.response);
 	return response.data.response;
-      
 }
+
 
 async function updateSpecificFixtures(fixtures) {
 	for (const fixt of fixtures) {
@@ -114,7 +117,6 @@ async function updateSpecificFixtures(fixtures) {
 	}
 }
 
-// should update 882075, 878224, 868249
 async function updateFixtures(){
     const currentTimeDate = new Date().toJSON();
     // Step 1. Get the fixtures for the current date
@@ -123,13 +125,15 @@ async function updateFixtures(){
     if(ids.length !== 0){
         console.log(`Updating fixtures. Current Time and Date is: ${currentTimeDate}`);
 
-        // Step 2. Call route to get fixture information for specified ids
-        const fixturesNotParsed = await getFixturesFromID(ids);
-        // Step 3. Parse the data
-        const fixturesParsed = parseFixtureData(fixturesNotParsed);
-        // console.log(fixturesParsed);
-        // Step 4. Update the fixtures 
-        updateSpecificFixtures(fixturesParsed);
+		for(let idString of ids){
+			// Step 2. Call route to get fixture information for specified ids
+			const fixturesNotParsed = await getFixturesFromID(idString);
+			// Step 3. Parse the data
+			const fixturesParsed = parseFixtureData(fixturesNotParsed);
+			// console.log(fixturesParsed);
+			// Step 4. Update the fixtures 
+			updateSpecificFixtures(fixturesParsed);
+		}
         return true;
     } else {
         console.log("No fixtures happening today");
@@ -137,13 +141,29 @@ async function updateFixtures(){
     }
 }
 
+function splitFixtureIDs(fixtureIDs){
+	const MAX_LENGTH = 20;
+	const numSubarrays = Math.ceil(fixtureIDs.length / MAX_LENGTH);
+	const result = [];
+
+	for (let i = 0; i < numSubarrays; i++) {
+		const start = i * MAX_LENGTH;
+		const end = start + MAX_LENGTH;
+		const subarray = fixtureIDs.slice(start, end);
+		const subarrayString = subarray.join("-");
+		result.push(subarrayString);
+	}
+
+	return result;
+}
+
 // Call update fixtures initially
 const fixturesOccuringToday = await updateFixtures();
 
 // Check if fixtures are occuring today, before calling setInterval
 if(fixturesOccuringToday){
-    // Set an interval to call updateFixtures every 3 minutes
-    const interval = setInterval(updateFixtures, 180000); // 3 * 60 * 1000
+    // Set an interval to call updateFixtures every 1 minute
+    const interval = setInterval(updateFixtures, 60000); // 3 * 60 * 1000
 
     // Clear the interval after 8 hours
     setTimeout(() => {
