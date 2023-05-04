@@ -25,6 +25,7 @@ async function main() {
 
 async function findFixturesForCurrentDate(){
     const currentDate = new Date().toJSON().slice(0,10);
+	// const currentDate = "2023-05-02"; // used to determine specific date
     console.log(currentDate);
     const fixtures = await Fixture.find({ "fixture.date" : { $regex:`.*${currentDate}.*` }});
     
