@@ -34,15 +34,3 @@ This project draws inspiration from LiveScore.com. We wanted to create our versi
 <li>Database: MongoDB, Mongoose</li>
 <li>API: API-Football https://www.api-football.com/documentation-v3</li>
 </ul>
-
-### Current Version Specific Information
-
-This version of the project continues to use a MongoDB database stores information for over 7000 matches and over 100 teams.
-Currently, due to the design of API-Football, we aren't able to obtain lineup information for multiple matches at once. Therefore, it was not possible to store that information in the database for all of the matches. Displaying a match's information currently requires an API call that slows done page loading time.
-
-### To-Do
-
-<ul>
-<li> Improve Website Visuals </li>
-<li> Create scripts to periodically update fixture information </li>
-</ul>
