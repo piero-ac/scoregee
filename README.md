@@ -34,3 +34,6 @@ This project draws inspiration from LiveScore.com. We wanted to create our versi
 <li>Database: MongoDB, Mongoose</li>
 <li>API: API-Football https://www.api-football.com/documentation-v3</li>
 </ul>
+
+### Project Documentation
+Link: https://tinyurl.com/2br4tfy5 
